@@ -19,74 +19,20 @@ cd /d "%~dp0"
 
 echo ===================================================================================
 echo   ATS ^& ETS2 Realistic-Keyboard-Steering (RKS) (Turbo-Mode) ~ by Shadoo91
-echo   [OMNIPRESENT TARGET INJECTOR - ATS ^& ETS2 MULTI-PATCH]
+echo   [B64 UNIVERSAL INJECTOR - NO FORMAT BREAKS]
 echo ===================================================================================
 echo.
 
-echo Scanning your system for active ATS ^& ETS2 profiles...
+echo Scanning system and executing Base64 Isolated Patch Engine...
 echo Please wait a moment...
 echo.
 
-set "FOUND_ANY=0"
+:: Der komplett verschluesselte Befehlsblock (Ueberspringt JEDEN Windows-Formatfehler)
+set "B64_CMD=JmNteCAvYyBlY2hvICRwaWQgPm51bDsgJGZpbGVzID0gR2V0LUNoaWxkSXRlbSAtUGF0aCAiJGVudjpVU0VSUFJPRklMRSIgLUZpbHRlciAnY29udHJvbHNAc2lpJyAtUmVjdXJzZSAtRXJyb3JBYm9ydGlvbiBTaWxlbnRseUNvbnRpbnVlOyBmb3JlYWNoICgkZmlsZSBpbiAkZmlsZXMpIHsgaWYgKCRmaWxlLkZ1bGxOYW1lIC1tYXRjaCAnKEFtZXJpY2FuIFRydWNrIFNpbXVsYXRvcnxldXJvdHJ1Y2syKVwgcHJvZmlsZXMnKSB7IFdyaXRlLUhvc3QgIlBhdGNoaW5nOiAkKCRmaWxlLkZ1bGxOYW1lKSIgLUZvcmVncm91bmRDb2xvciBDeWFuOyAkYmFrID0gSm9pbi1QYXRoICRmaWxlLkRpcmVjdG9yeU5hbWUgJ2NvbnRyb2xzLnNpaS5iYWsnOyBpZiAoLW5vdCAoVGVzdC1QYXRoICRiYWspKSB7IENvcHktSXRlbSAkZmlsZS5GdWxsTmFtZSAkYmFrIC1Gb3JjZSB9OyAkYXR0cmliID0gR2V0LUl0ZW1Qcm9wZXJ0eSAkZmlsZS5GdWxsTmFtZTsgaWYgKCRhdHRyaWIuQXR0cmlidXRlcyAtbWF0Y2ggJ1JlYWRPbmx5JykgeyBbU3lzdGVtLklPLkZpbGVdOjpTZXRBdHRyaWJ1dGVzKCRmaWxlLkZ1bGxOYW1lLCBbU3lzdGVtLklPLkZpbGVBdHRyaWJ1dGVzXTo6Tm9ybWFsKSB9OyAkY29udGVudCA9IFN5c3RlbS5JTy5GaWxlXTo6UmVhZEFsbFRleHQoJGZpbGUuRnVsbE5hbWUpOyAkbmV3TGluZXMgPSAnIGNvbnRyb2xzX2xpbmVzWzMzMF06ICJtaXggZHN0ZWVybGVmdCBga2V5Ym9hcmQuYT8wYGNyaXB0X2xpbmVzIicgKyBbRW52aXJvbm1lbnRdOjpOZXdMaW5lICsgJyBjb250cm9sc19saW5lc1szMzFdOiAibWl4IGRzdGVlcnJpZ2h0IGBrZXlib2FyZC5kPzBgY3JpcHRfbGluZXMiJyArIFtFbnZpcm9ubWVudF06Ok5ld0xpbmUgKyAnIGNvbnRyb2xzX2xpbmVzWzMzMl06ICJtaXggZHN0ZWVyaW5nIGAoa2V5Ym9hcmQuYT8wIC0ga2V5Ym9hcmQuZD8wKSAqICgwLjM1ICsga2V5Ym9hcmQuc3BhY2U/MCAqIDAuNjUpYGNyaXB0X2xpbmVzIicgKyBbRW52aXJvbm1lbnRdOjpOZXdMaW5lICsgJyBjb250cm9sc19saW5lc1szMzNdOiAibWl4IHN0ZWVyaW5nIGBkc3RlZXJpbmdgY3JpcHRfbGluZXMiJyArIFtFbnZpcm9ubWVudF06Ok5ld0xpbmUgKyAnIGNvbnRyb2xzX2xpbmVzWzMzNF06ICJtaXggbXN0ZWVyaW5nIGAtbW91c2UucmVsX3Bvc2l0aW9uLng/MCAqIGNfbXNlbnNgY3JpcHRfbGluZXMiJyArIFtFbnZpcm9ubWVudF06Ok5ld0xpbmUgKyAnIGNvbnRyb2xzX2xpbmVzWzMzNV06ICJtaXggbXBlZGFscyBgLW1vdXNlLnJlbF9wb3NpdGlvbi55PzAgKiBjX21zZW5zYGAiJyArIFtFbnZpcm9ubWVudF06Ok5ld0xpbmUgKyAnIGNvbnRyb2xzX2xpbmVzWzMzNl06ICJtaXggZGZvcndhcmQgYDBgIicgKyBbRW52aXJvbm1lbnRdOjpOZXdMaW5lICsgJyBjb250cm9sc19saW5lc1szMzddOiAibWl4IGRiYWNrd2FyZCBgMGAiJyArIFtFbnZpcm9ubWVudF06Ok5ld0xpbmUgKyAnIGNvbnRyb2xzX2xpbmVzWzMzOF06ICJtaXggYWZvcndhcmQgYChrZXlib2FyZC53NzAgKiAwLjM1KSArIChrZXlib2FyZC5sYWx0PzAgKiAwLjU1KWAnIicgKyBbRW52aXJvbm1lbnRdOjpOZXdMaW5lICsgJyBjb250cm9sc19saW5lc1szMzldOiAibWl4IGFiYWNrd2FyZCBga2V5Ym9hcmQubzcwICogKDAuMTAgKyBrZXlib2FyZC5zcGFjZT8wICogMC41MClgIicgKyBbRW52aXJvbm1lbnRdOjpOZXdMaW5lICsgJyBjb250cm9sc19saW5lc1szNDBdOiAibWl4IGZvcndhcmQgYGFmb3J3YXJkYCInICsgW0Vudmlyb25tZW50XTo6TmV3TGluZSArICcgY29udHJvbHNfbGluZXNbMzQxXTogIm1peCBiYWNrd2FyZCBgYWJhY2t3YXJkYCInOyAkY29udGVudCA9ICRjb250ZW50IC1yZXBsYWNlICcoP3MpIGNvbnRyb2xzX2xpbmVzXDMzMFw6Lipjb250cm9sc19saW5lc1wzNDFcOltedXJcbl0qJywgJG5ld0xpbmVzOyBbU3lzdGVtLklPLkZpbGVdOjpXcml0ZUFsbFRleHQoJGZpbGUuRnVsbE5hbWUsICRjb250ZW50LCBbU3lzdGVtLlRleHQuRW5jb2RpbmddOjpBU0NJSSk7IFtTeXN0ZW0uSU8uRmlsZV06OlNldEF0dHJpYnV0ZXMoJGZpbGUuRnVsbE5hbWUsIFtTeXN0ZW0uSU8uRmlsZUF0dHJpYnV0ZXNdOjpSZWFkT25seSk7IFdyaXRlLUhvc3QgIiAgLT4gU3VjY2Vzc2Z1bGx5IHBhdGNoZWQgaW4gbmF0aXZlIFNDUyBmb3JtYXQhIiAtRm9yZWdyb3VuZENvbG9yIEdyZWVuIH0gfQ=="
 
-:: Durchsucht den gesamten Benutzerordner (inklusive Dokumente und OneDrive) nach JEDER controls.sii
-for /f "delims=" %%F in ('dir "%USERPROFILE%\controls.sii" /s /b 2^>nul') do (
-    set "FILE_PATH=%%F"
-    set "DIR_PATH=%%~dpF"
-    
-    if exist "!FILE_PATH!" (
-        echo Target Profile Detected:
-        echo "!FILE_PATH!"
-        set "FOUND_ANY=1"
-        
-        attrib -r -s -h "!FILE_PATH!" >nul 2>&1
-        
-        if not exist "!DIR_PATH!controls.sii.bak" (
-            copy /y "!FILE_PATH!" "!DIR_PATH!controls.sii.bak" >nul 2>&1
-            echo   -^> Backup created: controls.sii.bak
-        ) else (
-            echo   -^> Backup already exists.
-        )
-        
-        copy /y "!FILE_PATH!" "%temp%\controls_sandbox.sii" >nul 2>&1
-        if exist "%temp%\controls_ready.tmp" del /f /q "%temp%\controls_ready.tmp" >nul
-        
-        for /f "usebackq tokens=* delims=" %%L in ("%temp%\controls_sandbox.sii") do (
-            set "line=%%L"
-            set "written=0"
-            
-            if not "!line:mix dsteerleft=! "=="!line! " ( echo  config_lines: "mix dsteerleft `keyboard.a?0`" >> "%temp%\controls_ready.tmp" & set "written=1" )
-            if not "!line:mix dsteerright=! "=="!line! " ( echo  config_lines: "mix dsteerright `keyboard.d?0`" >> "%temp%\controls_ready.tmp" & set "written=1" )
-            if not "!line:mix dsteering=! "=="!line! " ( echo  config_lines: "mix dsteering `(keyboard.a?0 - keyboard.d?0) * (0.35 + keyboard.space?0 * 0.65)`" >> "%temp%\controls_ready.tmp" & set "written=1" )
-            if not "!line:mix steering=! "=="!line! " ( echo  config_lines: "mix steering `dsteering`" >> "%temp%\controls_ready.tmp" & set "written=1" )
-            if not "!line:mix msteering=! "=="!line! " ( echo  config_lines: "mix msteering `-mouse.rel_position.x?0 * c_msens`" >> "%temp%\controls_ready.tmp" & set "written=1" )
-            if not "!line:mix mpedals=! "=="!line! " ( echo  config_lines: "mix mpedals `-mouse.rel_position.y?0 * c_msens`" >> "%temp%\controls_ready.tmp" & set "written=1" )
-            if not "!line:mix dforward=! "=="!line! " ( echo  config_lines: "mix dforward `0`" >> "%temp%\controls_ready.tmp" & set "written=1" )
-            if not "!line:mix dbackward=! "=="!line! " ( echo  config_lines: "mix dbackward `0`" >> "%temp%\controls_ready.tmp" & set "written=1" )
-            if not "!line:mix aforward=! "=="!line! " ( echo  config_lines: "mix aforward `(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)`" >> "%temp%\controls_ready.tmp" & set "written=1" )
-            if not "!line:mix abackward=! "=="!line! " ( echo  config_lines: "mix abackward `keyboard.s?0 * (0.10 + keyboard.space?0 * 0.50)`" >> "%temp%\controls_ready.tmp" & set "written=1" )
-            if not "!line:mix forward=! "=="!line! " ( echo  config_lines: "mix forward `aforward`" >> "%temp%\controls_ready.tmp" & set "written=1" )
-            if not "!line:mix backward=! "=="!line! " ( echo  config_lines: "mix backward `abackward`" >> "%temp%\controls_ready.tmp" & set "written=1" )
-            
-            if "!written!"=="0" (
-                echo !line! >> "%temp%\controls_ready.tmp"
-            )
-        )
-        
-        replace "%temp%\controls_ready.tmp" "!DIR_PATH!." /R /U >nul 2>&1
-        copy /y "%temp%\controls_ready.tmp" "!FILE_PATH!" >nul 2>&1
-        
-        del /f /q "%temp%\controls_sandbox.sii" "%temp%\controls_ready.tmp" >nul 2>&1
-        attrib +r "!FILE_PATH!" >nul 2>&1
-        echo   -^> SUCCESSFULLY PATCHED!
-        echo -----------------------------------------------------------------------------------
-    )
-)
-
-if "!FOUND_ANY!"=="0" (
-    echo [ERROR] No active ATS or ETS2 profiles found on this PC.
-)
+:: 3. Ausfuehren des Base64-Datenstroms
+powershell -NoProfile -ExecutionPolicy Bypass -EncodedCommand %B64_CMD%
 
 echo.
-echo [INFO] Installation completed. Both games patched if detected.
+echo [INFO] Installation process finished.
 pause
