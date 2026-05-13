@@ -56,15 +56,14 @@ for /d %%P in ("%PROFILE_DIR%\*") do (
         :: Schreibschutz im OneDrive aufheben
         attrib -r -s -h "%%P\controls.sii" >nul 2>&1
         
-        :: DIE RETTUNG: Kopiere die Datei in das lokale Temp-Verzeichnis (Sandbox)
-        :: Hier hat OneDrive KEINEN Zugriff und kann nichts blockieren!
-        copy /y "%%P\controls.sii" "%temp%\controls_sandbox.sii" >nul
+        :: Kopiere die Datei in das lokale Temp-Verzeichnis (Sandbox)
+        copy /y "%%P\controls.sii" "%temp%\controls_sandbox.sii" >nul 2>&1
         
         :: Bereinige die Sandkasten-Datei von alten Zeilen
-        findstr /v /c:"config_lines[330]:" /c:"config_lines[331]:" /c:"config_lines[332]:" /c:"config_lines[333]:" /c:"config_lines[334]:" /c:"config_lines[335]:" /c:"config_lines[336]:" /c:"config_lines[337]:" /c:"config_lines[338]:" /c:"config_lines[339]:" /c:"config_lines[340]:" /c:"config_lines[341]:" /c:"mix dsteer" /c:"mix steering" /c:"mix msteering" /c:"mix mpedals" /c:"mix dforward" /c:"mix dbackward" /c:"mix aforward" /c:"mix abackward" /c:"mix forward" /c:"mix backward" "%temp%\controls_sandbox.sii" > "%temp%\controls_filtered.tmp"
+        findstr /v /c:"mix dsteer" /c:"mix steering" /c:"mix msteering" /c:"mix mpedals" /c:"mix dforward" /c:"mix dbackward" /c:"mix aforward" /c:"mix abackward" /c:"mix forward" /c:"mix backward" "%temp%\controls_sandbox.sii" > "%temp%\controls_filtered.tmp" 2>nul
         
         :: Entferne die schliessende Klammer am Ende
-        findstr /v /x "}" "%temp%\controls_filtered.tmp" > "%temp%\controls_ready.tmp"
+        findstr /v /x "}" "%temp%\controls_filtered.tmp" > "%temp%\controls_ready.tmp" 2>nul
         
         :: Schreibe deine neuen Turbo-Zeilen direkt in die lokale Sandbox-Datei
         echo  config_lines: "mix dsteerleft `keyboard.a?0`" >> "%temp%\controls_ready.tmp"
@@ -82,13 +81,13 @@ for /d %%P in ("%PROFILE_DIR%\*") do (
         echo } >> "%temp%\controls_ready.tmp"
         
         :: Schiebe die fertig modifizierte Datei per erzwungenem Overwrite zurück zu OneDrive
-        copy /y "%temp%\controls_ready.tmp" "%%P\controls.sii" >nul
+        copy /y "%temp%\controls_ready.tmp" "%%P\controls.sii" >nul 2>&1
         
-        :: Aufraeumen in der lokalen Sandbox
-        del /f /q "%temp%\controls_sandbox.sii" "%temp%\controls_filtered.tmp" "%temp%\controls_ready.tmp" >nul 2>&1
+        :: Aufraeumen in der lokalen Sandbox mit erzwungenem Kill
+        del /f /q /a "%temp%\controls_sandbox.sii" "%temp%\controls_filtered.tmp" "%temp%\controls_ready.tmp" >nul 2>&1
         
         :: Schreibschutz im OneDrive wieder rein, damit ATS die Datei akzeptiert
-        attrib +r "%%P\controls.sii"
+        attrib +r "%%P\controls.sii" >nul 2>&1
         echo   -^> Successfully patched^!
     )
 )
