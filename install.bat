@@ -39,14 +39,14 @@ echo bakFile = profilePath ^& "\controls.sii.bak"
 echo If fso.FileExists(configFile^) Then
 echo     On Error Resume Next
 echo     Set file = fso.GetFile(configFile^)
-echo     If Err.Number ^<^> 0 Then
+echo     If Err.Number ^<^\^> 0 Then
 echo         WScript.Echo "  -> [ERROR] Cloud file is not downloaded yet. Open it once in Windows Explorer!"
 echo         Err.Clear
-WScript.Quit
+echo         WScript.Quit
 echo     End If
 echo     If file.Size = 0 Then
 echo         WScript.Echo "  -> [ERROR] File is empty or locked by OneDrive sync."
-WScript.Quit
+echo         WScript.Quit
 echo     End If
 echo     If file.Attributes And 1 Then file.Attributes = file.Attributes - 1
 echo     text = fso.OpenTextFile(configFile, 1, False, 0^).ReadAll
@@ -64,8 +64,6 @@ echo                " config_lines: ""mix mpedals `-mouse.rel_position.y?0 * c_m
 echo                " config_lines: ""mix dforward `0`""" ^& vbCrLf ^& _
 echo                " config_lines: ""mix dbackward `0`""" ^& vbCrLf ^& _
 echo                " config_lines: ""mix aforward `(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)`""" ^& vbCrLf ^& _
-echo                " config_lines: ""mix abackward `keyboard.s?0 * (0.10 + keyboard.space?0 * 0.50)`""" ^& vbCrLf ^& _
-echo                " config_lines: ""mix forward `aforward`""" ^& vbCrLf ^& _
 echo                " config_lines: ""mix backward `abackward`"""
 echo     If regEx.Test(text^) Then
 echo         text = regEx.Replace(text, newLines^)
