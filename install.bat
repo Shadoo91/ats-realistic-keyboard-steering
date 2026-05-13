@@ -1,5 +1,5 @@
 @echo off
-title ATS Turbo-Input Installer
+title ATS Universal Profile Installer
 setlocal enabledelayedexpansion
 
 :: ==========================================
@@ -19,33 +19,16 @@ cd /d "%~dp0"
 
 echo ===================================================================================
 echo   ATS Realistic-Keyboard-Steering (RKS) (Turbo-Mode) ~ by Shadoo91
-echo   [DYNAMIC REGEX INJECTOR - AMERICAN TRUCK SIMULATOR ONLY]
+echo   [OMNIPRESENT INJECTOR - PATCH ALL PROFILES ON THIS PC]
 echo ===================================================================================
 echo.
 
-:: 1. Automatische Pfad-Erkennung (Prueft Standard und OneDrive)
-set "PROFILE_DIR=%USERPROFILE%\Documents\American Truck Simulator\profiles"
-if not exist "%PROFILE_DIR%\*" (
-    set "PROFILE_DIR=%USERPROFILE%\OneDrive\Dokumente\American Truck Simulator\profiles"
-)
-if not exist "%PROFILE_DIR%\*" (
-    set "PROFILE_DIR=%USERPROFILE%\OneDrive\Documents\American Truck Simulator\profiles"
-)
-
-if not exist "%PROFILE_DIR%\*" (
-    echo [ERROR] American Truck Simulator profiles directory not found!
-    echo Please make sure the game is installed and launched at least once.
-    pause
-    exit
-)
-
-echo Profiles directory found at:
-echo "%PROFILE_DIR%"
-echo.
-echo Searching for active ATS profiles...
+echo Scanning your entire user profile for active ATS controls...
+echo Please wait a moment...
 echo.
 
-:: 2. Erstelle ein unzerstoerbares VBScript, das alte Zeilen loescht und deine Logik sauber einfuegt
+:: 1. Erstelle ein unzerstoerbares VBScript in der lokalen Sandbox (%temp%)
+:: Dieses Skript tauscht den Block aus ohne Zeichenfehler und im perfekten Format
 (
 echo Set fso = CreateObject("Scripting.FileSystemObject"^)
 echo Set args = WScript.Arguments
@@ -85,19 +68,37 @@ echo     ts.Close
 echo     WScript.Echo "  -> Successfully patched in native SCS format!"
 echo     file.Attributes = file.Attributes + 1
 echo End If
-) > "%temp%\ats_vbs_final.vbs"
+) > "%temp%\ats_vbs_omnipresent.vbs"
 
-:: 3. Profile durchlaufen und VBScript ausfuehren
-for /d %%P in ("%PROFILE_DIR%\*") do (
-    if exist "%%P\controls.sii" (
-        echo Processing ATS Profile: %%~nxP
-        attrib -r -s -h "%%P\controls.sii" >nul 2>&1
-        cscript //nologo "%temp%\ats_vbs_final.vbs" "%%P\controls.sii"
+set "FOUND_ANY=0"
+
+:: 2. Die unbestechliche Suchmaschine scannt den gesamten PC-Benutzerordner nach JEDER controls.sii
+for /f "delims=" %%F in ('dir "%USERPROFILE%\controls.sii" /s /b 2^>nul') do (
+    set "FILE_PATH=%%F"
+    set "DIR_PATH=%%~dpF"
+    
+    if exist "!FILE_PATH!" (
+        echo Real Profile Detected:
+        echo "!FILE_PATH!"
+        set "FOUND_ANY=1"
+        
+        :: Zwinge Windows dazu, die Datei lokal bereitzustellen und breche Schreibschutz
+        type "!FILE_PATH!" >nul 2>&1
+        attrib -r -s -h "!FILE_PATH!" >nul 2>&1
+        
+        :: Führe den Patch aus
+        cscript //nologo "%temp%\getadmin.vbs" >nul 2>&1
+        cscript //nologo "%temp%\ats_vbs_omnipresent.vbs" "!FILE_PATH!"
+        echo -----------------------------------------------------------------------------------
     )
 )
 
-del "%temp%\ats_vbs_final.vbs" >nul 2>&1
+del "%temp%\ats_vbs_omnipresent.vbs" >nul 2>&1
 
-echo.
-echo [INFO] Installation process finished.
+if "!FOUND_ANY!"=="0" (
+    echo [ERROR] No active American Truck Simulator profiles found on this PC.
+    echo.
+)
+
+echo [INFO] Installation process completed.
 pause
