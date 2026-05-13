@@ -91,3 +91,14 @@ Klicke vor der Installation in Steam mit der rechten Maustaste auf **American Tr
 
 ### ↩️ Deinstallation
 Wenn du deine alten Steuerungseinstellungen wiederherstellen möchtest, führe einfach die `uninstall.bat` (Windows) oder `./uninstall.sh` (Linux) aus. Das Skript löscht die modifizierten Zeilen und stellt deine originale Konfiguration aus der Backup-Datei wieder her.
+
+
+
+
+## ⚠️ Terms of Use & Copyright
+
+**© 2026 YourGitHubName. All rights reserved.**
+
+*   **No Redistribution:** You are strictly prohibited from re-uploading, redistributing, or mirroring these scripts or the repository files on any other platform, forum, or modding site.
+*   **No Unauthorized Modifications:** Modifying, editing, or copying code from these installers or configuration files for public release or sharing is not allowed. 
+*   **Credits & Attribution:** If you showcase, review, or feature this project (e.g., on YouTube, blogs, or community forums), you **MUST explicitly credit me as the author** and provide direct links to this GitHub repository and the official Steam Workshop page.
