@@ -19,11 +19,10 @@ cd /d "%~dp0"
 
 echo ===================================================================================
 echo   ATS Realistic-Keyboard-Steering (RKS) (Turbo-Mode) - for Windows ~ by Shadoo91
-echo   [SANDBOX APPENDER - ONEDRIVE SAFE]
+echo   [DYNAMIC BLOCK INJECTOR - INDEX INDEPENDENT]
 echo ===================================================================================
 echo.
 
-:: 1. Pfade definieren (Standard und OneDrive)
 set "PROFILE_DIR=%USERPROFILE%\Documents\American Truck Simulator\profiles"
 if not exist "%PROFILE_DIR%" set "PROFILE_DIR=%USERPROFILE%\OneDrive\Documents\American Truck Simulator\profiles"
 if not exist "%PROFILE_DIR%" set "PROFILE_DIR=%USERPROFILE%\OneDrive\Dokumente\American Truck Simulator\profiles"
@@ -37,15 +36,11 @@ if not exist "%PROFILE_DIR%" (
 echo Profiles directory found at:
 echo "%PROFILE_DIR%"
 echo.
-echo Patching configuration files via local sandbox...
-echo.
 
-:: 2. Profile durchlaufen
 for /d %%P in ("%PROFILE_DIR%\*") do (
     if exist "%%P\controls.sii" (
         echo Processing profile: %%~nxP
         
-        :: Backup erstellen, falls noch nicht vorhanden
         if not exist "%%P\controls.sii.bak" (
             copy /y "%%P\controls.sii" "%%P\controls.sii.bak" >nul 2>&1
             echo   -^> Backup created: controls.sii.bak
@@ -53,19 +48,16 @@ for /d %%P in ("%PROFILE_DIR%\*") do (
             echo   -^> Backup already exists. Skipping backup.
         )
         
-        :: Schreibschutz im OneDrive aufheben
         attrib -r -s -h "%%P\controls.sii" >nul 2>&1
-        
-        :: Kopiere die Datei in das lokale Temp-Verzeichnis (Sandbox)
         copy /y "%%P\controls.sii" "%temp%\controls_sandbox.sii" >nul 2>&1
         
-        :: Bereinige die Sandkasten-Datei von alten Zeilen
+        :: DIE RETTUNG: Wir filtern die alten Eintraege anhand der NAMEN, nicht der Nummern!
         findstr /v /c:"mix dsteer" /c:"mix steering" /c:"mix msteering" /c:"mix mpedals" /c:"mix dforward" /c:"mix dbackward" /c:"mix aforward" /c:"mix abackward" /c:"mix forward" /c:"mix backward" "%temp%\controls_sandbox.sii" > "%temp%\controls_filtered.tmp" 2>nul
         
-        :: Entferne die schliessende Klammer am Ende
+        :: Entferne die schliessende Klammer
         findstr /v /x "}" "%temp%\controls_filtered.tmp" > "%temp%\controls_ready.tmp" 2>nul
         
-        :: Schreibe deine neuen Turbo-Zeilen direkt in die lokale Sandbox-Datei
+        :: Wir klatschen deine Formeln ohne starre Nummern ans Ende. Das Spiel nummeriert sie beim Laden selbst!
         echo  config_lines: "mix dsteerleft `keyboard.a?0`" >> "%temp%\controls_ready.tmp"
         echo  config_lines: "mix dsteerright `keyboard.d?0`" >> "%temp%\controls_ready.tmp"
         echo  config_lines: "mix dsteering `(keyboard.a?0 - keyboard.d?0) * (0.35 + keyboard.space?0 * 0.65)`" >> "%temp%\controls_ready.tmp"
@@ -80,13 +72,8 @@ for /d %%P in ("%PROFILE_DIR%\*") do (
         echo  config_lines: "mix backward `abackward`" >> "%temp%\controls_ready.tmp"
         echo } >> "%temp%\controls_ready.tmp"
         
-        :: Schiebe die fertig modifizierte Datei per erzwungenem Overwrite zurück zu OneDrive
         copy /y "%temp%\controls_ready.tmp" "%%P\controls.sii" >nul 2>&1
-        
-        :: Aufraeumen in der lokalen Sandbox mit erzwungenem Kill
         del /f /q /a "%temp%\controls_sandbox.sii" "%temp%\controls_filtered.tmp" "%temp%\controls_ready.tmp" >nul 2>&1
-        
-        :: Schreibschutz im OneDrive wieder rein, damit ATS die Datei akzeptiert
         attrib +r "%%P\controls.sii" >nul 2>&1
         echo   -^> Successfully patched^!
     )
