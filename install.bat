@@ -1,5 +1,5 @@
 @echo off
-title ATS Universal Profile Installer
+title ATS Profile Installer
 setlocal enabledelayedexpansion
 
 :: ==========================================
@@ -19,22 +19,22 @@ cd /d "%~dp0"
 
 echo ===================================================================================
 echo   ATS Realistic-Keyboard-Steering (RKS) (Turbo-Mode) ~ by Shadoo91
-echo   [OMNIPRESENT INJECTOR - PATCH ALL PROFILES ON THIS PC]
+echo   [PRECISE INJECTOR - AMERICAN TRUCK SIMULATOR ONLY]
 echo ===================================================================================
 echo.
 
-echo Scanning your entire user profile for active ATS controls...
+echo Scanning your user profile for active ATS controls...
 echo Please wait a moment...
 echo.
 
 :: 1. Erstelle ein unzerstoerbares VBScript in der lokalen Sandbox (%temp%)
-:: Dieses Skript tauscht den Block aus ohne Zeichenfehler und im perfekten Format
 (
 echo Set fso = CreateObject("Scripting.FileSystemObject"^)
 echo Set args = WScript.Arguments
 echo configFile = args(0^)
 echo bakFile = configFile ^& ".bak"
 echo If fso.FileExists(configFile^) Then
+echo     On Error Resume Next
 echo     If Not fso.FileExists(bakFile^) Then fso.CopyFile configFile, bakFile, True
 echo     Set file = fso.GetFile(configFile^)
 echo     If file.Attributes And 1 Then file.Attributes = file.Attributes - 1
@@ -65,34 +65,42 @@ echo     text = regEx.Replace(text, newLines^)
 echo     Set ts = fso.OpenTextFile(configFile, 2, True, 0^)
 echo     ts.Write text
 echo     ts.Close
-echo     WScript.Echo "  -> Successfully patched in native SCS format!"
+echo     If Err.Number = 0 Then
+echo         WScript.Echo "  -> SUCCESSFULLY PATCHED!"
+echo     Else
+echo         WScript.Echo "  -> [SKIP] File locked by cloud storage."
+echo     End If
 echo     file.Attributes = file.Attributes + 1
+echo     On Error GoTo 0
 echo End If
-) > "%temp%\ats_vbs_omnipresent.vbs"
+) > "%temp%\ats_vbs_precise.vbs"
 
 set "FOUND_ANY=0"
 
-:: 2. Die unbestechliche Suchmaschine scannt den gesamten PC-Benutzerordner nach JEDER controls.sii
+:: 2. Die unbestechliche Suchmaschine mit striktem ATS-Profil-Filter
 for /f "delims=" %%F in ('dir "%USERPROFILE%\controls.sii" /s /b 2^>nul') do (
     set "FILE_PATH=%%F"
     set "DIR_PATH=%%~dpF"
     
-    if exist "!FILE_PATH!" (
-        echo Real Profile Detected:
-        echo "!FILE_PATH!"
-        set "FOUND_ANY=1"
-        
-        :: Zwinge Windows dazu, die Datei lokal bereitzustellen und breche Schreibschutz
-        type "!FILE_PATH!" >nul 2>&1
-        attrib -r -s -h "!FILE_PATH!" >nul 2>&1
-        
-        :: Führe den Patch aus
-        cscript //nologo "%temp%\ats_vbs_omnipresent.vbs" "!FILE_PATH!"
-        echo -----------------------------------------------------------------------------------
+    :: SICHERHEITS-FILTER: Nur echte ATS-Profile patchen, keine ETS2-Ordner und keine .bak-Verzeichnisse
+    echo !FILE_PATH! | findstr /i /c:"American Truck Simulator\profiles" >nul 2>&1
+    if !errorlevel! equ 0 (
+        echo !FILE_PATH! | findstr /i /c:".bak" >nul 2>&1
+        if !errorlevel! neq 0 (
+            echo Real ATS Profile Detected:
+            echo "!FILE_PATH!"
+            set "FOUND_ANY=1"
+            
+            type "!FILE_PATH!" >nul 2>&1
+            attrib -r -s -h "!FILE_PATH!" >nul 2>&1
+            
+            cscript //nologo "%temp%\ats_vbs_precise.vbs" "!FILE_PATH!"
+            echo -----------------------------------------------------------------------------------
+        )
     )
 )
 
-del "%temp%\ats_vbs_omnipresent.vbs" >nul 2>&1
+del "%temp%\ats_vbs_precise.vbs" >nul 2>&1
 
 if "!FOUND_ANY!"=="0" (
     echo [ERROR] No active American Truck Simulator profiles found on this PC.
