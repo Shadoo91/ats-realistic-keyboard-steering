@@ -39,7 +39,7 @@ echo bakFile = profilePath ^& "\controls.sii.bak"
 echo If fso.FileExists(configFile^) Then
 echo     On Error Resume Next
 echo     Set file = fso.GetFile(configFile^)
-echo     If Err.Number ^<^\^> 0 Then
+echo     If Err.Number ^<> 0 Then
 echo         WScript.Echo "  -> [ERROR] Cloud file is not downloaded yet. Open it once in Windows Explorer!"
 echo         Err.Clear
 echo         WScript.Quit
@@ -64,13 +64,15 @@ echo                " config_lines: ""mix mpedals `-mouse.rel_position.y?0 * c_m
 echo                " config_lines: ""mix dforward `0`""" ^& vbCrLf ^& _
 echo                " config_lines: ""mix dbackward `0`""" ^& vbCrLf ^& _
 echo                " config_lines: ""mix aforward `(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)`""" ^& vbCrLf ^& _
+echo                " config_lines: ""mix abackward `keyboard.s?0 * (0.10 + keyboard.space?0 * 0.50)`""" ^& vbCrLf ^& _
+echo                " config_lines: ""mix forward `aforward`""" ^& vbCrLf ^& _
 echo                " config_lines: ""mix backward `abackward`"""
 echo     If regEx.Test(text^) Then
 echo         text = regEx.Replace(text, newLines^)
 echo         Set ts = fso.OpenTextFile(configFile, 2, True, 0^)
 echo         ts.Write text
 echo         ts.Close
-echo         WScript.Echo "  -> Successfully patched!"
+echo         WScript.Echo "  -> Successfully patched"
 echo     Else
 echo         WScript.Echo "  -> [ERROR] Target lines 330-341 not found. Your controls might be custom modified."
 echo     End If
