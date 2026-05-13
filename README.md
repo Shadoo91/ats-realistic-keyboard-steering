@@ -19,8 +19,6 @@ This script updates your American Truck Simulator input configuration to provide
 *   **Braking:**
     *   **S Key (Smooth Brake):** Triggers a soft 10% deceleration. Activates brake lights without locking up the tires.
     *   **Turbo Brake (S + Spacebar):** Instantly engages **60% maximum braking force** for heavy emergency stops.
-*   **Airhorn:** Rebound to the **E Key** (Alt is now used for Throttle Boost).
-*   **Parking Brake:** Rebound to the **Backspace Key** (Spacebar is now used for Steering/Braking Turbo).
 
 ### 🚀 Installation Guide
 
