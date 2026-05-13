@@ -72,7 +72,7 @@ echo             print("  -> Successfully patched!"^)
 echo         except Exception as e: print(f"  -> [ERROR] Access blocked: {e}"^)
 ) > "%temp%\ats_py_patch.py"
 
-:: 3. Starte den Python-Kern, der in Windows integriert ist
+:: 3. Starte den Python-Kern
 python "%temp%\ats_py_patch.py" 2>nul
 if %errorlevel% neq 0 (
     python3 "%temp%\ats_py_patch.py" 2>nul
