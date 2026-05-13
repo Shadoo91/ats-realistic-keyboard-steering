@@ -1,50 +1,67 @@
 @echo off
-title ATS Local Profile Installer
+title ATS Profile Installer
 setlocal enabledelayedexpansion
+
+:: ==========================================
+:: ADMIN-RECHTE PRÜFEN & ANFORDERN
+:: ==========================================
+net session >nul 2>&1
+if %errorlevel% neq 0 (
+    echo Requesting Administrator privileges...
+    echo Set UAC = CreateObject^("Shell.Application"^) > "%temp%\getadmin.vbs"
+    echo UAC.ShellExecute "%~s0", "", "", "runas", 1 >> "%temp%\getadmin.vbs"
+    "%temp%\getadmin.vbs"
+    del "%temp%\getadmin.vbs"
+    exit /b
+)
+
+cd /d "%~dp0"
 
 echo ===================================================================================
 echo   ATS Realistic-Keyboard-Steering (RKS) (Turbo-Mode) ~ by Shadoo91
-echo   [LOCAL DIRECT PATCH ENGINE - NO POWERSHELL - NO VBS]
+echo   [UNIVERSAL LOCAL PATCH ENGINE - NO SCRIPTING DEPENDENCIES]
 echo ===================================================================================
 echo.
 
-:: Fokus ausschliesslich auf den echten, lokalen Benutzerordner
-set "PROFILE_DIR=C:\Users\ar\Documents\American Truck Simulator\profiles"
+:: 1. Automatische Pfad-Erkennung (Prueft lokalen Dokumentenordner)
+set "PROFILE_DIR=%USERPROFILE%\Documents\American Truck Simulator\profiles"
 
-if not exist "%PROFILE_DIR%" (
-    echo [ERROR] Local American Truck Simulator profiles directory not found!
-    echo Please make sure the profile folder '61726E65' is placed inside:
-    echo C:\Users\ar\Documents\American Truck Simulator\profiles\
+if not exist "%PROFILE_DIR%\*" (
+    echo [ERROR] American Truck Simulator profiles directory not found!
+    echo Please make sure the profile folder is placed inside your Documents folder.
     pause
     exit
 )
 
-echo Local profiles directory found at:
+echo Real active profiles directory found at:
 echo "%PROFILE_DIR%"
 echo.
 echo Patching configuration files...
 echo.
 
+:: 2. Profile durchlaufen
 for /d %%P in ("%PROFILE_DIR%\*") do (
     if exist "%%P\controls.sii" (
-        echo Processing profile: %%~nxP
+        echo Processing ATS Profile: %%~nxP
         
         :: Schreibschutz aufheben
         attrib -r "%%P\controls.sii" >nul 2>&1
         
-        :: Backup erstellen
+        :: Backup erstellen, falls noch nicht vorhanden
         if not exist "%%P\controls.sii.bak" (
-            copy /y "%%P\controls.sii" "%%P\controls.sii.bak" >nul
+            copy /y "%%P\controls.sii" "%%P\controls.sii.bak" >nul 2>&1
             echo   -^> Backup created: controls.sii.bak
+        ) else (
+            echo   -^> Backup already exists.
         )
         
-        :: Filtert die alten Zeilen sauber heraus
+        :: Filtert die alten Zeilen sauber heraus ohne VBS oder PowerShell-Risiken
         findstr /v /c:"mix dsteer" /c:"mix steering" /c:"mix msteering" /c:"mix mpedals" /c:"mix dforward" /c:"mix dbackward" /c:"mix aforward" /c:"mix abackward" /c:"mix forward" /c:"mix backward" "%%P\controls.sii" > "%temp%\controls_filtered.tmp" 2>nul
         
-        :: Entfernt die schliessende Klammer "}" am Ende
+        :: Entfernt die schliessende Klammer "}" am Ende der Datei
         findstr /v /x "}" "%temp%\controls_filtered.tmp" > "%temp%\controls_ready.tmp" 2>nul
         
-        :: Fuegt deine Turbo-Zeilen fehlerfrei unten an
+        :: Fuegt deine Turbo-Zeilen fehlerfrei unten an den Datenstrom an
         echo  config_lines: "mix dsteerleft `keyboard.a?0`" >> "%temp%\controls_ready.tmp"
         echo  config_lines: "mix dsteerright `keyboard.d?0`" >> "%temp%\controls_ready.tmp"
         echo  config_lines: "mix dsteering `(keyboard.a?0 - keyboard.d?0) * (0.35 + keyboard.space?0 * 0.65)`" >> "%temp%\controls_ready.tmp"
@@ -59,13 +76,16 @@ for /d %%P in ("%PROFILE_DIR%\*") do (
         echo  config_lines: "mix backward `abackward`" >> "%temp%\controls_ready.tmp"
         echo } >> "%temp%\controls_ready.tmp"
         
-        :: Schiebt die fertige Datei zurueck
+        :: Schiebt die fertige Datei zurueck ins Profil
         copy /y "%temp%\controls_ready.tmp" "%%P\controls.sii" >nul
+        
+        :: Sandbox bereinigen
         del /f /q "%temp%\controls_filtered.tmp" "%temp%\controls_ready.tmp" >nul 2>&1
         
-        :: Schreibschutz fuer das Spiel wieder rein
+        :: Schreibschutz für das Spiel wieder rein
         attrib +r "%%P\controls.sii" >nul 2>&1
         echo   -^> Successfully patched profile^!
+        echo -----------------------------------------------------------------------------------
     )
 )
 
