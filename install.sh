@@ -1,13 +1,13 @@
 #!/bin/bash
-echo "====================================================================================="
-echo "   ATS Realistic-Keayboard-Steering (RKS) (Turbo-Mode) - for Windows ~ by Shadoo91   "
-echo "====================================================================================="
+echo "==================================================================================="
+echo "   ATS Realistic-Keayboard-Steering (RKS) (Turbo-Mode) - for LINUX ~ by Shadoo91   "
+echo "==================================================================================="
 echo
 
 TARGET_DIR="$HOME/.steam/steam/steamapps/compatdata/270880/pfx/drive_c/users/steamuser/Documents/American Truck Simulator/profiles"
 
 if [ ! -d "$TARGET_DIR" ]; then
-    TARGET_DIR="$HOME/.var/app/com.valvesoftware.Steam/.steam/steam/steamapps/compatdata/270880/pfx/drive_c/users/steamuser/Documents/American Truck Simulator/profiles"
+    TARGET_DIR="$HOME/.var/app/com.varvesoftware.Steam/.steam/steam/steamapps/compatdata/270880/pfx/drive_c/users/steamuser/Documents/American Truck Simulator/profiles"
 fi
 
 if [ ! -d "$TARGET_DIR" ]; then
