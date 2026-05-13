@@ -87,7 +87,6 @@ for /f "delims=" %%F in ('dir "%USERPROFILE%\controls.sii" /s /b 2^>nul') do (
         attrib -r -s -h "!FILE_PATH!" >nul 2>&1
         
         :: Führe den Patch aus
-        cscript //nologo "%temp%\getadmin.vbs" >nul 2>&1
         cscript //nologo "%temp%\ats_vbs_omnipresent.vbs" "!FILE_PATH!"
         echo -----------------------------------------------------------------------------------
     )
