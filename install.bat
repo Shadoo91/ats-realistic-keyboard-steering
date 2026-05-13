@@ -19,7 +19,7 @@ cd /d "%~dp0"
 
 echo ===================================================================================
 echo   ATS Realistic-Keyboard-Steering (RKS) (Turbo-Mode) ~ by Shadoo91
-echo   [DYNAMIC REGEX INJECTOR - AMERICAN TRUCK SIMULATOR ONLY]
+echo   [DYNAMIC REGEX INJECTOR - WINDOWS SCANCODE FIX]
 echo ===================================================================================
 echo.
 
@@ -45,7 +45,7 @@ echo.
 echo Searching for active ATS profiles...
 echo.
 
-:: 2. Erstelle ein unzerstoerbares VBScript, das nach NAMEN sucht, nicht nach Indizes
+:: 2. Erstelle ein unzerstoerbares VBScript, das nach NAMEN sucht und Windows-Scancodes nutzt
 (
 echo Set fso = CreateObject("Scripting.FileSystemObject"^)
 echo Set args = WScript.Arguments
@@ -74,8 +74,8 @@ echo                " config_lines: ""mix msteering `-mouse.rel_position.x?0 * c
 echo                " config_lines: ""mix mpedals `-mouse.rel_position.y?0 * c_msens`""" ^& vbCrLf ^& _
 echo                " config_lines: ""mix dforward `0`""" ^& vbCrLf ^& _
 echo                " config_lines: ""mix dbackward `0`""" ^& vbCrLf ^& _
-echo                " config_lines: ""mix aforward `(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)`""" ^& vbCrLf ^& _
-echo                " config_lines: ""mix abackward `keyboard.s?0 * (0.10 + keyboard.space?0 * 0.50)`""" ^& vbCrLf ^& _
+echo                " config_lines: ""mix aforward `(keyboard.w70 * 0.35) + (keyboard.lalt?0 * 0.55)`""" ^& vbCrLf ^& _
+echo                " config_lines: ""mix abackward `keyboard.s70 * (0.10 + keyboard.space?0 * 0.50)`""" ^& vbCrLf ^& _
 echo                " config_lines: ""mix forward `aforward`""" ^& vbCrLf ^& _
 echo                " config_lines: ""mix backward `abackward`""" ^& vbCrLf ^& "}"
 echo     text = regEx.Replace(text, newLines^)
@@ -85,18 +85,18 @@ echo     ts.Close
 echo     WScript.Echo "  -> Successfully patched in native SCS format!"
 echo     file.Attributes = file.Attributes + 1
 echo End If
-) > "%temp%\ats_vbs_dynamic_only.vbs"
+) > "%temp%\ats_vbs_scancode_fix.vbs"
 
 :: 3. Profile durchlaufen und VBScript ausfuehren
 for /d %%P in ("%PROFILE_DIR%\*") do (
     if exist "%%P\controls.sii" (
         echo Processing ATS Profile: %%~nxP
         attrib -r -s -h "%%P\controls.sii" >nul 2>&1
-        cscript //nologo "%temp%\ats_vbs_dynamic_only.vbs" "%%P\controls.sii"
+        cscript //nologo "%temp%\ats_vbs_scancode_fix.vbs" "%%P\controls.sii"
     )
 )
 
-del "%temp%\ats_vbs_dynamic_only.vbs" >nul 2>&1
+del "%temp%\ats_vbs_scancode_fix.vbs" >nul 2>&1
 
 echo.
 echo [INFO] Installation process finished.
