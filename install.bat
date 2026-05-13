@@ -2,19 +2,37 @@
 title ATS Turbo-Input Installer
 setlocal enabledelayedexpansion
 
-echo ===================================================
-echo   ATS Turbo Keyboard Input Installer for Windows  
-echo ===================================================
+echo ===================================================================================
+echo   ATS Realistic-Keayboard-Steering (RKS) (Turbo-Mode) - for Windows ~ by Shadoo91  
+echo ===================================================================================
 echo.
 
+:: 1. Standard-Pfad pruefen
 set "PROFILE_DIR=%USERPROFILE%\Documents\American Truck Simulator\profiles"
 
+:: 2. Falls nicht vorhanden, OneDrive-Pfade pruefen
 if not exist "%PROFILE_DIR%" (
-    echo [ERROR] ATS profile directory not found!
+    set "PROFILE_DIR=%USERPROFILE%\OneDrive\Documents\American Truck Simulator\profiles"
+)
+if not exist "%PROFILE_DIR%" (
+    set "PROFILE_DIR=%USERPROFILE%\OneDrive\Dokumente\American Truck Simulator\profiles"
+)
+
+:: 3. Falls immer noch nicht gefunden, Fehlermeldung mit manuellem Ausweg ausgeben
+if not exist "%PROFILE_DIR%" (
+    echo [ERROR] American Truck Simulator profiles directory not found!
+    echo.
+    echo Please make sure the game is installed and you have launched it at least once.
+    echo If you use a custom documents path, place this installer directly inside
+    echo your 'American Truck Simulator\profiles' folder and run it again.
+    echo.
     pause
     exit
 )
 
+echo Profiles directory found at:
+echo "%PROFILE_DIR%"
+echo.
 echo Searching profiles and creating backups...
 echo.
 
