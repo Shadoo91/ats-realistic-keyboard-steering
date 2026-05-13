@@ -19,7 +19,7 @@ cd /d "%~dp0"
 
 echo ===================================================================================
 echo   ATS Realistic-Keyboard-Steering (RKS) (Turbo-Mode) ~ by Shadoo91
-echo   [UNIVERSAL LOCAL PATCH ENGINE - ANALOG INPUT FIX]
+echo   [UNIVERSAL BATCH ENGINE - ANALOG SELECTION INJECTOR]
 echo ===================================================================================
 echo.
 
@@ -55,13 +55,13 @@ for /d %%P in ("%PROFILE_DIR%\*") do (
             echo   -^> Backup already exists.
         )
         
-        :: Filtert die alten Zeilen sauber heraus (Reine Batch-Befehle, absolut sicher vor Zerstörung)
+        :: Filtert die alten Zeilen sauber heraus (Reiner Batch-Befehl)
         findstr /v /c:"mix dsteer" /c:"mix steering" /c:"mix msteering" /c:"mix mpedals" /c:"mix dforward" /c:"mix dbackward" /c:"mix aforward" /c:"mix abackward" /c:"mix forward" /c:"mix backward" "%%P\controls.sii" > "%temp%\controls_filtered.tmp" 2>nul
         
         :: Entfernt die schliessende Klammer "}" am Ende der Datei
         findstr /v /x "}" "%temp%\controls_filtered.tmp" > "%temp%\controls_ready.tmp" 2>nul
         
-        :: Fuegt deine originalen Werte feinfühlig geglättet unten an den Datenstrom an
+        :: Schaltet deine exakten Wunschwerte ueber die SCS-Auswahl-Logik fliessend frei
         echo  config_lines: "mix dsteerleft `keyboard.a?0`" >> "%temp%\controls_ready.tmp"
         echo  config_lines: "mix dsteerright `keyboard.d?0`" >> "%temp%\controls_ready.tmp"
         echo  config_lines: "mix dsteering `(keyboard.a?0 - keyboard.d?0) * (0.35 + keyboard.space?0 * 0.65)`" >> "%temp%\controls_ready.tmp"
@@ -72,8 +72,8 @@ for /d %%P in ("%PROFILE_DIR%\*") do (
         echo  config_lines: "mix dbackward `0`" >> "%temp%\controls_ready.tmp"
         echo  config_lines: "mix aforward `0`" >> "%temp%\controls_ready.tmp"
         echo  config_lines: "mix abackward `0`" >> "%temp%\controls_ready.tmp"
-        echo  config_lines: "mix forward `deadzone((keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55), 0)`" >> "%temp%\controls_ready.tmp"
-        echo  config_lines: "mix backward `deadzone(keyboard.s?0 * (0.10 + keyboard.space?0 * 0.50), 0)`" >> "%temp%\controls_ready.tmp"
+        echo  config_lines: "mix forward `deadzone(sel(keyboard.lalt?0, keyboard.w?0 * 0.90, keyboard.w?0 * 0.35), 0)`" >> "%temp%\controls_ready.tmp"
+        echo  config_lines: "mix backward `deadzone(sel(keyboard.space?0, keyboard.s?0 * 0.60, keyboard.s?0 * 0.10), 0)`" >> "%temp%\controls_ready.tmp"
         echo } >> "%temp%\controls_ready.tmp"
         
         :: Schiebt die fertige Datei zurueck ins Profil
