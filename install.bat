@@ -19,7 +19,7 @@ cd /d "%~dp0"
 
 echo ===================================================================================
 echo   ATS Realistic-Keyboard-Steering (RKS) (Turbo-Mode) - for Windows ~ by Shadoo91
-echo   [RUNNING AS ADMINISTRATOR]
+echo   [NATIVE BATCH INJECTOR - NO POWERSHELL]
 echo ===================================================================================
 echo.
 
@@ -36,8 +36,6 @@ if not exist "%PROFILE_DIR%" (
 
 echo Profiles directory found at:
 echo "%PROFILE_DIR%"
-echo.
-echo Patching configuration files...
 echo.
 
 :: 2. Profile durchlaufen
@@ -69,25 +67,24 @@ for /d %%P in ("%PROFILE_DIR%\*") do (
             echo !line! | findstr /c:"config_lines[330]:" >nul
             if !errorlevel! equ 0 (
                 set "in_block=1"
-                echo  config_lines: "mix dsteerleft `keyboard.a?0`" >> "%%P\controls.tmp"
-                echo  config_lines: "mix dsteerright `keyboard.d?0`" >> "%%P\controls.tmp"
-                echo  config_lines: "mix dsteering `(keyboard.a?0 - keyboard.d?0) * (0.35 + keyboard.space?0 * 0.65)`" >> "%%P\controls.tmp"
-                echo  config_lines: "mix steering `dsteering`" >> "%%P\controls.tmp"
-                echo  config_lines: "mix msteering `-mouse.rel_position.x?0 * c_msens`" >> "%%P\controls.tmp"
-                echo  config_lines: "mix mpedals `-mouse.rel_position.y?0 * c_msens`" >> "%%P\controls.tmp"
-                echo  config_lines: "mix dforward `0`" >> "%%P\controls.tmp"
-                echo  config_lines: "mix dbackward `0`" >> "%%P\controls.tmp"
-                echo  config_lines: "mix aforward `(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)`" >> "%%P\controls.tmp"
-                echo  config_lines: "mix abackward `keyboard.s?0 * (0.10 + keyboard.space?0 * 0.50)`" >> "%%P\controls.tmp"
-                echo  config_lines: "mix forward `aforward`" >> "%%P\controls.tmp"
-                echo  config_lines: "mix backward `abackward`" >> "%%P\controls.tmp"
+                echo  config_lines[330]: "mix dsteerleft `keyboard.a?0`" >> "%%P\controls.tmp"
+                echo  config_lines[331]: "mix dsteerright `keyboard.d?0`" >> "%%P\controls.tmp"
+                echo  config_lines[332]: "mix dsteering `(keyboard.a?0 - keyboard.d?0) * (0.35 + keyboard.space?0 * 0.65)`" >> "%%P\controls.tmp"
+                echo  config_lines[333]: "mix steering `dsteering`" >> "%%P\controls.tmp"
+                echo  config_lines[334]: "mix msteering `-mouse.rel_position.x?0 * c_msens`" >> "%%P\controls.tmp"
+                echo  config_lines[335]: "mix mpedals `-mouse.rel_position.y?0 * c_msens`" >> "%%P\controls.tmp"
+                echo  config_lines[336]: "mix dforward `0`" >> "%%P\controls.tmp"
+                echo  config_lines[337]: "mix dbackward `0`" >> "%%P\controls.tmp"
+                echo  config_lines[338]: "mix aforward `(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)`" >> "%%P\controls.tmp"
+                echo  config_lines[339]: "mix abackward `keyboard.s?0 * (0.10 + keyboard.space?0 * 0.50)`" >> "%%P\controls.tmp"
+                echo  config_lines[340]: "mix forward `aforward`" >> "%%P\controls.tmp"
+                echo  config_lines[341]: "mix backward `abackward`" >> "%%P\controls.tmp"
             )
             
             :: Pruefen ob der Block endet
             echo !line! | findstr /c:"config_lines[341]:" >nul
             if !errorlevel! equ 0 (
                 set "in_block=0"
-                :: Springe zur naechsten Zeile um die alte Zeile 341 nicht doppelt zu schreiben
                 goto :skip_line
             )
             
@@ -102,7 +99,7 @@ for /d %%P in ("%PROFILE_DIR%\*") do (
         copy /y "%%P\controls.tmp" "%%P\controls.sii" >nul
         del /f /q "%%P\controls.tmp" >nul
         
-        :: Schreibschutz wieder aktivieren für das Spiel
+        :: Schreibschutz wieder aktivieren fuer das Spiel
         attrib +r "%%P\controls.sii"
         echo   -^> Successfully patched^!
     )
