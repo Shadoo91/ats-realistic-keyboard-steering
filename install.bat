@@ -1,5 +1,5 @@
 @echo off
-title SCS Games Turbo-Input Installer
+title ATS Turbo-Input Installer
 setlocal enabledelayedexpansion
 
 :: ==========================================
@@ -18,25 +18,34 @@ if %errorlevel% neq 0 (
 cd /d "%~dp0"
 
 echo ===================================================================================
-echo   ATS ^& ETS2 Realistic-Keyboard-Steering (RKS) (Turbo-Mode) ~ by Shadoo91
-echo   [NATIVE HYBRID INJECTOR - ENFORCED SCS-ASCII FORMAT]
+echo   ATS Realistic-Keyboard-Steering (RKS) (Turbo-Mode) ~ by Shadoo91
+echo   [DYNAMIC REGEX INJECTOR - AMERICAN TRUCK SIMULATOR ONLY]
 echo ===================================================================================
 echo.
 
-:: 1. Automatische Pfad-Erkennung für ATS und ETS2 (Prüft Standard und OneDrive)
-set "PROFILE_DIR=%USERPROFILE%\Documents"
-if not exist "%PROFILE_DIR%\American Truck Simulator\profiles" (
-    set "PROFILE_DIR=%USERPROFILE%\OneDrive\Dokumente"
+:: 1. Automatische Pfad-Erkennung nur fuer ATS (Prueft Standard und OneDrive)
+set "PROFILE_DIR=%USERPROFILE%\Documents\American Truck Simulator\profiles"
+if not exist "%PROFILE_DIR%\*" (
+    set "PROFILE_DIR=%USERPROFILE%\OneDrive\Dokumente\American Truck Simulator\profiles"
 )
-if not exist "%PROFILE_DIR%\American Truck Simulator\profiles" (
-    set "PROFILE_DIR=%USERPROFILE%\OneDrive\Documents"
+if not exist "%PROFILE_DIR%\*" (
+    set "PROFILE_DIR=%USERPROFILE%\OneDrive\Documents\American Truck Simulator\profiles"
 )
 
-echo Searching for active game profiles...
+if not exist "%PROFILE_DIR%\*" (
+    echo [ERROR] American Truck Simulator profiles directory not found!
+    echo Please make sure the game is installed and launched at least once.
+    pause
+    exit
+)
+
+echo Profiles directory found at:
+echo "%PROFILE_DIR%"
+echo.
+echo Searching for active ATS profiles...
 echo.
 
-:: 2. Erstelle eine saubere, temporäre VBScript-Datei in der lokalen Sandbox.
-:: VBScript liest die Datei als Ganzblock ein und zerschießt niemals die Backticks.
+:: 2. Erstelle ein unzerstoerbares VBScript, das nach NAMEN sucht, nicht nach Indizes
 (
 echo Set fso = CreateObject("Scripting.FileSystemObject"^)
 echo Set args = WScript.Arguments
@@ -51,8 +60,13 @@ echo     Set regEx = New RegExp
 echo     regEx.Global = True
 echo     regEx.IgnoreCase = True
 echo     regEx.MultiLine = True
-echo     regEx.Pattern = " config_lines\[330\]:[\s\S]*?config_lines\[341\]:[^\r\n]*"
-echo     newLines = " config_lines: ""mix dsteerleft `keyboard.a?0`""" ^& vbCrLf ^& _
+echo     regEx.Pattern = " config_lines\[\d+\]:\s*""mix (dsteerleft|dsteerright|dsteering|steering|msteering|mpedals|dforward|dbackward|aforward|abackward|forward|backward)\s+[^""]*"""
+echo     If regEx.Test(text^) Then text = regEx.Replace(text, ""^)
+echo     regEx.Pattern = "^\s*$"
+echo     text = regEx.Replace(text, ""^)
+echo     regEx.Pattern = "\s*\}"
+echo     newLines = vbCrLf ^& _
+echo                " config_lines: ""mix dsteerleft `keyboard.a?0`""" ^& vbCrLf ^& _
 echo                " config_lines: ""mix dsteerright `keyboard.d?0`""" ^& vbCrLf ^& _
 echo                " config_lines: ""mix dsteering `(keyboard.a?0 - keyboard.d?0) * (0.35 + keyboard.space?0 * 0.65)`""" ^& vbCrLf ^& _
 echo                " config_lines: ""mix steering `dsteering`""" ^& vbCrLf ^& _
@@ -63,48 +77,27 @@ echo                " config_lines: ""mix dbackward `0`""" ^& vbCrLf ^& _
 echo                " config_lines: ""mix aforward `(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)`""" ^& vbCrLf ^& _
 echo                " config_lines: ""mix abackward `keyboard.s?0 * (0.10 + keyboard.space?0 * 0.50)`""" ^& vbCrLf ^& _
 echo                " config_lines: ""mix forward `aforward`""" ^& vbCrLf ^& _
-echo                " config_lines: ""mix backward `abackward`"""
-echo     If regEx.Test(text^) Then
-echo         text = regEx.Replace(text, newLines^)
-echo         Set ts = fso.OpenTextFile(configFile, 2, True, 0^)
-echo         ts.Write text
-echo         ts.Close
-echo         WScript.Echo "  -> Successfully patched!"
-echo     Else
-echo         WScript.Echo "  -> [ERROR] Target lines not found or already modified."
-echo     End If
+echo                " config_lines: ""mix backward `abackward`""" ^& vbCrLf ^& "}"
+echo     text = regEx.Replace(text, newLines^)
+echo     Set ts = fso.OpenTextFile(configFile, 2, True, 0^)
+echo     ts.Write text
+echo     ts.Close
+echo     WScript.Echo "  -> Successfully patched in native SCS format!"
 echo     file.Attributes = file.Attributes + 1
 echo End If
-) > "%temp%\ats_ets_vbs_core.vbs"
+) > "%temp%\ats_vbs_dynamic_only.vbs"
 
-:: 3. American Truck Simulator patchen (falls vorhanden)
-if exist "%PROFILE_DIR%\American Truck Simulator\profiles" (
-    echo [ATS] Profiles folder detected.
-    for /d %%P in ("%PROFILE_DIR%\American Truck Simulator\profiles\*") do (
-        if exist "%%P\controls.sii" (
-            echo   Processing ATS Profile: %%~nxP
-            attrib -r -s -h "%%P\controls.sii" >nul 2>&1
-            cscript //nologo "%temp%\ats_ets_vbs_core.vbs" "%%P\controls.sii"
-        )
+:: 3. Profile durchlaufen und VBScript ausfuehren
+for /d %%P in ("%PROFILE_DIR%\*") do (
+    if exist "%%P\controls.sii" (
+        echo Processing ATS Profile: %%~nxP
+        attrib -r -s -h "%%P\controls.sii" >nul 2>&1
+        cscript //nologo "%temp%\ats_vbs_dynamic_only.vbs" "%%P\controls.sii"
     )
-    echo.
 )
 
-:: 4. Euro Truck Simulator 2 patchen (falls vorhanden)
-if exist "%PROFILE_DIR%\Euro Truck Simulator 2\profiles" (
-    echo [ETS2] Profiles folder detected.
-    for /d %%P in ("%PROFILE_DIR%\Euro Truck Simulator 2\profiles\*") do (
-        if exist "%%P\controls.sii" (
-            echo   Processing ETS2 Profile: %%~nxP
-            attrib -r -s -h "%%P\controls.sii" >nul 2>&1
-            cscript //nologo "%temp%\ats_ets_vbs_core.vbs" "%%P\controls.sii"
-        )
-    )
-    echo.
-)
+del "%temp%\ats_vbs_dynamic_only.vbs" >nul 2>&1
 
-:: Sandbox leeren
-del "%temp%\ats_ets_vbs_core.vbs" >nul 2>&1
-
+echo.
 echo [INFO] Installation process finished.
 pause
