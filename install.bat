@@ -2,80 +2,102 @@
 title ATS Turbo-Input Installer
 setlocal enabledelayedexpansion
 
+:: ==========================================
+:: ADMIN-RECHTE PRÜFEN & ANFORDERN
+:: ==========================================
+net session >nul 2>&1
+if %errorlevel% neq 0 (
+    echo Requesting Administrator privileges...
+    echo Set UAC = CreateObject^("Shell.Application"^) > "%temp%\getadmin.vbs"
+    echo UAC.ShellExecute "%~s0", "", "", "runas", 1 >> "%temp%\getadmin.vbs"
+    "%temp%\getadmin.vbs"
+    del "%temp%\getadmin.vbs"
+    exit /b
+)
+
+cd /d "%~dp0"
+
 echo ===================================================================================
 echo   ATS Realistic-Keyboard-Steering (RKS) (Turbo-Mode) - for Windows ~ by Shadoo91
-echo   [AUTOMATIC PRO-SEARCH ENGINE - FIND ANY PROFILE]
+echo   [SANDBOX APP-INJECTOR - NATIVE ONEDRIVE BYPASS]
 echo ===================================================================================
 echo.
 
-echo Searching your hard drive for active ATS profiles...
-echo (This may take a moment, please wait...)
+:: 1. Pfade definieren (Scharfe Fokussierung auf den OneDrive-Pfad deines Kumpels)
+set "PROFILE_DIR=%USERPROFILE%\OneDrive\Dokumente\American Truck Simulator\profiles"
+if not exist "%PROFILE_DIR%" set "PROFILE_DIR=%USERPROFILE%\OneDrive\Documents\American Truck Simulator\profiles"
+if not exist "%PROFILE_DIR%" set "PROFILE_DIR=%USERPROFILE%\Documents\American Truck Simulator\profiles"
+
+if not exist "%PROFILE_DIR%" (
+    echo [ERROR] American Truck Simulator profiles directory not found!
+    pause
+    exit
+)
+
+echo Profiles directory found at:
+echo "%PROFILE_DIR%"
+echo.
+echo Forcing Cloud Stream and executing Sandbox Patch...
 echo.
 
-set "FOUND_PROFILE=0"
-
-:: Das Skript durchsucht den gesamten Benutzerordner nach der echten controls.sii
-for /f "delims=" %%F in ('dir "%USERPROFILE%\controls.sii" /s /b 2^>nul') do (
-    set "FILE_PATH=%%F"
-    set "DIR_PATH=%%~dpF"
-    
-    :: Geisterordner oder leere Backup-Verzeichnisse ignorieren
-    if exist "!FILE_PATH!" (
-        echo Real active profile found at:
-        echo "!DIR_PATH!"
-        set "FOUND_PROFILE=1"
+:: 2. Profile durchlaufen
+for /d %%P in ("%PROFILE_DIR%\*") do (
+    if exist "%%P\controls.sii" (
+        echo Processing profile: %%~nxP
         
-        :: 1. Schreibschutz aufheben
-        attrib -r "!FILE_PATH!" >nul 2>&1
+        :: Attribute im Cloud-Verzeichnis aufheben
+        attrib -r -s -h "%%P\controls.sii" >nul 2>&1
         
-        :: 2. Backup erstellen, falls noch nicht vorhanden
-        if not exist "!DIR_PATH!controls.sii.bak" (
-            copy /y "!FILE_PATH!" "!DIR_PATH!controls.sii.bak" >nul 2>&1
+        :: DIE RETTUNG: Nativer Windows-Befehl ZWINGT OneDrive zum physischen Download auf die Festplatte
+        copy /y "%%P\controls.sii" "%temp%\controls_sandbox.sii" >nul
+        
+        :: Erst wenn die Datei physisch in der Sandbox liegt, wird das Backup im Cloud-Ordner erstellt
+        if not exist "%%P\controls.sii.bak" (
+            copy /y "%temp%\controls_sandbox.sii" "%%P\controls.sii.bak" >nul
             echo   -^> Backup created: controls.sii.bak
+        ) else (
+            echo   -^> Backup already exists. Skipping backup.
         )
         
-        :: 3. Temporaere Arbeitsdatei leeren
-        type nul > "!DIR_PATH!controls.tmp"
+        :: Temporaere Arbeitsdatei loeschen falls vorhanden
+        if exist "%temp%\controls_ready.tmp" del /f /q "%temp%\controls_ready.tmp" >nul
         
-        :: 4. Datei Zeile fuer Zeile auslesen und exakt ersetzen
-        for /f "usebackq tokens=* delims=" %%L in ("!FILE_PATH!") do (
+        :: 3. Datei Zeile fuer Zeile auslesen und manipulierten Block injizieren
+        set "patched=0"
+        for /f "usebackq tokens=* delims=" %%L in ("%temp%\controls_sandbox.sii") do (
             set "line=%%L"
             set "written=0"
             
-            if not "!line:mix dsteerleft=! "=="!line! " ( echo  config_lines: "mix dsteerleft `keyboard.a?0`" >> "!DIR_PATH!controls.tmp" & set "written=1" )
-            if not "!line:mix dsteerright=! "=="!line! " ( echo  config_lines: "mix dsteerright `keyboard.d?0`" >> "!DIR_PATH!controls.tmp" & set "written=1" )
-            if not "!line:mix dsteering=! "=="!line! " ( echo  config_lines: "mix dsteering `(keyboard.a?0 - keyboard.d?0) * (0.35 + keyboard.space?0 * 0.65)`" >> "!DIR_PATH!controls.tmp" & set "written=1" )
-            if not "!line:mix steering=! "=="!line! " ( echo  config_lines: "mix steering `dsteering`" >> "!DIR_PATH!controls.tmp" & set "written=1" )
-            if not "!line:mix msteering=! "=="!line! " ( echo  config_lines: "mix msteering `-mouse.rel_position.x?0 * c_msens`" >> "!DIR_PATH!controls.tmp" & set "written=1" )
-            if not "!line:mix mpedals=! "=="!line! " ( echo  config_lines: "mix mpedals `-mouse.rel_position.y?0 * c_msens`" >> "!DIR_PATH!controls.tmp" & set "written=1" )
-            if not "!line:mix dforward=! "=="!line! " ( echo  config_lines: "mix dforward `0`" >> "!DIR_PATH!controls.tmp" & set "written=1" )
-            if not "!line:mix dbackward=! "=="!line! " ( echo  config_lines: "mix dbackward `0`" >> "!DIR_PATH!controls.tmp" & set "written=1" )
-            if not "!line:mix aforward=! "=="!line! " ( echo  config_lines: "mix aforward `(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)`" >> "!DIR_PATH!controls.tmp" & set "written=1" )
-            if not "!line:mix abackward=! "=="!line! " ( echo  config_lines: "mix abackward `keyboard.s?0 * (0.10 + keyboard.space?0 * 0.50)`" >> "!DIR_PATH!controls.tmp" & set "written=1" )
-            if not "!line:mix forward=! "=="!line! " ( echo  config_lines: "mix forward `aforward`" >> "!DIR_PATH!controls.tmp" & set "written=1" )
-            if not "!line:mix backward=! "=="!line! " ( echo  config_lines: "mix backward `abackward`" >> "!DIR_PATH!controls.tmp" & set "written=1" )
+            if not "!line:mix dsteerleft=! "=="!line! " ( echo  config_lines: "mix dsteerleft `keyboard.a?0`" >> "%temp%\controls_ready.tmp" & set "written=1" )
+            if not "!line:mix dsteerright=! "=="!line! " ( echo  config_lines: "mix dsteerright `keyboard.d?0`" >> "%temp%\controls_ready.tmp" & set "written=1" )
+            if not "!line:mix dsteering=! "=="!line! " ( echo  config_lines: "mix dsteering `(keyboard.a?0 - keyboard.d?0) * (0.35 + keyboard.space?0 * 0.65)`" >> "%temp%\controls_ready.tmp" & set "written=1" )
+            if not "!line:mix steering=! "=="!line! " ( echo  config_lines: "mix steering `dsteering`" >> "%temp%\controls_ready.tmp" & set "written=1" )
+            if not "!line:mix msteering=! "=="!line! " ( echo  config_lines: "mix msteering `-mouse.rel_position.x?0 * c_msens`" >> "%temp%\controls_ready.tmp" & set "written=1" )
+            if not "!line:mix mpedals=! "=="!line! " ( echo  config_lines: "mix mpedals `-mouse.rel_position.y?0 * c_msens`" >> "%temp%\controls_ready.tmp" & set "written=1" )
+            if not "!line:mix dforward=! "=="!line! " ( echo  config_lines: "mix dforward `0`" >> "%temp%\controls_ready.tmp" & set "written=1" )
+            if not "!line:mix dbackward=! "=="!line! " ( echo  config_lines: "mix dbackward `0`" >> "%temp%\controls_ready.tmp" & set "written=1" )
+            if not "!line:mix aforward=! "=="!line! " ( echo  config_lines: "mix aforward `(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)`" >> "%temp%\controls_ready.tmp" & set "written=1" )
+            if not "!line:mix abackward=! "=="!line! " ( echo  config_lines: "mix abackward `keyboard.s?0 * (0.10 + keyboard.space?0 * 0.50)`" >> "%temp%\controls_ready.tmp" & set "written=1" )
+            if not "!line:mix forward=! "=="!line! " ( echo  config_lines: "mix forward `aforward`" >> "%temp%\controls_ready.tmp" & set "written=1" )
+            if not "!line:mix backward=! "=="!line! " ( echo  config_lines: "mix backward `abackward`" >> "%temp%\controls_ready.tmp" & set "written=1" )
             
             if "!written!"=="0" (
-                echo !line! >> "!DIR_PATH!controls.tmp"
+                echo !line! >> "%temp%\controls_ready.tmp"
             )
         )
         
-        :: 5. Temporaere Datei ueber die originale kopieren
-        copy /y "!DIR_PATH!controls.tmp" "!FILE_PATH!" >nul 2>&1
-        del /f /q "!DIR_PATH!controls.tmp" >nul 2>&1
+        :: Schiebe die fertig modifizierte Datei aus der Sandbox zurueck zu OneDrive
+        copy /y "%temp%\controls_ready.tmp" "%%P\controls.sii" >nul
         
-        :: 6. Schreibschutz wieder aktivieren für das Spiel
-        attrib +r "!FILE_PATH!" >nul 2>&1
+        :: Sandbox bereinigen
+        del /f /q "%temp%\controls_sandbox.sii" "%temp%\controls_ready.tmp" >nul 2>&1
+        
+        :: Schreibschutz im Spielordner wieder aktivieren für SCS
+        attrib +r "%%P\controls.sii" >nul 2>&1
         echo   -^> Successfully patched^!
-        echo.
     )
 )
 
-if "!FOUND_PROFILE!"=="0" (
-    echo [ERROR] Could not find any active controls.sii file on your PC.
-    echo Please start American Truck Simulator at least once to create your profile!
-    echo.
-)
-
-echo [INFO] Installation completed.
+echo.
+echo [INFO] Installation process finished.
 pause
