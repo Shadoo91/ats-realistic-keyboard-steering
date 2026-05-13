@@ -19,79 +19,28 @@ cd /d "%~dp0"
 
 echo ===================================================================================
 echo   ATS Realistic-Keyboard-Steering (RKS) (Turbo-Mode) - for Windows ~ by Shadoo91
-echo   [FINAL LOCAL PATH INJECTOR - NO ONEDRIVE GHOSTS]
+echo   [ENCODING FORCE ENGINE - ENFORCED ASCII/UTF8]
 echo ===================================================================================
 echo.
 
-:: 1. Knallharte Fokussierung auf den echten, lokalen Benutzerordner
 set "PROFILE_DIR=%USERPROFILE%\Documents\American Truck Simulator\profiles"
+if not exist "%PROFILE_DIR%" set "PROFILE_DIR=%USERPROFILE%\OneDrive\Documents\American Truck Simulator\profiles"
+if not exist "%PROFILE_DIR%" set "PROFILE_DIR=%USERPROFILE%\OneDrive\Dokumente\American Truck Simulator\profiles"
 
-:: Nur falls dieser absolut nicht existiert, weichen wir auf die OneDrive-Pfade aus
-if not exist "%PROFILE_DIR%\*" (
-    set "PROFILE_DIR=%USERPROFILE%\OneDrive\Documents\American Truck Simulator\profiles"
-)
-if not exist "%PROFILE_DIR%\*" (
-    set "PROFILE_DIR=%USERPROFILE%\OneDrive\Dokumente\American Truck Simulator\profiles"
-)
-
-if not exist "%PROFILE_DIR%\*" (
+if not exist "%PROFILE_DIR%" (
     echo [ERROR] American Truck Simulator profiles directory not found!
-    echo Please run the installer directly inside your 'profiles' folder if you use a custom path.
     pause
     exit
 )
 
-echo Real active profiles directory found at:
+echo Profiles directory found at:
 echo "%PROFILE_DIR%"
 echo.
-echo Patching configuration files via local sandbox...
+echo Executing Enforced Encoding Patch...
 echo.
 
-:: 2. Profile durchlaufen und an Ort und Stelle patchen
-for /d %%P in ("%PROFILE_DIR%\*") do (
-    if exist "%%P\controls.sii" (
-        echo Processing profile: %%~nxP
-        
-        if not exist "%%P\controls.sii.bak" (
-            copy /y "%%P\controls.sii" "%%P\controls.sii.bak" >nul 2>&1
-            echo   -^> Backup created: controls.sii.bak
-        ) else (
-            echo   -^> Backup already exists. Skipping backup.
-        )
-        
-        attrib -r -s -h "%%P\controls.sii" >nul 2>&1
-        copy /y "%%P\controls.sii" "%temp%\controls_sandbox.sii" >nul 2>&1
-        
-        type nul > "%temp%\controls_ready.tmp"
-        
-        for /f "usebackq tokens=* delims=" %%L in ("%temp%\controls_sandbox.sii") do (
-            set "line=%%L"
-            set "written=0"
-            
-            if not "!line:mix dsteerleft=! "=="!line! " ( echo  config_lines: "mix dsteerleft `keyboard.a?0`" >> "%temp%\controls_ready.tmp" & set "written=1" )
-            if not "!line:mix dsteerright=! "=="!line! " ( echo  config_lines: "mix dsteerright `keyboard.d?0`" >> "%temp%\controls_ready.tmp" & set "written=1" )
-            if not "!line:mix dsteering=! "=="!line! " ( echo  config_lines: "mix dsteering `(keyboard.a?0 - keyboard.d?0) * (0.35 + keyboard.space?0 * 0.65)`" >> "%temp%\controls_ready.tmp" & set "written=1" )
-            if not "!line:mix steering=! "=="!line! " ( echo  config_lines: "mix steering `dsteering`" >> "%temp%\controls_ready.tmp" & set "written=1" )
-            if not "!line:mix msteering=! "=="!line! " ( echo  config_lines: "mix msteering `-mouse.rel_position.x?0 * c_msens`" >> "%temp%\controls_ready.tmp" & set "written=1" )
-            if not "!line:mix mpedals=! "=="!line! " ( echo  config_lines: "mix mpedals `-mouse.rel_position.y?0 * c_msens`" >> "%temp%\controls_ready.tmp" & set "written=1" )
-            if not "!line:mix dforward=! "=="!line! " ( echo  config_lines: "mix dforward `0`" >> "%temp%\controls_ready.tmp" & set "written=1" )
-            if not "!line:mix dbackward=! "=="!line! " ( echo  config_lines: "mix dbackward `0`" >> "%temp%\controls_ready.tmp" & set "written=1" )
-            if not "!line:mix aforward=! "=="!line! " ( echo  config_lines: "mix aforward `(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)`" >> "%temp%\controls_ready.tmp" & set "written=1" )
-            if not "!line:mix abackward=! "=="!line! " ( echo  config_lines: "mix abackward `keyboard.s?0 * (0.10 + keyboard.space?0 * 0.50)`" >> "%temp%\controls_ready.tmp" & set "written=1" )
-            if not "!line:mix forward=! "=="!line! " ( echo  config_lines: "mix forward `aforward`" >> "%temp%\controls_ready.tmp" & set "written=1" )
-            if not "!line:mix backward=! "=="!line! " ( echo  config_lines: "mix backward `abackward`" >> "%temp%\controls_ready.tmp" & set "written=1" )
-            
-            if "!written!"=="0" (
-                echo !line! >> "%temp%\controls_ready.tmp"
-            )
-        )
-        
-        copy /y "%temp%\controls_ready.tmp" "%%P\controls.sii" >nul 2>&1
-        del /f /q /a "%temp%\controls_sandbox.sii" "%temp%\controls_ready.tmp" >nul 2>&1
-        attrib +r "%%P\controls.sii" >nul 2>&1
-        echo   -^> Successfully patched^!
-    )
-)
+:: Die Rettung: Ein nativer PowerShell-Einzeiler, der die Codierung exakt im SCS-Format (ASCII/Raw UTF8) erzwingt
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$files = Get-ChildItem -Path '%PROFILE_DIR%' -Filter 'controls.sii' -Recurse; foreach ($file in $files) { Write-Host \"Patching: $($file.Directory.Name)\" -ForegroundColor Green; $bak = Join-Path $file.DirectoryName 'controls.sii.bak'; if (-not (Test-Path $bak)) { Copy-Item $file.FullName $bak -Force }; $attrib = Get-ItemProperty $file.FullName; if ($attrib.Attributes -match 'ReadOnly') { [System.IO.File]::SetAttributes($file.FullName, [System.IO.FileAttributes]::Normal) }; $content = Get-Content $file.FullName -Raw; $newLines = ' config_lines: \"mix dsteerleft ``keyboard.a?0``\"' + [Environment]::NewLine + ' config_lines: \"mix dsteerright ``keyboard.d?0``\"' + [Environment]::NewLine + ' config_lines: \"mix dsteering ``(keyboard.a?0 - keyboard.d?0) * (0.35 + keyboard.space?0 * 0.65)``\"' + [Environment]::NewLine + ' config_lines: \"mix steering ``dsteering``\"' + [Environment]::NewLine + ' config_lines: \"mix msteering ``-mouse.rel_position.x?0 * c_msens``\"' + [Environment]::NewLine + ' config_lines: \"mix mpedals ``-mouse.rel_position.y?0 * c_msens``\"' + [Environment]::NewLine + ' config_lines: \"mix dforward ``0``\"' + [Environment]::NewLine + ' config_lines: \"mix dbackward ``0``\"' + [Environment]::NewLine + ' config_lines: \"mix aforward ``(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)``\"' + [Environment]::NewLine + ' config_lines: \"mix abackward ``keyboard.s?0 * (0.10 + keyboard.space?0 * 0.50)``\"' + [Environment]::NewLine + ' config_lines: \"mix forward ``aforward``\"' + [Environment]::NewLine + ' config_lines: \"mix backward ``abackward``\"'; $content = $content -replace '(?s) config_lines\[330\]:.*config_lines\[341\]:[^\r\n]*', $newLines; [System.IO.File]::WriteAllText($file.FullName, $content, [System.Text.Encoding]::ASCII); [System.IO.File]::SetAttributes($file.FullName, [System.IO.FileAttributes]::ReadOnly); Write-Host '  -> Patch applied in native SCS format!' -ForegroundColor Green }"
 
 echo.
 echo [INFO] Installation process finished.
