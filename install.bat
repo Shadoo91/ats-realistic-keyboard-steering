@@ -1,5 +1,6 @@
 @echo off
 title ATS Turbo-Input Installer
+setlocal enabledelayedexpansion
 
 :: ==========================================
 :: ADMIN-RECHTE PRÜFEN & ANFORDERN
@@ -29,7 +30,6 @@ if not exist "%PROFILE_DIR%" set "PROFILE_DIR=%USERPROFILE%\OneDrive\Dokumente\A
 
 if not exist "%PROFILE_DIR%" (
     echo [ERROR] American Truck Simulator profiles directory not found!
-    echo Please run the installer directly inside your 'profiles' folder if you use a custom path.
     pause
     exit
 )
@@ -37,28 +37,76 @@ if not exist "%PROFILE_DIR%" (
 echo Profiles directory found at:
 echo "%PROFILE_DIR%"
 echo.
-echo Forcing OneDrive Cloud Download and breaking file locks...
-echo.
-
-:: 2. OneDrive-Zwangszugriff über native Windows-Befehle vor dem Patchvorgang
-for /d %%P in ("%PROFILE_DIR%\*") do (
-    if exist "%%P\controls.sii" (
-        echo Syncing profile: %%~nxP
-        
-        :: Erzwingt, dass Windows die Datei physisch aus OneDrive herunterlaedt
-        type "%%P\controls.sii" >nul 2>&1
-        
-        :: Entfernt rigoros alle Dateiattribute (Schreibschutz, System- und Cloud-Sperren)
-        attrib -r -s -h -p "%%P\controls.sii" >nul 2>&1
-    )
-)
-
-echo.
 echo Patching configuration files...
 echo.
 
-:: 3. Fehlerfreier Patch via PowerShell (Datei ist nun garantiert lokal vorhanden)
-powershell -NoProfile -ExecutionPolicy Bypass -Command "$files = Get-ChildItem -Path '%PROFILE_DIR%' -Filter 'controls.sii' -Recurse; if ($files.Count -eq 0) { Write-Host '[ERROR] No controls.sii found!' -ForegroundColor Red; exit }; foreach ($file in $files) { Write-Host \"Processing profile: $($file.Directory.Name)\" -ForegroundColor Green; $bakFile = Join-Path $file.DirectoryName 'controls.sii.bak'; if (-not (Test-Path $bakFile)) { Copy-Item $file.FullName $bakFile -Force; Write-Host '  -> Backup created: controls.sii.bak' -ForegroundColor Yellow } else { Write-Host '  -> Backup already exists. Skipping backup.' -ForegroundColor Gray }; try { $text = [System.IO.File]::ReadAllText($file.FullName); $newLines = ' config_lines: \"mix dsteerleft ``keyboard.a?0``\"' + [Environment]::NewLine + ' config_lines: \"mix dsteerright ``keyboard.d?0``\"' + [Environment]::NewLine + ' config_lines: \"mix dsteering ``(keyboard.a?0 - keyboard.d?0) * (0.35 + keyboard.space?0 * 0.65)``\"' + [Environment]::NewLine + ' config_lines: \"mix steering ``dsteering``\"' + [Environment]::NewLine + ' config_lines: \"mix msteering ``-mouse.rel_position.x?0 * c_msens``\"' + [Environment]::NewLine + ' config_lines: \"mix mpedals ``-mouse.rel_position.y?0 * c_msens``\"' + [Environment]::NewLine + ' config_lines: \"mix dforward ``0``\"' + [Environment]::NewLine + ' config_lines: \"mix dbackward ``0``\"' + [Environment]::NewLine + ' config_lines: \"mix aforward ``(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)``\"' + [Environment]::NewLine + ' config_lines: \"mix abackward ``keyboard.s?0 * (0.10 + keyboard.space?0 * 0.50)``\"' + [Environment]::NewLine + ' config_lines: \"mix forward ``aforward``\"' + [Environment]::NewLine + ' config_lines: \"mix backward ``abackward``\"'; $text = $text -replace '(?s) config_lines\[330\]:.*config_lines\[341\]:[^\r\n]*', $newLines; [System.IO.File]::WriteAllText($file.FullName, $text, (New-Object System.Text.UTF8Encoding($false))); Write-Host '  -> Successfully patched!' -ForegroundColor Green } catch { Write-Host '  -> [ERROR] Failed to modify the file. Access blocked by OneDrive.' -ForegroundColor Red } [System.IO.File]::SetAttributes($file.FullName, [System.IO.FileAttributes]::ReadOnly) }"
+:: 2. Profile durchlaufen
+for /d %%P in ("%PROFILE_DIR%\*") do (
+    if exist "%%P\controls.sii" (
+        echo Processing profile: %%~nxP
+        
+        :: Attribute aufheben und Windows zwingen, die Datei lokal bereitzustellen
+        attrib -r -s -h "%%P\controls.sii" >nul 2>&1
+        type "%%P\controls.sii" >nul 2>&1
+        
+        :: Backup erstellen per nativem Windows-Befehl
+        if not exist "%%P\controls.sii.bak" (
+            copy /y "%%P\controls.sii" "%%P\controls.sii.bak" >nul
+            echo   -^> Backup created: controls.sii.bak
+        ) else (
+            echo   -^> Backup already exists. Skipping backup.
+        )
+        
+        :: Temporaere Arbeitsdatei loeschen falls vorhanden
+        if exist "%%P\controls.tmp" del /f /q "%%P\controls.tmp" >nul
+        
+        :: Datei Zeile fuer Zeile auslesen und manipulierten Block injizieren
+        set "in_block=0"
+        for /f "usebackq tokens=* delims=" %%L in ("%%P\controls.sii") do (
+            set "line=%%L"
+            
+            :: Pruefen ob der zu ersetzende Block beginnt
+            echo !line! | findstr /c:"config_lines[330]:" >nul
+            if !errorlevel! equ 0 (
+                set "in_block=1"
+                echo  config_lines: "mix dsteerleft `keyboard.a?0`" >> "%%P\controls.tmp"
+                echo  config_lines: "mix dsteerright `keyboard.d?0`" >> "%%P\controls.tmp"
+                echo  config_lines: "mix dsteering `(keyboard.a?0 - keyboard.d?0) * (0.35 + keyboard.space?0 * 0.65)`" >> "%%P\controls.tmp"
+                echo  config_lines: "mix steering `dsteering`" >> "%%P\controls.tmp"
+                echo  config_lines: "mix msteering `-mouse.rel_position.x?0 * c_msens`" >> "%%P\controls.tmp"
+                echo  config_lines: "mix mpedals `-mouse.rel_position.y?0 * c_msens`" >> "%%P\controls.tmp"
+                echo  config_lines: "mix dforward `0`" >> "%%P\controls.tmp"
+                echo  config_lines: "mix dbackward `0`" >> "%%P\controls.tmp"
+                echo  config_lines: "mix aforward `(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)`" >> "%%P\controls.tmp"
+                echo  config_lines: "mix abackward `keyboard.s?0 * (0.10 + keyboard.space?0 * 0.50)`" >> "%%P\controls.tmp"
+                echo  config_lines: "mix forward `aforward`" >> "%%P\controls.tmp"
+                echo  config_lines: "mix backward `abackward`" >> "%%P\controls.tmp"
+            )
+            
+            :: Pruefen ob der Block endet
+            echo !line! | findstr /c:"config_lines[341]:" >nul
+            if !errorlevel! equ 0 (
+                set "in_block=0"
+                :: Springe zur naechsten Zeile um die alte Zeile 341 nicht doppelt zu schreiben
+                goto :skip_line
+            )
+            
+            if !in_block! equ 0 (
+                echo !line! >> "%%P\controls.tmp"
+            )
+            :skip_line
+            set "dummy=1"
+        )
+        
+        :: Temporaere Datei ueber die originale Datei kopieren (erhaelt UTF-8-Format)
+        copy /y "%%P\controls.tmp" "%%P\controls.sii" >nul
+        del /f /q "%%P\controls.tmp" >nul
+        
+        :: Schreibschutz wieder aktivieren für das Spiel
+        attrib +r "%%P\controls.sii"
+        echo   -^> Successfully patched^!
+    )
+)
 
 echo.
 echo [INFO] Installation process finished.
