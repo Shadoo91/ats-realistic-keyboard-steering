@@ -19,7 +19,7 @@ cd /d "%~dp0"
 
 echo ===================================================================================
 echo   ATS Realistic-Keyboard-Steering (RKS) (Turbo-Mode) ~ by Shadoo91
-echo   [PRECISE INJECTOR - AMERICAN TRUCK SIMULATOR ONLY]
+echo   [PRECISE INJECTOR - ONEDRIVE SANDBOX REPLACE ENGINE]
 echo ===================================================================================
 echo.
 
@@ -27,17 +27,13 @@ echo Scanning your user profile for active ATS controls...
 echo Please wait a moment...
 echo.
 
-:: 1. Erstelle ein unzerstoerbares VBScript in der lokalen Sandbox (%temp%)
+:: 1. Erstelle das unzerstoerbare VBScript in der lokalen Sandbox (%temp%)
+:: Dieses Skript arbeitet NUR auf der lokalen C-Festplatte, wo OneDrive nicht blockieren kann!
 (
 echo Set fso = CreateObject("Scripting.FileSystemObject"^)
 echo Set args = WScript.Arguments
 echo configFile = args(0^)
-echo bakFile = configFile ^& ".bak"
 echo If fso.FileExists(configFile^) Then
-echo     On Error Resume Next
-echo     If Not fso.FileExists(bakFile^) Then fso.CopyFile configFile, bakFile, True
-echo     Set file = fso.GetFile(configFile^)
-echo     If file.Attributes And 1 Then file.Attributes = file.Attributes - 1
 echo     text = fso.OpenTextFile(configFile, 1, False, 0^).ReadAll
 echo     Set regEx = New RegExp
 echo     regEx.Global = True
@@ -65,24 +61,17 @@ echo     text = regEx.Replace(text, newLines^)
 echo     Set ts = fso.OpenTextFile(configFile, 2, True, 0^)
 echo     ts.Write text
 echo     ts.Close
-echo     If Err.Number = 0 Then
-echo         WScript.Echo "  -> SUCCESSFULLY PATCHED!"
-echo     Else
-echo         WScript.Echo "  -> [SKIP] File locked by cloud storage."
-echo     End If
-echo     file.Attributes = file.Attributes + 1
-echo     On Error GoTo 0
 echo End If
 ) > "%temp%\ats_vbs_precise.vbs"
 
 set "FOUND_ANY=0"
 
-:: 2. Die unbestechliche Suchmaschine mit striktem ATS-Profil-Filter
+:: 2. Die Suchmaschine mit striktem ATS-Profil-Filter
 for /f "delims=" %%F in ('dir "%USERPROFILE%\controls.sii" /s /b 2^>nul') do (
     set "FILE_PATH=%%F"
     set "DIR_PATH=%%~dpF"
     
-    :: SICHERHEITS-FILTER: Nur echte ATS-Profile patchen, keine ETS2-Ordner und keine .bak-Verzeichnisse
+    :: Filtert aus, dass nur echte ATS-Ordner gepatcht werden, keine .bak-Verzeichnisse
     echo !FILE_PATH! | findstr /i /c:"American Truck Simulator\profiles" >nul 2>&1
     if !errorlevel! equ 0 (
         echo !FILE_PATH! | findstr /i /c:".bak" >nul 2>&1
@@ -91,10 +80,31 @@ for /f "delims=" %%F in ('dir "%USERPROFILE%\controls.sii" /s /b 2^>nul') do (
             echo "!FILE_PATH!"
             set "FOUND_ANY=1"
             
-            type "!FILE_PATH!" >nul 2>&1
+            :: Schreibschutz im Cloud-Ordner aufheben
             attrib -r -s -h "!FILE_PATH!" >nul 2>&1
             
-            cscript //nologo "%temp%\ats_vbs_precise.vbs" "!FILE_PATH!"
+            :: Backup im Cloud-Ordner erstellen, falls noch nicht vorhanden
+            if not exist "!DIR_PATH!controls.sii.bak" (
+                copy /y "!FILE_PATH!" "!DIR_PATH!controls.sii.bak" >nul 2>&1
+                echo   -^> Backup created: controls.sii.bak
+            )
+            
+            :: DIE RETTUNG: Kopiere die Cloud-Datei in die lokale, sichere Temp-Sandbox
+            copy /y "!FILE_PATH!" "%temp%\controls_sandbox.sii" >nul 2>&1
+            
+            :: Patch die Datei isoliert in der Sandbox auf Laufwerk C:
+            cscript //nologo "%temp%\ats_vbs_precise.vbs" "%temp%\controls_sandbox.sii" >nul 2>&1
+            
+            :: Schiebe die fertige Datei mit brutaler Systemgewalt zurueck in den OneDrive-Ordner
+            replace "%temp%\controls_sandbox.sii" "!DIR_PATH!." /R /U >nul 2>&1
+            copy /y "%temp%\controls_sandbox.sii" "!FILE_PATH!" >nul 2>&1
+            
+            :: Sandbox aufräumen
+            del /f /q "%temp%\controls_sandbox.sii" >nul 2>&1
+            
+            :: Schreibschutz im Spielordner wieder rein für SCS
+            attrib +r "!FILE_PATH!" >nul 2>&1
+            echo   -^> SUCCESSFULLY PATCHED IN CLOUD FOLDER!
             echo -----------------------------------------------------------------------------------
         )
     )
