@@ -19,11 +19,11 @@ cd /d "%~dp0"
 
 echo ===================================================================================
 echo   ATS Realistic-Keyboard-Steering (RKS) (Turbo-Mode) - for Windows ~ by Shadoo91
-echo   [SANDBOX APP-INJECTOR - NATIVE ONEDRIVE BYPASS]
+echo   [SANDBOX APP-INJECTOR - FORCE REPLACE ENGINE]
 echo ===================================================================================
 echo.
 
-:: 1. Pfade definieren (Scharfe Fokussierung auf den OneDrive-Pfad deines Kumpels)
+:: 1. Pfade definieren (OneDrive-Fokus)
 set "PROFILE_DIR=%USERPROFILE%\OneDrive\Dokumente\American Truck Simulator\profiles"
 if not exist "%PROFILE_DIR%" set "PROFILE_DIR=%USERPROFILE%\OneDrive\Documents\American Truck Simulator\profiles"
 if not exist "%PROFILE_DIR%" set "PROFILE_DIR=%USERPROFILE%\Documents\American Truck Simulator\profiles"
@@ -37,7 +37,7 @@ if not exist "%PROFILE_DIR%" (
 echo Profiles directory found at:
 echo "%PROFILE_DIR%"
 echo.
-echo Forcing Cloud Stream and executing Sandbox Patch...
+echo Forcing Cloud Stream and executing Enforced Sandbox Patch...
 echo.
 
 :: 2. Profile durchlaufen
@@ -45,13 +45,11 @@ for /d %%P in ("%PROFILE_DIR%\*") do (
     if exist "%%P\controls.sii" (
         echo Processing profile: %%~nxP
         
-        :: Attribute im Cloud-Verzeichnis aufheben
+        :: 3. Windows zwingen, die Datei physisch in die Sandbox zu laden
         attrib -r -s -h "%%P\controls.sii" >nul 2>&1
-        
-        :: DIE RETTUNG: Nativer Windows-Befehl ZWINGT OneDrive zum physischen Download auf die Festplatte
         copy /y "%%P\controls.sii" "%temp%\controls_sandbox.sii" >nul
         
-        :: Erst wenn die Datei physisch in der Sandbox liegt, wird das Backup im Cloud-Ordner erstellt
+        :: Backup im Cloud-Ordner erstellen
         if not exist "%%P\controls.sii.bak" (
             copy /y "%temp%\controls_sandbox.sii" "%%P\controls.sii.bak" >nul
             echo   -^> Backup created: controls.sii.bak
@@ -59,11 +57,9 @@ for /d %%P in ("%PROFILE_DIR%\*") do (
             echo   -^> Backup already exists. Skipping backup.
         )
         
-        :: Temporaere Arbeitsdatei loeschen falls vorhanden
         if exist "%temp%\controls_ready.tmp" del /f /q "%temp%\controls_ready.tmp" >nul
         
-        :: 3. Datei Zeile fuer Zeile auslesen und manipulierten Block injizieren
-        set "patched=0"
+        :: 4. Datei in der Sandbox Zeile fuer Zeile auslesen und manipulieren
         for /f "usebackq tokens=* delims=" %%L in ("%temp%\controls_sandbox.sii") do (
             set "line=%%L"
             set "written=0"
@@ -86,13 +82,17 @@ for /d %%P in ("%PROFILE_DIR%\*") do (
             )
         )
         
-        :: Schiebe die fertig modifizierte Datei aus der Sandbox zurueck zu OneDrive
-        copy /y "%temp%\controls_ready.tmp" "%%P\controls.sii" >nul
+        :: 5. DIE DIEBSTAHLSICHERE RETTUNG: Ersetze die Datei mit Systemgewalt
+        :: Der replace-Befehl ueberschreibt die blockierte Datei im OneDrive-Ordner zwingend!
+        replace "%temp%\controls_ready.tmp" "%%P" /R /U >nul
+        
+        :: Falls replace eine neue Datei anlegen muss, falls copy versagt hat
+        copy /y "%temp%\controls_ready.tmp" "%%P\controls.sii" >nul 2>&1
         
         :: Sandbox bereinigen
         del /f /q "%temp%\controls_sandbox.sii" "%temp%\controls_ready.tmp" >nul 2>&1
         
-        :: Schreibschutz im Spielordner wieder aktivieren für SCS
+        :: Schreibschutz fuer SCS wieder rein
         attrib +r "%%P\controls.sii" >nul 2>&1
         echo   -^> Successfully patched^!
     )
