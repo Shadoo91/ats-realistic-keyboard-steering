@@ -19,16 +19,15 @@ cd /d "%~dp0"
 
 echo ===================================================================================
 echo   ATS Realistic-Keyboard-Steering (RKS) (Turbo-Mode) ~ by Shadoo91
-echo   [PRECISE INJECTOR - ONEDRIVE SANDBOX REPLACE ENGINE]
+echo   [SAFE APPEND ENGINE - STRIKT ATS FILTER]
 echo ===================================================================================
 echo.
 
-echo Scanning your user profile for active ATS controls...
-echo Please wait a moment...
+echo Scanning system for active ATS profiles...
 echo.
 
-:: 1. Erstelle das unzerstoerbare VBScript in der lokalen Sandbox (%temp%)
-:: Dieses Skript arbeitet NUR auf der lokalen C-Festplatte, wo OneDrive nicht blockieren kann!
+:: 1. VBScript das NUR die allerletzte schliessende Klammer modifiziert.
+:: Verhindert das versehentliche Loeschen von anderen Belegungen!
 (
 echo Set fso = CreateObject("Scripting.FileSystemObject"^)
 echo Set args = WScript.Arguments
@@ -39,9 +38,7 @@ echo     Set regEx = New RegExp
 echo     regEx.Global = True
 echo     regEx.IgnoreCase = True
 echo     regEx.MultiLine = True
-echo     regEx.Pattern = " config_lines\[\d+\]:\s*""mix (dsteerleft|dsteerright|dsteering|steering|msteering|mpedals|dforward|dbackward|aforward|abackward|forward|backward)\s+[^""]*"""
-echo     If regEx.Test(text^) Then text = regEx.Replace(text, ""^)
-echo     regEx.Pattern = "^\s*$"
+echo     regEx.Pattern = " config_lines\[\d+\]:\s*""mix (dsteerleft|dsteerright|dsteering|steering|msteering|mpedals|dforward|dbackward|aforward|abackward|forward|backward)\s+[^""]*""[\r\n]*"
 echo     text = regEx.Replace(text, ""^)
 echo     regEx.Pattern = "\s*\}"
 echo     newLines = vbCrLf ^& _
@@ -62,16 +59,16 @@ echo     Set ts = fso.OpenTextFile(configFile, 2, True, 0^)
 echo     ts.Write text
 echo     ts.Close
 echo End If
-) > "%temp%\ats_vbs_precise.vbs"
+) > "%temp%\ats_vbs_append.vbs"
 
 set "FOUND_ANY=0"
 
-:: 2. Die Suchmaschine mit striktem ATS-Profil-Filter
+:: 2. Die Suchmaschine mit DEINEM STRIKTEN ATS-Profil-Filter
 for /f "delims=" %%F in ('dir "%USERPROFILE%\controls.sii" /s /b 2^>nul') do (
     set "FILE_PATH=%%F"
     set "DIR_PATH=%%~dpF"
     
-    :: Filtert aus, dass nur echte ATS-Ordner gepatcht werden, keine .bak-Verzeichnisse
+    :: DEIN STRIKTER FILTER: Nur American Truck Simulator/profiles zulassen!
     echo !FILE_PATH! | findstr /i /c:"American Truck Simulator\profiles" >nul 2>&1
     if !errorlevel! equ 0 (
         echo !FILE_PATH! | findstr /i /c:".bak" >nul 2>&1
@@ -80,42 +77,33 @@ for /f "delims=" %%F in ('dir "%USERPROFILE%\controls.sii" /s /b 2^>nul') do (
             echo "!FILE_PATH!"
             set "FOUND_ANY=1"
             
-            :: Schreibschutz im Cloud-Ordner aufheben
             attrib -r -s -h "!FILE_PATH!" >nul 2>&1
             
-            :: Backup im Cloud-Ordner erstellen, falls noch nicht vorhanden
             if not exist "!DIR_PATH!controls.sii.bak" (
                 copy /y "!FILE_PATH!" "!DIR_PATH!controls.sii.bak" >nul 2>&1
                 echo   -^> Backup created: controls.sii.bak
             )
             
-            :: DIE RETTUNG: Kopiere die Cloud-Datei in die lokale, sichere Temp-Sandbox
             copy /y "!FILE_PATH!" "%temp%\controls_sandbox.sii" >nul 2>&1
+            cscript //nologo "%temp%\ats_vbs_append.vbs" "%temp%\controls_sandbox.sii" >nul 2>&1
             
-            :: Patch die Datei isoliert in der Sandbox auf Laufwerk C:
-            cscript //nologo "%temp%\ats_vbs_precise.vbs" "%temp%\controls_sandbox.sii" >nul 2>&1
-            
-            :: Schiebe die fertige Datei mit brutaler Systemgewalt zurueck in den OneDrive-Ordner
             replace "%temp%\controls_sandbox.sii" "!DIR_PATH!." /R /U >nul 2>&1
             copy /y "%temp%\controls_sandbox.sii" "!FILE_PATH!" >nul 2>&1
             
-            :: Sandbox aufräumen
             del /f /q "%temp%\controls_sandbox.sii" >nul 2>&1
-            
-            :: Schreibschutz im Spielordner wieder rein für SCS
             attrib +r "!FILE_PATH!" >nul 2>&1
-            echo   -^> SUCCESSFULLY PATCHED IN CLOUD FOLDER!
+            echo   -^> SUCCESSFULLY PATCHED!
             echo -----------------------------------------------------------------------------------
         )
     )
 )
 
-del "%temp%\ats_vbs_precise.vbs" >nul 2>&1
+del "%temp%\ats_vbs_append.vbs" >nul 2>&1
 
 if "!FOUND_ANY!"=="0" (
     echo [ERROR] No active American Truck Simulator profiles found on this PC.
-    echo.
 )
 
-echo [INFO] Installation process completed.
+echo.
+echo [INFO] Installation completed.
 pause
