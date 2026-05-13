@@ -29,7 +29,7 @@ echo.
 echo Searching profiles and patching controls...
 echo.
 
-:: 2. Erstelle das optimierte, ausfallsichere VBScript
+:: 2. Erstelle das optimierte, ausfallsichere VBScript (KOMPLETT OHNE UNGLEICH-ZEICHEN)
 (
 echo Set fso = CreateObject("Scripting.FileSystemObject"^)
 echo Set args = WScript.Arguments
@@ -39,13 +39,14 @@ echo bakFile = profilePath ^& "\controls.sii.bak"
 echo If fso.FileExists(configFile^) Then
 echo     On Error Resume Next
 echo     Set file = fso.GetFile(configFile^)
-echo     If Err.Number ^<> 0 Then
+echo     If Err.Number = 0 Then
+echo         If file.Size = 0 Then
+echo             WScript.Echo "  -> [ERROR] File is empty or locked by OneDrive sync."
+echo             WScript.Quit
+echo         End If
+echo     Else
 echo         WScript.Echo "  -> [ERROR] Cloud file is not downloaded yet. Open it once in Windows Explorer!"
 echo         Err.Clear
-echo         WScript.Quit
-echo     End If
-echo     If file.Size = 0 Then
-echo         WScript.Echo "  -> [ERROR] File is empty or locked by OneDrive sync."
 echo         WScript.Quit
 echo     End If
 echo     If file.Attributes And 1 Then file.Attributes = file.Attributes - 1
