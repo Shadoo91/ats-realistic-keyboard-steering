@@ -37,11 +37,28 @@ if not exist "%PROFILE_DIR%" (
 echo Profiles directory found at:
 echo "%PROFILE_DIR%"
 echo.
-echo Searching profiles and patching controls...
+echo Forcing OneDrive Cloud Download and breaking file locks...
 echo.
 
-:: 2. Erzwungener OneDrive-Download + Fehlerfreier Patch via PowerShell
-powershell -NoProfile -ExecutionPolicy Bypass -Command "$files = Get-ChildItem -Path '%PROFILE_DIR%' -Filter 'controls.sii' -Recurse; if ($files.Count -eq 0) { Write-Host '[ERROR] No controls.sii found!' -ForegroundColor Red; exit }; foreach ($file in $files) { Write-Host \"Processing profile: $($file.Directory.Name)\" -ForegroundColor Green; $attrib = Get-ItemProperty $file.FullName; if ($attrib.Attributes -match 'ReadOnly') { [System.IO.File]::SetAttributes($file.FullName, [System.IO.FileAttributes]::Normal) }; try { $text = [System.IO.File]::ReadAllText($file.FullName); $bakFile = Join-Path $file.DirectoryName 'controls.sii.bak'; if (-not (Test-Path $bakFile)) { Copy-Item $file.FullName $bakFile -Force; Write-Host '  -> Backup created: controls.sii.bak' -ForegroundColor Yellow } else { Write-Host '  -> Backup already exists. Skipping backup.' -ForegroundColor Gray }; $newLines = ' config_lines: \"mix dsteerleft ``keyboard.a?0``\"' + [Environment]::NewLine + ' config_lines: \"mix dsteerright ``keyboard.d?0``\"' + [Environment]::NewLine + ' config_lines: \"mix dsteering ``(keyboard.a?0 - keyboard.d?0) * (0.35 + keyboard.space?0 * 0.65)``\"' + [Environment]::NewLine + ' config_lines: \"mix steering ``dsteering``\"' + [Environment]::NewLine + ' config_lines: \"mix msteering ``-mouse.rel_position.x?0 * c_msens``\"' + [Environment]::NewLine + ' config_lines: \"mix mpedals ``-mouse.rel_position.y?0 * c_msens``\"' + [Environment]::NewLine + ' config_lines: \"mix dforward ``0``\"' + [Environment]::NewLine + ' config_lines: \"mix dbackward ``0``\"' + [Environment]::NewLine + ' config_lines: \"mix aforward ``(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)``\"' + [Environment]::NewLine + ' config_lines: \"mix abackward ``keyboard.s?0 * (0.10 + keyboard.space?0 * 0.50)``\"' + [Environment]::NewLine + ' config_lines: \"mix forward ``aforward``\"' + [Environment]::NewLine + ' config_lines: \"mix backward ``abackward``\"'; $text = $text -replace '(?s) config_lines\[330\]:.*config_lines\[341\]:[^\r\n]*', $newLines; [System.IO.File]::WriteAllText($file.FullName, $text, (New-Object System.Text.UTF8Encoding($false))); Write-Host '  -> Successfully patched!' -ForegroundColor Green } catch { Write-Host '  -> [ERROR] Cloud file is purely online. Downloading now... Please re-run the installer in 5 seconds!' -ForegroundColor Red; $p = Start-Process attrib -ArgumentList '\"', $file.FullName, '\"' -NoNewWindow -PassThru; $p.WaitForExit() } [System.IO.File]::SetAttributes($file.FullName, [System.IO.FileAttributes]::ReadOnly) }"
+:: 2. OneDrive-Zwangszugriff über native Windows-Befehle vor dem Patchvorgang
+for /d %%P in ("%PROFILE_DIR%\*") do (
+    if exist "%%P\controls.sii" (
+        echo Syncing profile: %%~nxP
+        
+        :: Erzwingt, dass Windows die Datei physisch aus OneDrive herunterlaedt
+        type "%%P\controls.sii" >nul 2>&1
+        
+        :: Entfernt rigoros alle Dateiattribute (Schreibschutz, System- und Cloud-Sperren)
+        attrib -r -s -h -p "%%P\controls.sii" >nul 2>&1
+    )
+)
+
+echo.
+echo Patching configuration files...
+echo.
+
+:: 3. Fehlerfreier Patch via PowerShell (Datei ist nun garantiert lokal vorhanden)
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$files = Get-ChildItem -Path '%PROFILE_DIR%' -Filter 'controls.sii' -Recurse; if ($files.Count -eq 0) { Write-Host '[ERROR] No controls.sii found!' -ForegroundColor Red; exit }; foreach ($file in $files) { Write-Host \"Processing profile: $($file.Directory.Name)\" -ForegroundColor Green; $bakFile = Join-Path $file.DirectoryName 'controls.sii.bak'; if (-not (Test-Path $bakFile)) { Copy-Item $file.FullName $bakFile -Force; Write-Host '  -> Backup created: controls.sii.bak' -ForegroundColor Yellow } else { Write-Host '  -> Backup already exists. Skipping backup.' -ForegroundColor Gray }; try { $text = [System.IO.File]::ReadAllText($file.FullName); $newLines = ' config_lines: \"mix dsteerleft ``keyboard.a?0``\"' + [Environment]::NewLine + ' config_lines: \"mix dsteerright ``keyboard.d?0``\"' + [Environment]::NewLine + ' config_lines: \"mix dsteering ``(keyboard.a?0 - keyboard.d?0) * (0.35 + keyboard.space?0 * 0.65)``\"' + [Environment]::NewLine + ' config_lines: \"mix steering ``dsteering``\"' + [Environment]::NewLine + ' config_lines: \"mix msteering ``-mouse.rel_position.x?0 * c_msens``\"' + [Environment]::NewLine + ' config_lines: \"mix mpedals ``-mouse.rel_position.y?0 * c_msens``\"' + [Environment]::NewLine + ' config_lines: \"mix dforward ``0``\"' + [Environment]::NewLine + ' config_lines: \"mix dbackward ``0``\"' + [Environment]::NewLine + ' config_lines: \"mix aforward ``(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)``\"' + [Environment]::NewLine + ' config_lines: \"mix abackward ``keyboard.s?0 * (0.10 + keyboard.space?0 * 0.50)``\"' + [Environment]::NewLine + ' config_lines: \"mix forward ``aforward``\"' + [Environment]::NewLine + ' config_lines: \"mix backward ``abackward``\"'; $text = $text -replace '(?s) config_lines\[330\]:.*config_lines\[341\]:[^\r\n]*', $newLines; [System.IO.File]::WriteAllText($file.FullName, $text, (New-Object System.Text.UTF8Encoding($false))); Write-Host '  -> Successfully patched!' -ForegroundColor Green } catch { Write-Host '  -> [ERROR] Failed to modify the file. Access blocked by OneDrive.' -ForegroundColor Red } [System.IO.File]::SetAttributes($file.FullName, [System.IO.FileAttributes]::ReadOnly) }"
 
 echo.
 echo [INFO] Installation process finished.
