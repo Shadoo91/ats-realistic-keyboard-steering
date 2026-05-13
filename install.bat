@@ -1,6 +1,5 @@
 @echo off
 title ATS Turbo-Input Installer
-setlocal enabledelayedexpansion
 
 :: ==========================================
 :: ADMIN-RECHTE PRÜFEN & ANFORDERN
@@ -19,7 +18,7 @@ cd /d "%~dp0"
 
 echo ===================================================================================
 echo   ATS Realistic-Keyboard-Steering (RKS) (Turbo-Mode) - for Windows ~ by Shadoo91
-echo   [PYTHON CORE REPLACEMENT ENGINE]
+echo   [NATIVE ENGINE - NO POWERSHELL - NO PYTHON]
 echo ===================================================================================
 echo.
 
@@ -37,47 +36,58 @@ if not exist "%PROFILE_DIR%" (
 echo Profiles directory found at:
 echo "%PROFILE_DIR%"
 echo.
-echo Executing Python Core Patch Engine...
+echo Patching configuration files...
 echo.
 
-:: 2. Schreibe ein unzerstoerbares Python-Skript, das absolut keine Zeichen- oder Cloudfehler kennt
+:: 2. Erstelle ein unzerstoerbares JScript, das auf JEDEM Windows-PC existiert
 (
-echo import os, re, shutil
-echo profile_dir = r'%PROFILE_DIR%'
-echo new_lines = ''' config_lines: "mix dsteerleft `keyboard.a?0`"
-echo  config_lines: "mix dsteerright `keyboard.d?0`"
-echo  config_lines: "mix dsteering `(keyboard.a?0 - keyboard.d?0) * (0.35 + keyboard.space?0 * 0.65)`"
-echo  config_lines: "mix steering `dsteering`"
-echo  config_lines: "mix msteering `-mouse.rel_position.x?0 * c_msens`"
-echo  config_lines: "mix mpedals `-mouse.rel_position.y?0 * c_msens`"
-echo  config_lines: "mix dforward `0`"
-echo  config_lines: "mix dbackward `0`"
-echo  config_lines: "mix aforward `(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)`"
-echo  config_lines: "mix abackward `keyboard.s?0 * (0.10 + keyboard.space?0 * 0.50)`"
-echo  config_lines: "mix forward `aforward`"
-echo  config_lines: "mix backward `abackward`"'''
-echo for root, dirs, files in os.walk(profile_dir^):
-echo     if 'controls.sii' in files:
-echo         config_file = os.path.join(root, 'controls.sii'^)
-echo         bak_file = config_file + '.bak'
-echo         print(f"Processing profile: {os.path.basename(root^)}"^)
-echo         try:
-echo             if not os.path.exists(bak_file^): shutil.copyfile(config_file, bak_file^)
-echo             os.chmod(config_file, 0o666^)
-echo             with open(config_file, 'r', encoding='utf-8', errors='ignore'^) as f: text = f.read(^)
-echo             patched_text = re.sub(r'(?s) config_lines\[330\]:.*config_lines\[341\]:[^\r\n]*', new_lines, text^)
-echo             with open(config_file, 'w', encoding='utf-8', newline='\r\n'^) as f: f.write(patched_text^)
-echo             os.chmod(config_file, 0o444^)
-echo             print("  -> Successfully patched!"^)
-echo         except Exception as e: print(f"  -> [ERROR] Access blocked: {e}"^)
-) > "%temp%\ats_py_patch.py"
+echo var fso = new ActiveXObject("Scripting.FileSystemObject"^);
+echo var args = WScript.Arguments;
+echo var profilePath = args(0^);
+echo var configFile = profilePath + "\\controls.sii";
+echo var bakFile = configFile + ".bak";
+echo if (fso.FileExists(configFile^)^) {
+echo     if (!fso.FileExists(bakFile^)^) { fso.CopyFile(configFile, bakFile, true^); }
+echo     var file = fso.GetFile(configFile^);
+echo     if (file.Attributes ^& 1^) { file.Attributes -= 1; }
+echo     var ts = fso.OpenTextFile(configFile, 1, false, 0^);
+echo     var text = ts.ReadAll(^);
+echo     ts.Close(^);
+echo     var newLines = " config_lines: \"mix dsteerleft `keyboard.a?0`\"\r\n" +
+echo                    " config_lines: \"mix dsteerright `keyboard.d?0`\"\r\n" +
+echo                    " config_lines: \"mix dsteering `(keyboard.a?0 - keyboard.d?0) * (0.35 + keyboard.space?0 * 0.65)`\"\r\n" +
+echo                    " config_lines: \"mix steering `dsteering`\"\r\n" +
+echo                    " config_lines: \"mix msteering `-mouse.rel_position.x?0 * c_msens`\"\r\n" +
+echo                    " config_lines: \"mix mpedals `-mouse.rel_position.y?0 * c_msens`\"\r\n" +
+echo                    " config_lines: \"mix dforward `0`\"\r\n" +
+echo                    " config_lines: \"mix dbackward `0`\"\r\n" +
+echo                    " config_lines: \"mix aforward `(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)`\"\r\n" +
+echo                    " config_lines: \"mix abackward `keyboard.s?0 * (0.10 + keyboard.space?0 * 0.50)`\"\r\n" +
+echo                    " config_lines: \"mix forward `aforward`\"\r\n" +
+echo                    " config_lines: \"mix backward `abackward`\"";
+echo     var regex = / config_lines\[330\]:[\s\S]*?config_lines\[341\]:[^\r\n]*/;
+echo     if (regex.test(text^)^) {
+echo         text = text.replace(regex, newLines^);
+echo         var ws = fso.OpenTextFile(configFile, 2, true, 0^);
+echo         ws.Write(text^);
+echo         ws.Close(^);
+echo         WScript.Echo("  -> Successfully patched!"^);
+echo     } else {
+echo         WScript.Echo("  -> [ERROR] Lines 330-341 not found. Already patched?"^);
+echo     }
+echo     file.Attributes += 1;
+echo }
+) > "%temp%\ats_js_patch.js"
 
-:: 3. Starte den Python-Kern
-python "%temp%\ats_py_patch.py" 2>nul
-if %errorlevel% neq 0 (
-    python3 "%temp%\ats_py_patch.py" 2>nul
+:: 3. Profile durchlaufen und JScript aufrufen
+for /d %%P in ("%PROFILE_DIR%\*") do (
+    if exist "%%P\controls.sii" (
+        echo Processing profile: %%~nxP
+        cscript //nologo "%temp%\ats_js_patch.js" "%%P"
+    )
 )
-del "%temp%\ats_py_patch.py"
+
+del "%temp%\ats_js_patch.js"
 
 echo.
 echo [INFO] Installation process finished.
