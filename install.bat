@@ -1,5 +1,5 @@
 @echo off
-title ATS Turbo-Input Installer
+title SCS Games Turbo-Input Installer
 setlocal enabledelayedexpansion
 
 :: ==========================================
@@ -18,18 +18,18 @@ if %errorlevel% neq 0 (
 cd /d "%~dp0"
 
 echo ===================================================================================
-echo   ATS Realistic-Keyboard-Steering (RKS) (Turbo-Mode) - for Windows ~ by Shadoo91
-echo   [OMNIPRESENT TARGET INJECTOR - PATCH ALL PROFILES]
+echo   ATS ^& ETS2 Realistic-Keyboard-Steering (RKS) (Turbo-Mode) ~ by Shadoo91
+echo   [OMNIPRESENT TARGET INJECTOR - ATS ^& ETS2 MULTI-PATCH]
 echo ===================================================================================
 echo.
 
-echo Scanning your system for active American Truck Simulator profiles...
+echo Scanning your system for active ATS ^& ETS2 profiles...
 echo Please wait a moment...
 echo.
 
 set "FOUND_ANY=0"
 
-:: Durchsucht den gesamten Benutzerordner (inklusive Dokumente, OneDrive und Local) nach controls.sii
+:: Durchsucht den gesamten Benutzerordner (inklusive Dokumente und OneDrive) nach JEDER controls.sii
 for /f "delims=" %%F in ('dir "%USERPROFILE%\controls.sii" /s /b 2^>nul') do (
     set "FILE_PATH=%%F"
     set "DIR_PATH=%%~dpF"
@@ -39,10 +39,8 @@ for /f "delims=" %%F in ('dir "%USERPROFILE%\controls.sii" /s /b 2^>nul') do (
         echo "!FILE_PATH!"
         set "FOUND_ANY=1"
         
-        :: Attribute rigoros entfernen (bricht OneDrive-Sperren)
         attrib -r -s -h "!FILE_PATH!" >nul 2>&1
         
-        :: 1. Sicherheits-Backup direkt vor Ort erstellen, falls noch nicht da
         if not exist "!DIR_PATH!controls.sii.bak" (
             copy /y "!FILE_PATH!" "!DIR_PATH!controls.sii.bak" >nul 2>&1
             echo   -^> Backup created: controls.sii.bak
@@ -50,11 +48,9 @@ for /f "delims=" %%F in ('dir "%USERPROFILE%\controls.sii" /s /b 2^>nul') do (
             echo   -^> Backup already exists.
         )
         
-        :: 2. Datei in die sichere lokale Sandbox kopieren, um Schreibfehler im OneDrive zu blockieren
         copy /y "!FILE_PATH!" "%temp%\controls_sandbox.sii" >nul 2>&1
         if exist "%temp%\controls_ready.tmp" del /f /q "%temp%\controls_ready.tmp" >nul
         
-        :: 3. Datei in der Sandbox Zeile fuer Zeile auslesen und den Block sauber injizieren
         for /f "usebackq tokens=* delims=" %%L in ("%temp%\controls_sandbox.sii") do (
             set "line=%%L"
             set "written=0"
@@ -77,14 +73,10 @@ for /f "delims=" %%F in ('dir "%USERPROFILE%\controls.sii" /s /b 2^>nul') do (
             )
         )
         
-        :: 4. Datei mit brutaler Systemgewalt ueberschreiben (Hebelt OneDrive aus)
         replace "%temp%\controls_ready.tmp" "!DIR_PATH!." /R /U >nul 2>&1
         copy /y "%temp%\controls_ready.tmp" "!FILE_PATH!" >nul 2>&1
         
-        :: Sandbox leeren
         del /f /q "%temp%\controls_sandbox.sii" "%temp%\controls_ready.tmp" >nul 2>&1
-        
-        :: Schreibschutz fuer SCS wieder rein
         attrib +r "!FILE_PATH!" >nul 2>&1
         echo   -^> SUCCESSFULLY PATCHED!
         echo -----------------------------------------------------------------------------------
@@ -92,9 +84,9 @@ for /f "delims=" %%F in ('dir "%USERPROFILE%\controls.sii" /s /b 2^>nul') do (
 )
 
 if "!FOUND_ANY!"=="0" (
-    echo [ERROR] No active profiles found on this PC.
+    echo [ERROR] No active ATS or ETS2 profiles found on this PC.
 )
 
 echo.
-echo [INFO] Installation completed.
+echo [INFO] Installation completed. Both games patched if detected.
 pause
