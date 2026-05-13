@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "======================================================================================"
-echo "   ATS Realistic-Keayboard-Steering (RKS) (Turbo-Mode) - for Windows ~ by Shadoo91    "
+echo "   ATS Realistic-Keayboard-Steering (RKS) (Turbo-Mode) - for LINUX ~ by Shadoo91    "
 echo "======================================================================================"
 echo
 
