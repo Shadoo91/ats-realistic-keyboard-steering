@@ -1,7 +1,7 @@
 #!/bin/bash
-echo "==============================================================================="
-echo "   ATS Realistic-Keayboard-Steering (RKS) (Turbo-Mode) for Linux ~ by Shadoo   "
-echo "==============================================================================="
+echo "====================================================================================="
+echo "   ATS Realistic-Keayboard-Steering (RKS) (Turbo-Mode) - for Windows ~ by Shadoo91   "
+echo "====================================================================================="
 echo
 
 TARGET_DIR="$HOME/.steam/steam/steamapps/compatdata/270880/pfx/drive_c/users/steamuser/Documents/American Truck Simulator/profiles"
@@ -40,9 +40,6 @@ find "$TARGET_DIR" -name "controls.sii" | while read -r FILE; do
     sed -i 's|config_lines\[339\]:.*|config_lines\[339\]: "mix abackward `keyboard.s?0 * (0.10 + keyboard.space?0 * 0.50)`"|' "$FILE"
     sed -i 's|config_lines\[340\]:.*|config_lines\[340\]: "mix forward `aforward`"|' "$FILE"
     sed -i 's|config_lines\[341\]:.*|config_lines\[341\]: "mix backward `abackward`"|' "$FILE"
-    
-    sed -i 's|config_lines\[358\]:.*|config_lines\[358\]: "mix airhorn `keyboard.lalt?0 \| semantical.airhorn?0`"|' "$FILE"
-    sed -i 's|mix parkingbrake.*|mix parkingbrake `keyboard.backspace?0`"|' "$FILE"
     
     chmod 444 "$FILE"
 done
