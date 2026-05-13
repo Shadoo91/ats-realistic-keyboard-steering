@@ -19,7 +19,7 @@ cd /d "%~dp0"
 
 echo ===================================================================================
 echo   ATS Realistic-Keyboard-Steering (RKS) (Turbo-Mode) ~ by Shadoo91
-echo   [SAFE POWERSHELL ENGINE - NO SPECIAL CHARACTER CORRUPTION]
+echo   [SAFE POWERSHELL ENGINE - ORIGINAL VALUES PROTECTED]
 echo ===================================================================================
 echo.
 
@@ -34,15 +34,14 @@ if not exist "%PROFILE_DIR%\*" (
 echo Profiles directory found at:
 echo "%PROFILE_DIR%"
 echo.
-echo Patching configuration files...
+echo Patching configuration files with your original math...
 echo.
 
-:: Ruft PowerShell isoliert auf. Das verhindert, dass CMD Sonderzeichen wie '&' zerhackt!
 powershell -NoProfile -ExecutionPolicy Bypass -Command ^
     "$dir = '%PROFILE_DIR%'; ^
      $files = Get-ChildItem -Path $dir -Filter 'controls.sii' -Recurse; ^
      foreach ($file in $files) { ^
-         Write-Host 'Processing profile:' $file.Directory.Name -ForegroundColor Cyan; ^
+         Write-Host 'Patching Profile:' $file.Directory.Name -ForegroundColor Cyan; ^
          $bak = $file.FullName + '.bak'; ^
          if (-not (Test-Path $bak)) { Copy-Item $file.FullName $bak -Force }; ^
          [System.IO.File]::SetAttributes($file.FullName, [System.IO.FileAttributes]::Normal); ^
@@ -57,11 +56,11 @@ powershell -NoProfile -ExecutionPolicy Bypass -Command ^
          $text = $text -replace '(?m)^\s*config_lines\[\d+\]:\s*\"mix dbackward\s+.*\"', ' config_lines: \"mix dbackward `0`\"'; ^
          $text = $text -replace '(?m)^\s*config_lines\[\d+\]:\s*\"mix aforward\s+.*\"', ' config_lines: \"mix aforward `0`\"'; ^
          $text = $text -replace '(?m)^\s*config_lines\[\d+\]:\s*\"mix abackward\s+.*\"', ' config_lines: \"mix abackward `0`\"'; ^
-         $text = $text -replace '(?m)^\s*config_lines\[\d+\]:\s*\"mix forward\s+.*\"', ' config_lines: \"mix forward `(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)`\"'; ^
-         $text = $text -replace '(?m)^\s*config_lines\[\d+\]:\s*\"mix backward\s+.*\"', ' config_lines: \"mix backward `keyboard.s?0 * (0.10 + keyboard.space?0 * 0.50)`\"'; ^
+         $text = $text -replace '(?m)^\s*config_lines\[\d+\]:\s*\"mix forward\s+.*\"', ' config_lines: \"mix forward `deadzone((keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55), 0)`\"'; ^
+         $text = $text -replace '(?m)^\s*config_lines\[\d+\]:\s*\"mix backward\s+.*\"', ' config_lines: \"mix backward `deadzone(keyboard.s?0 * (0.10 + keyboard.space?0 * 0.50), 0)`\"'; ^
          [System.IO.File]::WriteAllText($file.FullName, $text, [System.Text.Encoding]::ASCII); ^
          [System.IO.File]::SetAttributes($file.FullName, [System.IO.FileAttributes]::ReadOnly); ^
-         Write-Host '  -> Successfully patched profile!' -ForegroundColor Green; ^
+         Write-Host '  -> Successfully patched with your exact values!' -ForegroundColor Green; ^
      }"
 
 echo.
