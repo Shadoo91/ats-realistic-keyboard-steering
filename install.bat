@@ -19,7 +19,7 @@ cd /d "%~dp0"
 
 echo ===================================================================================
 echo   ATS Realistic-Keyboard-Steering (RKS) (Turbo-Mode) ~ by Shadoo91
-echo   [UNIVERSAL LOCAL PATCH ENGINE - NO SCRIPTING DEPENDENCIES]
+echo   [UNIVERSAL LOCAL PATCH ENGINE - SYNTAX FIXED]
 echo ===================================================================================
 echo.
 
@@ -51,17 +51,15 @@ for /d %%P in ("%PROFILE_DIR%\*") do (
         if not exist "%%P\controls.sii.bak" (
             copy /y "%%P\controls.sii" "%%P\controls.sii.bak" >nul 2>&1
             echo   -^> Backup created: controls.sii.bak
-        ) else (
-            echo   -^> Backup already exists.
         )
         
-        :: Filtert die alten Zeilen sauber heraus ohne VBS oder PowerShell-Risiken
+        :: Filtert die alten Zeilen sauber heraus
         findstr /v /c:"mix dsteer" /c:"mix steering" /c:"mix msteering" /c:"mix mpedals" /c:"mix dforward" /c:"mix dbackward" /c:"mix aforward" /c:"mix abackward" /c:"mix forward" /c:"mix backward" "%%P\controls.sii" > "%temp%\controls_filtered.tmp" 2>nul
         
         :: Entfernt die schliessende Klammer "}" am Ende der Datei
         findstr /v /x "}" "%temp%\controls_filtered.tmp" > "%temp%\controls_ready.tmp" 2>nul
         
-        :: Fuegt deine Turbo-Zeilen fehlerfrei unten an den Datenstrom an
+        :: Fuegt deine Turbo-Zeilen in der absolut fehlerfreien SCS-Syntax ein
         echo  config_lines: "mix dsteerleft `keyboard.a?0`" >> "%temp%\controls_ready.tmp"
         echo  config_lines: "mix dsteerright `keyboard.d?0`" >> "%temp%\controls_ready.tmp"
         echo  config_lines: "mix dsteering `(keyboard.a?0 - keyboard.d?0) * (0.35 + keyboard.space?0 * 0.65)`" >> "%temp%\controls_ready.tmp"
@@ -70,10 +68,10 @@ for /d %%P in ("%PROFILE_DIR%\*") do (
         echo  config_lines: "mix mpedals `-mouse.rel_position.y?0 * c_msens`" >> "%temp%\controls_ready.tmp"
         echo  config_lines: "mix dforward `0`" >> "%temp%\controls_ready.tmp"
         echo  config_lines: "mix dbackward `0`" >> "%temp%\controls_ready.tmp"
-        echo  config_lines: "mix aforward `(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)`" >> "%temp%\controls_ready.tmp"
-        echo  config_lines: "mix abackward `keyboard.s?0 * (0.10 + keyboard.space?0 * 0.50)`" >> "%temp%\controls_ready.tmp"
-        echo  config_lines: "mix forward `aforward`" >> "%temp%\controls_ready.tmp"
-        echo  config_lines: "mix backward `abackward`" >> "%temp%\controls_ready.tmp"
+        echo  config_lines: "mix aforward `0`" >> "%temp%\controls_ready.tmp"
+        echo  config_lines: "mix abackward `0`" >> "%temp%\controls_ready.tmp"
+        echo  config_lines: "mix forward `(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)`" >> "%temp%\controls_ready.tmp"
+        echo  config_lines: "mix backward `keyboard.s?0 * (0.10 + keyboard.space?0 * 0.50)`" >> "%temp%\controls_ready.tmp"
         echo } >> "%temp%\controls_ready.tmp"
         
         :: Schiebt die fertige Datei zurueck ins Profil
