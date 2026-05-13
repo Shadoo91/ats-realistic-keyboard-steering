@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "======================================================================================"
-echo "   ATS Realistic-Keayboard-Steering (RKS) (Turbo-Mode) - for LINUX ~ by Shadoo91    "
+echo "   ATS Realistic-Keayboard-Steering (RKS) (Turbo-Mode) - for Windows ~ by Shadoo91    "
 echo "======================================================================================"
 echo
 
@@ -18,14 +18,4 @@ fi
 find "$TARGET_DIR" -name "controls.sii" | while read -r FILE; do
     echo "[INFO] Processing profile: $(basename "$(dirname "$FILE")")"
     
-    BAK_FILE="${FILE}.bak"
-    if [ ! -f "$BAK_FILE" ]; then
-        cp "$FILE" "$BAK_FILE"
-        echo "  -> Backup created: controls.sii.bak"
-    else
-        echo "  -> Backup already exists. Skipping backup."
-    fi
-    
-    chmod 644 "$FILE"
-    
-    sed -i 's|config_lines\[330\]:.*|config_lines\[330\]: "mix dsteerleft `keyboard.a?0`"|'
+    BAK_FILE=
