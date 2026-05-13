@@ -65,8 +65,7 @@ Dieses Skript aktualisiert deine American Truck Simulator Steuerungskonfiguratio
 *   **Bremsen:**
     *   **S-Taste (Sanfte Bremse):** Löst eine weiche Verzögerung von 10% aus. Schaltet die Bremslichter an, verhindert aber blockierende Reifen.
     *   **Turbo-Bremse (S + Leertaste):** Schaltet sofort **60% maximale Bremskraft** für harte Notbremsungen frei.
-*   **Lufthupe (Airhorn):** Auf die Taste **E** verlegt (da Alt nun für den Gas-Turbo genutzt wird).
-*   **Handbremse:** Auf die **Backspace-Taste** (Rücktaste) verlegt (da die Leertaste exklusiv für den Lenk-/Brems-Turbo genutzt wird).
+
 
 ### 🚀 Installations-Anleitung
 
