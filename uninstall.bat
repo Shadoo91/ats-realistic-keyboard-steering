@@ -1,41 +1,75 @@
 @echo off
-title ATS Turbo-Input Uninstaller
-echo ===================================================
-echo   ATS Turbo Keyboard Input Uninstaller for Windows
-echo ===================================================
-echo.
+title ATS Profile Uninstaller
+setlocal enabledelayedexpansion
 
-set "PROFILE_DIR=%USERPROFILE%\Documents\American Truck Simulator\profiles"
-
-if not exist "%PROFILE_DIR%" (
-    echo [ERROR] ATS profile directory not found!
-    goto END
+:: ==========================================
+:: ADMIN-RECHTE PRÜFEN & ANFORDERN
+:: ==========================================
+net session >nul 2>&1
+if %errorlevel% neq 0 (
+    echo Requesting Administrator privileges...
+    echo Set UAC = CreateObject^("Shell.Application"^) > "%temp%\getadmin.vbs"
+    echo UAC.ShellExecute "%~s0", "", "", "runas", 1 >> "%temp%\getadmin.vbs"
+    "%temp%\getadmin.vbs"
+    del "%temp%\getadmin.vbs"
+    exit /b
 )
 
-echo Restoring original files...
+cd /d "%~dp0"
+
+echo ===================================================================================
+echo   ATS Realistic-Keyboard-Steering (RKS) ~ by Shadoo91
+echo   [UNIVERSAL UNINSTALLER - RESTORE ALL PROFILES]
+echo ===================================================================================
 echo.
 
-:: Erstelle ein temporaeres PowerShell-Skript, um Zeilen-Uebergänge ohne Sonderzeichen zu verarbeiten
-echo $bakFiles = Get-ChildItem -Path '%PROFILE_DIR%' -Filter 'controls.sii.bak' -Recurse > "%temp%\ats_unpatch.ps1"
-echo if ($bakFiles.Count -eq 0) { Write-Host '[INFO] No backups found. System is already in original state.' -ForegroundColor Yellow; exit } >> "%temp%\ats_unpatch.ps1"
-echo foreach ($bak in $bakFiles) { >> "%temp%\ats_unpatch.ps1"
-echo     $configFile = Join-Path $bak.DirectoryName 'controls.sii' >> "%temp%\ats_unpatch.ps1"
-echo     Write-Host "Restoring profile: $($bak.Directory.Name)" -ForegroundColor Green >> "%temp%\ats_unpatch.ps1"
-echo     if (Test-Path $configFile) { >> "%temp%\ats_unpatch.ps1"
-echo         $attrib = Get-ItemProperty $configFile >> "%temp%\ats_unpatch.ps1"
-echo         if ($attrib.Attributes -match 'ReadOnly') { [System.IO.File]::SetAttributes($configFile, [System.IO.FileAttributes]::Normal) } >> "%temp%\ats_unpatch.ps1"
-echo         Remove-Item $configFile -Force >> "%temp%\ats_unpatch.ps1"
-echo     } >> "%temp%\ats_unpatch.ps1"
-echo     Move-Item $bak.FullName $configFile -Force >> "%temp%\ats_unpatch.ps1"
-echo     [System.IO.File]::SetAttributes($configFile, [System.IO.FileAttributes]::Normal) >> "%temp%\ats_unpatch.ps1"
-echo } >> "%temp%\ats_unpatch.ps1"
+:: 1. Automatische Pfad-Erkennung (Fokus auf echten lokalen Dokumentenordner)
+set "PROFILE_DIR=%USERPROFILE%\Documents\American Truck Simulator\profiles"
 
-:: Fuehre das Skript aus und loesche die temporaere Datei
-powershell -NoProfile -ExecutionPolicy Bypass -File "%temp%\ats_unpatch.ps1"
-del "%temp%\ats_unpatch.ps1"
+if not exist "%PROFILE_DIR%\*" (
+    echo [ERROR] American Truck Simulator profiles directory not found!
+    echo Nothing to restore.
+    pause
+    exit
+)
+
+echo Profiles directory found at:
+echo "%PROFILE_DIR%"
+echo.
+echo Searching for backups and restoring original controls...
+echo.
+
+set "RESTORED_ANY=0"
+
+:: 2. Alle Profile im Ordner durchlaufen
+for /d %%P in ("%PROFILE_DIR%\*") do (
+    if exist "%%P\controls.sii.bak" (
+        echo Processing ATS Profile: %%~nxP
+        set "RESTORED_ANY=1"
+        
+        :: Attribute aufheben, um Schreibblockaden zu verhindern
+        attrib -r -s -h "%%P\controls.sii" >nul 2>&1
+        attrib -r -s -h "%%P\controls.sii.bak" >nul 2>&1
+        
+        :: Aktuelle modifizierte Datei loeschen
+        del /f /q "%%P\controls.sii" >nul 2>&1
+        
+        :: Backup-Sicherung in die originale controls.sii zurueckkopieren
+        copy /y "%%P\controls.sii.bak" "%%P\controls.sii" >nul 2>&1
+        
+        :: Optionale Bereinigung: Die .bak Datei nach der Wiederherstellung entfernen
+        del /f /q "%%P\controls.sii.bak" >nul 2>&1
+        
+        echo   -^> Original backup successfully restored!
+        echo -----------------------------------------------------------------------------------
+    )
+)
 
 echo.
-echo [INFO] Uninstallation complete. Original steering configuration restored!
-:END
-echo.
+if "!RESTORED_ANY!"=="0" (
+    echo [INFO] No backup files (.bak) found. Your profiles are already using default controls.
+) else (
+    echo [INFO] Uninstallation completed successfully! All profiles restored to original layout.
+)
+
 pause
