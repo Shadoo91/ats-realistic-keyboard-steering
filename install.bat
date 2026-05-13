@@ -2,9 +2,24 @@
 title ATS Turbo-Input Installer
 setlocal enabledelayedexpansion
 
+:: ==========================================
+:: ADMIN-RECHTE PRÜFEN & ANFORDERN
+:: ==========================================
+net session >nul 2>&1
+if %errorlevel% neq 0 (
+    echo Requesting Administrator privileges...
+    echo Set UAC = CreateObject^("Shell.Application"^) > "%temp%\getadmin.vbs"
+    echo UAC.ShellExecute "%~s0", "", "", "runas", 1 >> "%temp%\getadmin.vbs"
+    "%temp%\getadmin.vbs"
+    del "%temp%\getadmin.vbs"
+    exit /b
+)
+
+cd /d "%~dp0"
+
 echo ===================================================================================
 echo   ATS Realistic-Keyboard-Steering (RKS) (Turbo-Mode) - for Windows ~ by Shadoo91
-echo   [RAW BATCH APPEND ENGINE - NO SCRIPTING DEPENDENCIES]
+echo   [SANDBOX APPENDER - ONEDRIVE SAFE]
 echo ===================================================================================
 echo.
 
@@ -22,7 +37,7 @@ if not exist "%PROFILE_DIR%" (
 echo Profiles directory found at:
 echo "%PROFILE_DIR%"
 echo.
-echo Patching configuration files...
+echo Patching configuration files via local sandbox...
 echo.
 
 :: 2. Profile durchlaufen
@@ -30,43 +45,49 @@ for /d %%P in ("%PROFILE_DIR%\*") do (
     if exist "%%P\controls.sii" (
         echo Processing profile: %%~nxP
         
-        :: Schreibschutz brechen und OneDrive-Download erzwingen
-        attrib -r -s -h "%%P\controls.sii" >nul 2>&1
-        type "%%P\controls.sii" >nul 2>&1
-        
         :: Backup erstellen, falls noch nicht vorhanden
         if not exist "%%P\controls.sii.bak" (
-            copy /y "%%P\controls.sii" "%%P\controls.sii.bak" >nul
+            copy /y "%%P\controls.sii" "%%P\controls.sii.bak" >nul 2>&1
             echo   -^> Backup created: controls.sii.bak
         ) else (
             echo   -^> Backup already exists. Skipping backup.
         )
         
-        :: Erstelle eine saubere temporaere Datei OHNE die alten Zeilen 330-341
-        :: findstr filtert alle Zeilen heraus, die diese Nummern oder deine alten Patches enthalten
-        findstr /v /c:"config_lines[330]:" /c:"config_lines[331]:" /c:"config_lines[332]:" /c:"config_lines[333]:" /c:"config_lines[334]:" /c:"config_lines[335]:" /c:"config_lines[336]:" /c:"config_lines[337]:" /c:"config_lines[338]:" /c:"config_lines[339]:" /c:"config_lines[340]:" /c:"config_lines[341]:" /c:"mix dsteer" /c:"mix steering" /c:"mix msteering" /c:"mix mpedals" /c:"mix dforward" /c:"mix dbackward" /c:"mix aforward" /c:"mix abackward" /c:"mix forward" /c:"mix backward" "%%P\controls.sii" > "%%P\controls.tmp"
+        :: Schreibschutz im OneDrive aufheben
+        attrib -r -s -h "%%P\controls.sii" >nul 2>&1
         
-        :: Jetzt loeschen wir die letzte schliessende Klammer "}" der Datei, um unseren Code vor ihr einzufuegen
-        findstr /v /x "}" "%%P\controls.tmp" > "%%P\controls.sii"
-        del /f /q "%%P\controls.tmp" >nul 2>&1
+        :: DIE RETTUNG: Kopiere die Datei in das lokale Temp-Verzeichnis (Sandbox)
+        :: Hier hat OneDrive KEINEN Zugriff und kann nichts blockieren!
+        copy /y "%%P\controls.sii" "%temp%\controls_sandbox.sii" >nul
         
-        :: Jetzt klatschen wir deine neuen Turbo-Zeilen und die schliessende Klammer einfach unten ran!
-        :: Keine Schleifen, kein PowerShell, kein JScript. Reiner Text-Append.
-        echo  config_lines: "mix dsteerleft `keyboard.a?0`" >> "%%P\controls.sii"
-        echo  config_lines: "mix dsteerright `keyboard.d?0`" >> "%%P\controls.sii"
-        echo  config_lines: "mix dsteering `(keyboard.a?0 - keyboard.d?0) * (0.35 + keyboard.space?0 * 0.65)`" >> "%%P\controls.sii"
-        echo  config_lines: "mix steering `dsteering`" >> "%%P\controls.sii"
-        echo  config_lines: "mix msteering `-mouse.rel_position.x?0 * c_msens`" >> "%%P\controls.sii"
-        echo  config_lines: "mix mpedals `-mouse.rel_position.y?0 * c_msens`" >> "%%P\controls.sii"
-        echo  config_lines: "mix dforward `0`" >> "%%P\controls.sii"
-        echo  config_lines: "mix dbackward `0`" >> "%%P\controls.sii"
-        echo  config_lines: "mix aforward `(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)`" >> "%%P\controls.sii"
-        echo  config_lines: "mix abackward `keyboard.s?0 * (0.10 + keyboard.space?0 * 0.50)`" >> "%%P\controls.sii"
-        echo  config_lines: "mix forward `aforward`" >> "%%P\controls.sii"
-        echo  config_lines: "mix backward `abackward`" >> "%%P\controls.sii"
-        echo } >> "%%P\controls.sii"
+        :: Bereinige die Sandkasten-Datei von alten Zeilen
+        findstr /v /c:"config_lines[330]:" /c:"config_lines[331]:" /c:"config_lines[332]:" /c:"config_lines[333]:" /c:"config_lines[334]:" /c:"config_lines[335]:" /c:"config_lines[336]:" /c:"config_lines[337]:" /c:"config_lines[338]:" /c:"config_lines[339]:" /c:"config_lines[340]:" /c:"config_lines[341]:" /c:"mix dsteer" /c:"mix steering" /c:"mix msteering" /c:"mix mpedals" /c:"mix dforward" /c:"mix dbackward" /c:"mix aforward" /c:"mix abackward" /c:"mix forward" /c:"mix backward" "%temp%\controls_sandbox.sii" > "%temp%\controls_filtered.tmp"
         
-        :: Schreibschutz wieder aktivieren, damit das Spiel es frisst
+        :: Entferne die schliessende Klammer am Ende
+        findstr /v /x "}" "%temp%\controls_filtered.tmp" > "%temp%\controls_ready.tmp"
+        
+        :: Schreibe deine neuen Turbo-Zeilen direkt in die lokale Sandbox-Datei
+        echo  config_lines: "mix dsteerleft `keyboard.a?0`" >> "%temp%\controls_ready.tmp"
+        echo  config_lines: "mix dsteerright `keyboard.d?0`" >> "%temp%\controls_ready.tmp"
+        echo  config_lines: "mix dsteering `(keyboard.a?0 - keyboard.d?0) * (0.35 + keyboard.space?0 * 0.65)`" >> "%temp%\controls_ready.tmp"
+        echo  config_lines: "mix steering `dsteering`" >> "%temp%\controls_ready.tmp"
+        echo  config_lines: "mix msteering `-mouse.rel_position.x?0 * c_msens`" >> "%temp%\controls_ready.tmp"
+        echo  config_lines: "mix mpedals `-mouse.rel_position.y?0 * c_msens`" >> "%temp%\controls_ready.tmp"
+        echo  config_lines: "mix dforward `0`" >> "%temp%\controls_ready.tmp"
+        echo  config_lines: "mix dbackward `0`" >> "%temp%\controls_ready.tmp"
+        echo  config_lines: "mix aforward `(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)`" >> "%temp%\controls_ready.tmp"
+        echo  config_lines: "mix abackward `keyboard.s?0 * (0.10 + keyboard.space?0 * 0.50)`" >> "%temp%\controls_ready.tmp"
+        echo  config_lines: "mix forward `aforward`" >> "%temp%\controls_ready.tmp"
+        echo  config_lines: "mix backward `abackward`" >> "%temp%\controls_ready.tmp"
+        echo } >> "%temp%\controls_ready.tmp"
+        
+        :: Schiebe die fertig modifizierte Datei per erzwungenem Overwrite zurück zu OneDrive
+        copy /y "%temp%\controls_ready.tmp" "%%P\controls.sii" >nul
+        
+        :: Aufraeumen in der lokalen Sandbox
+        del /f /q "%temp%\controls_sandbox.sii" "%temp%\controls_filtered.tmp" "%temp%\controls_ready.tmp" >nul 2>&1
+        
+        :: Schreibschutz im OneDrive wieder rein, damit ATS die Datei akzeptiert
         attrib +r "%%P\controls.sii"
         echo   -^> Successfully patched^!
     )
