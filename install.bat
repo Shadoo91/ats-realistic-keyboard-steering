@@ -1,64 +1,68 @@
 @echo off
-title ATS Turbo-Input Installer
+title ATS Profile Installer
 setlocal enabledelayedexpansion
 
-echo ===================================================
-echo   ATS Turbo Keyboard Input Installer for Windows  
-echo ===================================================
+:: ==========================================
+:: ADMIN-RECHTE PRÜFEN & ANFORDERN
+:: ==========================================
+net session >nul 2>&1
+if %errorlevel% neq 0 (
+    echo Requesting Administrator privileges...
+    echo Set UAC = CreateObject^("Shell.Application"^) > "%temp%\getadmin.vbs"
+    echo UAC.ShellExecute "%~s0", "", "", "runas", 1 >> "%temp%\getadmin.vbs"
+    "%temp%\getadmin.vbs"
+    del "%temp%\getadmin.vbs"
+    exit /b
+)
+
+cd /d "%~dp0"
+
+echo ===================================================================================
+echo   ATS Realistic-Keyboard-Steering (RKS) (Turbo-Mode) ~ by Shadoo91
+echo   [SAFE POWERSHELL ENGINE - NO SPECIAL CHARACTER CORRUPTION]
+echo ===================================================================================
 echo.
 
 set "PROFILE_DIR=%USERPROFILE%\Documents\American Truck Simulator\profiles"
 
-if not exist "%PROFILE_DIR%" (
-    echo [ERROR] ATS profile directory not found!
+if not exist "%PROFILE_DIR%\*" (
+    echo [ERROR] American Truck Simulator profiles directory not found!
     pause
     exit
 )
 
-echo Searching profiles and creating backups...
+echo Profiles directory found at:
+echo "%PROFILE_DIR%"
+echo.
+echo Patching configuration files...
 echo.
 
-for /d %%P in ("%PROFILE_DIR%\*") do (
-    if exist "%%P\controls.sii" (
-        echo Processing profile: %%~nxP
-        
-        if not exist "%%P\controls.sii.bak" (
-            copy "%%P\controls.sii" "%%P\controls.sii.bak" >nul
-            echo   -^> Backup created: controls.sii.bak
-        ) else (
-            echo   -^> Backup already exists. Skipping backup.
-        )
-        
-        attrib -r "%%P\controls.sii"
-        type nul > "%%P\controls.tmp"
-        
-        for /f "usebackq tokens=* delims=" %%L in ("%%P\controls.sii") do (
-            set "line=%%L"
-            set "patched=0"
-            
-            :: Loest das Nummern-Problem: Sucht nach den NAMEN statt nach den Nummern!
-            if not "!line:mix dsteerleft=! "=="!line! " ( echo  config_lines: "mix dsteerleft `keyboard.a?0`" >> "%%P\controls.tmp" & set "patched=1" )
-            if not "!line:mix dsteerright=! "=="!line! " ( echo  config_lines: "mix dsteerright `keyboard.d?0`" >> "%%P\controls.tmp" & set "patched=1" )
-            if not "!line:mix dsteering=! "=="!line! " ( echo  config_lines: "mix dsteering `(keyboard.a?0 - keyboard.d?0) * (0.35 + keyboard.space?0 * 0.65)`" >> "%%P\controls.tmp" & set "patched=1" )
-            if not "!line:mix steering=! "=="!line! " ( echo  config_lines: "mix steering `dsteering`" >> "%%P\controls.tmp" & set "patched=1" )
-            if not "!line:mix msteering=! "=="!line! " ( echo  config_lines: "mix msteering `-mouse.rel_position.x?0 * c_msens`" >> "%%P\controls.tmp" & set "patched=1" )
-            if not "!line:mix mpedals=! "=="!line! " ( echo  config_lines: "mix mpedals `-mouse.rel_position.y?0 * c_msens`" >> "%%P\controls.tmp" & set "patched=1" )
-            if not "!line:mix dforward=! "=="!line! " ( echo  config_lines: "mix dforward `0`" >> "%%P\controls.tmp" & set "patched=1" )
-            if not "!line:mix dbackward=! "=="!line! " ( echo  config_lines: "mix dbackward `0`" >> "%%P\controls.tmp" & set "patched=1" )
-            if not "!line:mix aforward=! "=="!line! " ( echo  config_lines: "mix aforward `0`" >> "%%P\controls.tmp" & set "patched=1" )
-            if not "!line:mix abackward=! "=="!line! " ( echo  config_lines: "mix abackward `0`" >> "%%P\controls.tmp" & set "patched=1" )
-            if not "!line:mix forward=! "=="!line! " ( echo  config_lines: "mix forward `(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)`" >> "%%P\controls.tmp" & set "patched=1" )
-            if not "!line:mix backward=! "=="!line! " ( echo  config_lines: "mix backward `keyboard.s?0 * (0.10 + keyboard.space?0 * 0.50)`" >> "%%P\controls.tmp" & set "patched=1" )
-            
-            if "!patched!"=="0" (
-                echo !line! >> "%%P\controls.tmp"
-            )
-        )
-        
-        move /y "%%P\controls.tmp" "%%P\controls.sii" >nul
-        attrib +r "%%P\controls.sii"
-    )
-)
+:: Ruft PowerShell isoliert auf. Das verhindert, dass CMD Sonderzeichen wie '&' zerhackt!
+powershell -NoProfile -ExecutionPolicy Bypass -Command ^
+    "$dir = '%PROFILE_DIR%'; ^
+     $files = Get-ChildItem -Path $dir -Filter 'controls.sii' -Recurse; ^
+     foreach ($file in $files) { ^
+         Write-Host 'Processing profile:' $file.Directory.Name -ForegroundColor Cyan; ^
+         $bak = $file.FullName + '.bak'; ^
+         if (-not (Test-Path $bak)) { Copy-Item $file.FullName $bak -Force }; ^
+         [System.IO.File]::SetAttributes($file.FullName, [System.IO.FileAttributes]::Normal); ^
+         $text = [System.IO.File]::ReadAllText($file.FullName); ^
+         $text = $text -replace '(?m)^\s*config_lines\[\d+\]:\s*\"mix dsteerleft\s+.*\"', ' config_lines: \"mix dsteerleft `keyboard.a?0`\"'; ^
+         $text = $text -replace '(?m)^\s*config_lines\[\d+\]:\s*\"mix dsteerright\s+.*\"', ' config_lines: \"mix dsteerright `keyboard.d?0`\"'; ^
+         $text = $text -replace '(?m)^\s*config_lines\[\d+\]:\s*\"mix dsteering\s+.*\"', ' config_lines: \"mix dsteering `(keyboard.a?0 - keyboard.d?0) * (0.35 + keyboard.space?0 * 0.65)`\"'; ^
+         $text = $text -replace '(?m)^\s*config_lines\[\d+\]:\s*\"mix steering\s+.*\"', ' config_lines: \"mix steering `dsteering`\"'; ^
+         $text = $text -replace '(?m)^\s*config_lines\[\d+\]:\s*\"mix msteering\s+.*\"', ' config_lines: \"mix msteering `-mouse.rel_position.x?0 * c_msens`\"'; ^
+         $text = $text -replace '(?m)^\s*config_lines\[\d+\]:\s*\"mix mpedals\s+.*\"', ' config_lines: \"mix mpedals `-mouse.rel_position.y?0 * c_msens`\"'; ^
+         $text = $text -replace '(?m)^\s*config_lines\[\d+\]:\s*\"mix dforward\s+.*\"', ' config_lines: \"mix dforward `0`\"'; ^
+         $text = $text -replace '(?m)^\s*config_lines\[\d+\]:\s*\"mix dbackward\s+.*\"', ' config_lines: \"mix dbackward `0`\"'; ^
+         $text = $text -replace '(?m)^\s*config_lines\[\d+\]:\s*\"mix aforward\s+.*\"', ' config_lines: \"mix aforward `0`\"'; ^
+         $text = $text -replace '(?m)^\s*config_lines\[\d+\]:\s*\"mix abackward\s+.*\"', ' config_lines: \"mix abackward `0`\"'; ^
+         $text = $text -replace '(?m)^\s*config_lines\[\d+\]:\s*\"mix forward\s+.*\"', ' config_lines: \"mix forward `(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)`\"'; ^
+         $text = $text -replace '(?m)^\s*config_lines\[\d+\]:\s*\"mix backward\s+.*\"', ' config_lines: \"mix backward `keyboard.s?0 * (0.10 + keyboard.space?0 * 0.50)`\"'; ^
+         [System.IO.File]::WriteAllText($file.FullName, $text, [System.Text.Encoding]::ASCII); ^
+         [System.IO.File]::SetAttributes($file.FullName, [System.IO.FileAttributes]::ReadOnly); ^
+         Write-Host '  -> Successfully patched profile!' -ForegroundColor Green; ^
+     }"
 
 echo.
 echo [INFO] Installation completed successfully!
