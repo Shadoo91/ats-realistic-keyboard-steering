@@ -1,0 +1,21 @@
+SiiNunit
+{
+ui_control_config : _nameless.config {
+ constant c_msens 0.330000
+ constant c_mousesteer 0.000000
+ constant c_mousetrack 1.000000
+ constant c_steer_func 0.600000
+ config_lines: "mix dsteerleft `keyboard.a?0`"
+ config_lines: "mix dsteerright `keyboard.d?0`"
+ config_lines: "mix dsteering `(keyboard.a?0 - keyboard.d?0) * (0.35 + keyboard.space?0 * (0.55 - keyboard.s?0 * 0.25))`"
+ config_lines: "mix steering `dsteering * (1.0 - (c_steer_func * 0.5))`"
+ config_lines: "mix msteering `-mouse.rel_position.x?0 * c_msens`"
+ config_lines: "mix mpedals `-mouse.rel_position.y?0 * c_msens`"
+ config_lines: "mix dforward `0`"
+ config_lines: "mix dbackward `0`"
+ config_lines: "mix aforward `(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)`"
+ config_lines: "mix abackward `keyboard.s?0 * (0.10 + keyboard.space?0 * 0.50)`"
+ config_lines: "mix forward `aforward`"
+ config_lines: "mix backward `abackward`"
+}
+}
