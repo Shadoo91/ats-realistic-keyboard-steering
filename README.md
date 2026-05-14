@@ -1,7 +1,7 @@
 # ATS Realistic Keyboard Steering (with Turbo-Mode)
 
 ⚠️ **IMPORTANT NOTICE:** This repository contains the official installation scripts and physics configuration files. It is designed as a mandatory companion/supplement to the official Steam Workshop mod. Make sure you are subscribed to the mod on Steam before running these files!  
-🔗 **[Steam Workshop Link](https://steamcommunity.com/sharedfiles/filedetails/?id=3725174940)**
+🔗 **[Steam Workshop Link](https://steamcommunity.com)**
 
 This script updates your American Truck Simulator input configuration to provide realistic, physics-compliant keyboard controls. It implements a dual-stage input logic ("Turbo Mode") that allows precise cruising and sharp maneuvers without altering game physics files.
 
@@ -22,7 +22,7 @@ This script updates your American Truck Simulator input configuration to provide
 ### 🔹 Braking
 * **Smooth Brake (S Key):** Triggers a soft **10%** baseline deceleration. Lights up your brake lights naturally without instantly triggering ABS or locking up the tires.
 * **Heavy Turbo Brake (S + Spacebar):** Instantly engages up to **60%** maximum braking force for heavy emergency stops.
-* **Anti-Twitch Balance:** When braking heavily with `S + Spacebar`, the steering turbo automatically downscales from 90% to **65%** to compensate for the extreme weight shift and tire grip, preventing your truck from spinning out control.
+* **Anti-Twitch Balance:** When braking heavily with `S + Spacebar`, the steering turbo automatically downscales from 90% to **65%** to compensate for the extreme weight shift and tire grip, preventing your truck from spinning out of control.
 
 ---
 
@@ -39,24 +39,30 @@ This script updates your American Truck Simulator input configuration to provide
 ### 📥 Prerequisites
 Before running the installer, go to Steam ➔ Right-click American Truck Simulator ➔ Properties ➔ Controller ➔ Set Steam Input to **"Disable Steam Input"**. If active, Steam Input will emulate a gamepad and override this configuration.
 
-### 🪟 Windows 11 / 10 Instruction
-1. Close the game.
-2. Download `controls_preset.sii`, `install.bat`, and `uninstall.bat` into the **same folder**.
-3. Double-click `install.bat` to run the installer. It will automatically find all your ATS profiles, create a safe `.bak` backup, and apply the patch.
+### 🪟 Windows (10 / 11) Instruction
+1. Completely close the game.
+2. Download `controls_preset.sii`, `install_windows_rks_1.0.bat`, and `uninstall_windows_rks_1.0.bat` into the **same folder** (e.g., your Downloads folder).
+3. Double-click **`install_windows_rks_1.0.bat`** to run the installer. 
+4. It will automatically find all your ATS profiles, create a safe `.bak` backup, and apply the patch.
 
-### 🐧 Linux Instruction (Pop!_OS / Ubuntu)
-1. Close the game.
-2. Open your terminal in the directory where `install.sh` is located.
-3. Make the script executable and run it:
+### 🐧 Linux Instruction (Pop!_OS / Ubuntu / Steam Deck)
+1. Completely close the game.
+2. Download `controls_preset.sii`, `install_linux_rks_1.0.sh`, and `uninstall_linux_rks_1.0.sh` into the **same folder**.
+3. Open your terminal in that directory.
+4. Make the script executable and run it by typing:
    ```bash
-   chmod +x install.sh uninstall.sh
-   ./install.sh
+   chmod +x install_linux_rks_1.0.sh uninstall_linux_rks_1.0.sh
+   ./install_linux_rks_1.0.sh
    ```
 
 ---
 
 ## ↩️ Uninstallation
-If you ever want to revert back to your old controls, simply run the `uninstall.bat` (Windows) or `./uninstall.sh` (Linux) script. It will instantly delete the modified injector preset and restore your original configuration from the backup file.
+If you ever want to revert back to your old controls, simply run the uninstaller depending on your system:
+* **Windows:** Double-click **`uninstall_windows_rks_1.0.bat`**
+* **Linux:** Run `./uninstall_linux_rks_1.0.sh` in your terminal.
+
+It will instantly delete the injector preset and safely restore your original configuration from the backup file.
 
 ---
 
@@ -65,7 +71,7 @@ If you ever want to revert back to your old controls, simply run the `uninstall.
 Dieses Skript aktualisiert deine American Truck Simulator Steuerungskonfiguration für eine realistische und präzise Tastaturbedienung. Es implementiert eine zweistufige Eingabelogik ("Turbo-Modus"), die präzises Fahren auf Autobahnen sowie scharfe Manöver in der Stadt ermöglicht – völlig ohne Modifikation von Spieldateien.
 
 ⚠️ **WICHTIGER HINWEIS:** Dieses Repository dient als zwingende Ergänzung zur offiziellen Steam-Workshop-Mod. Stelle sicher, dass du die Mod auf Steam abonniert hast, bevor du diese Dateien ausführst!  
-🔗 **[Steam Workshop Link](https://steamcommunity.com/sharedfiles/filedetails/?id=3725174940)**
+🔗 **[Steam Workshop Link](https://steamcommunity.com)**
 
 ### 🎮 Features & Tastenbelegung
 
@@ -90,10 +96,34 @@ Dieses Skript aktualisiert deine American Truck Simulator Steuerungskonfiguratio
 * **Bremsstärke:** Stelle den Regler auf **50% (Mitte / Standard)** für den realistischsten Bremsweg in Kombination mit der Turbo-Bremse.
 
 ### 🚀 Installations-Anleitung
-1. Klicke in Steam mit der rechten Maustaste auf ATS ➔ Eigenschaften ➔ Controller ➔ Stelle Steam-Eingabe auf **"Steam-Eingabe deaktivieren"**.
-2. Schließe das Spiel.
-3. Lade `controls_preset.sii`, `install.bat` und `uninstall.bat` in den **selben Ordner** herunter.
-4. Führe die `install.bat` per Doppelklick aus. Das Skript sucht alle Profile, erstellt ein Backup und injiziert das Preset.
+
+#### 📥 Vorbereitung
+1. Klicke in Steam mit der rechten Maustaste auf ATS ➔ Eigenschaften ➔ Controller ➔ Stelle Steam-Eingabe auf **"Steam-Eingabe deaktivieren"**. Wenn aktiv, emuliert Steam ein Gamepad und ignoriert die Tastatur-Befehle der Datei.
+
+#### 🪟 Windows (10 / 11) Anleitung
+1. Schließe das Spiel vollständig.
+2. Lade die Dateien `controls_preset.sii`, `install_windows_rks_1.0.bat` und `uninstall_windows_rks_1.0.bat` in den **selben Ordner** herunter (z.B. deinen Downloads-Ordner).
+3. Führe die Datei **`install_windows_rks_1.0.bat`** per Doppelklick aus.
+4. Das Skript sucht automatisch alle deine ATS-Profile, erstellt ein sicheres Backup und wendet den Patch an.
+
+#### 🐧 Linux Anleitung (Pop!_OS / Ubuntu / Steam Deck)
+1. Schließe das Spiel vollständig.
+2. Lade die Dateien `controls_preset.sii`, `install_linux_rks_1.0.sh` und `uninstall_linux_rks_1.0.sh` in den **selben Ordner** herunter.
+3. Öffne dein Terminal in diesem Ordner.
+4. Mache das Skript ausführbar und starte es mit folgenden Befehlen:
+   ```bash
+   chmod +x install_linux_rks_1.0.sh uninstall_linux_rks_1.0.sh
+   ./install_linux_rks_1.0.sh
+   ```
+
+---
+
+## ↩️ Deinstallation
+Wenn du deine alten Steuerungseinstellungen wiederherstellen möchtest, führe einfach den passenden Uninstaller für dein System aus:
+* **Windows:** Führe die **`uninstall_windows_rks_1.0.bat`** per Doppelklick aus.
+* **Linux:** Starte `./uninstall_linux_rks_1.0.sh` im Terminal.
+
+Das Skript löscht das modifizierte Preset und stellt deine originale Konfiguration sofort aus der Backup-Datei wieder her.
 
 ---
 
