@@ -1,7 +1,7 @@
 #!/bin/bash
-echo "===================================================================="
-echo "   ATS Realistic-Keayboard-Steering (RKS) (Turbo-Mode) - for Linux  "
-echo "===================================================================="
+echo "==================================================================================="
+echo "   ATS Realistic-Keyboard-Steering (RKS) - Linux Uninstaller                      "
+echo "==================================================================================="
 echo
 
 TARGET_DIR="$HOME/.steam/steam/steamapps/compatdata/270880/pfx/drive_c/users/steamuser/Documents/American Truck Simulator/profiles"
@@ -15,25 +15,28 @@ if [ ! -d "$TARGET_DIR" ]; then
     exit 1
 fi
 
-BACKUPS=$(find "$TARGET_DIR" -name "controls.sii.bak")
+echo "Restoring original backups..."
+echo
 
-if [ -z "$BACKUPS" ]; then
-    echo "[INFO] No backups found. System is already in original state."
-    exit 0
-fi
+BACKUP_FOUND=0
 
 find "$TARGET_DIR" -name "controls.sii.bak" | while read -r BAK_FILE; do
+    BACKUP_FOUND=1
     FILE="${BAK_FILE%.bak}"
-    echo "[INFO] Restoring profile: $(basename "$(dirname "$FILE")")"
+    echo "Restoring Profile: $(basename "$(dirname "$FILE")")"
     
-    if [ -f "$FILE" ]; then
-        chmod 644 "$FILE"
-        rm "$FILE"
-    fi
+    chmod 644 "$FILE" 2>/dev/null
+    chmod 644 "$BAK_FILE"
     
+    rm -f "$FILE"
     mv "$BAK_FILE" "$FILE"
-    chmod 644 "$FILE"
+    
+    echo "  -> Backup successfully restored!"
+    echo "-----------------------------------------------------------------------------------"
 done
 
-echo
-echo "[INFO] Uninstallation complete. Original steering configuration restored!"
+if [ "$BACKUP_FOUND" -eq 0 ]; then
+    echo "[INFO] No backups found. Nothing to restore."
+else
+    echo "[INFO] Uninstallation completed successfully! All profiles restored."
+fi
