@@ -335,7 +335,7 @@ input_config : _nameless.6c2d.2610 {
  config_lines[329]: "mix headtrwmz `clamp(sel(trackiron, trackirz, 0) + sel(eyeposon, eyeposwmz, 0), -0.1, 0.1) + sel(hmdon, hmdz, 0)`"
  config_lines[330]: "mix dsteerleft `keyboard.a?0`"
  config_lines[331]: "mix dsteerright `keyboard.d?0`"
- config_lines[332]: "mix dsteering `(keyboard.a?0 - keyboard.d?0) * (0.35 + keyboard.space?0 * 0.55)`"
+ config_lines[332]: "mix dsteering `(keyboard.a?0 - keyboard.d?0) * (0.35 + keyboard.space?0 * (0.55 - keyboard.s?0 * 0.25))`"
  config_lines[333]: "mix steering `dsteering * (1.0 - (c_steer_func * 0.5))`"
  config_lines[334]: "mix msteering `-mouse.rel_position.x?0 * c_msens`"
  config_lines[335]: "mix mpedals `-mouse.rel_position.y?0 * c_msens`"
