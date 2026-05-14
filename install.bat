@@ -52,7 +52,7 @@ for /d %%P in ("%PROFILE_DIR%\*") do (
     if exist "%%P\controls.sii" (
         echo Patching ATS Profile: %%~nxP
         
-        :: Schreibschutz aufheben
+        :: Alten Schreibschutz aufheben, um Datei bearbeiten zu koennen
         attrib -r -s -h "%%P\controls.sii" >nul 2>&1
         
         :: Backup erstellen, falls noch nicht vorhanden
@@ -66,8 +66,7 @@ for /d %%P in ("%PROFILE_DIR%\*") do (
         :: Überschreibe die Datei direkt mit deinem funktionierenden Preset!
         copy /y "controls_preset.sii" "%%P\controls.sii" >nul 2>&1
         
-        :: Schreibschutz für das Spiel wieder rein
-        attrib +r "%%P\controls.sii" >nul 2>&1
+        :: WICHTIG: Kein "+r" Schreibschutz setzen, damit ATS die Datei beschreiben darf!
         echo   -^> Successfully injected verified preset!
         echo -----------------------------------------------------------------------------------
     )
