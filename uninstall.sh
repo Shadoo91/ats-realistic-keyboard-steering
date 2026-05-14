@@ -1,42 +1,69 @@
-#!/bin/bash
-echo "==================================================================================="
-echo "   ATS Realistic-Keyboard-Steering (RKS) - Linux Uninstaller                      "
-echo "==================================================================================="
-echo
+@echo off
+title ATS Profile Uninstaller
+setlocal enabledelayedexpansion
 
-TARGET_DIR="$HOME/.steam/steam/steamapps/compatdata/270880/pfx/drive_c/users/steamuser/Documents/American Truck Simulator/profiles"
+:: ==========================================
+:: ADMIN-RECHTE PRFEN & ANFORDERN
+:: ==========================================
+net session >nul 2>&1
+if %errorlevel% neq 0 (
+    echo Requesting Administrator privileges...
+    echo Set UAC = CreateObject^("Shell.Application"^) > "%temp%\getadmin.vbs"
+    echo UAC.ShellExecute "%~s0", "", "", "runas", 1 >> "%temp%\getadmin.vbs"
+    "%temp%\getadmin.vbs"
+    del "%temp%\getadmin.vbs"
+    exit /b
+)
 
-if [ ! -d "$TARGET_DIR" ]; then
-    TARGET_DIR="$HOME/.var/app/com.valvesoftware.Steam/.steam/steam/steamapps/compatdata/270880/pfx/drive_c/users/steamuser/Documents/American Truck Simulator/profiles"
-fi
+cd /d "%~dp0"
 
-if [ ! -d "$TARGET_DIR" ]; then
-    echo "[ERROR] ATS profile directory not found!"
-    exit 1
-fi
+echo ===================================================================================
+echo   ATS Realistic-Keyboard-Steering (RKS) ~ Uninstaller
+echo   [RESTORING ORIGINAL BACKUPS - 100%% SAFE]
+echo ===================================================================================
+echo.
 
-echo "Restoring original backups..."
-echo
+:: 1. Automatische Pfad-Erkennung
+set "PROFILE_DIR=%USERPROFILE%\Documents\American Truck Simulator\profiles"
 
-BACKUP_FOUND=0
+if not exist "%PROFILE_DIR%\*" (
+    echo [ERROR] American Truck Simulator profiles directory not found!
+    pause
+    exit
+)
 
-find "$TARGET_DIR" -name "controls.sii.bak" | while read -r BAK_FILE; do
-    BACKUP_FOUND=1
-    FILE="${BAK_FILE%.bak}"
-    echo "Restoring Profile: $(basename "$(dirname "$FILE")")"
-    
-    chmod 644 "$FILE" 2>/dev/null
-    chmod 644 "$BAK_FILE"
-    
-    rm -f "$FILE"
-    mv "$BAK_FILE" "$FILE"
-    
-    echo "  -> Backup successfully restored!"
-    echo "-----------------------------------------------------------------------------------"
-done
+echo Profiles directory found at:
+echo "%PROFILE_DIR%"
+echo.
+echo Restoring original backups...
+echo.
 
-if [ "$BACKUP_FOUND" -eq 0 ]; then
-    echo "[INFO] No backups found. Nothing to restore."
-else
-    echo "[INFO] Uninstallation completed successfully! All profiles restored."
-fi
+:: 2. Profile durchlaufen und das Backup zurckspielen
+set "BACKUP_FOUND=0"
+
+for /d %%P in ("%PROFILE_DIR%\*") do (
+    if exist "%%P\controls.sii.bak" (
+        set "BACKUP_FOUND=1"
+        echo Restoring Profile: %%~nxP
+        
+        :: Eventuelle Sperren aufheben
+        attrib -r -s -h "%%P\controls.sii" >nul 2>&1
+        attrib -r -s -h "%%P\controls.sii.bak" >nul 2>&1
+        
+        :: Modifizierte Datei loeschen und Backup umbenennen
+        del /q "%%P\controls.sii" >nul 2>&1
+        ren "%%P\controls.sii.bak" "controls.sii" >nul 2>&1
+        
+        echo   -^> Backup successfully restored!
+        echo -----------------------------------------------------------------------------------
+    )
+)
+
+if "!BACKUP_FOUND!"=="0" (
+    echo [INFO] No backups found. Nothing to restore.
+) else (
+    echo.
+    echo [INFO] Uninstallation completed successfully! All profiles restored.
+)
+
+pause
