@@ -2,9 +2,7 @@
 title ATS Profile Installer
 setlocal enabledelayedexpansion
 
-:: ==========================================
-:: ADMIN-RECHTE PRÜFEN & ANFORDERN
-:: ==========================================
+:: ADMIN-RECHTE PRÜFEN
 net session >nul 2>&1
 if %errorlevel% neq 0 (
     echo Requesting Administrator privileges...
@@ -19,18 +17,10 @@ cd /d "%~dp0"
 
 echo ===================================================================================
 echo   ATS Realistic-Keyboard-Steering (RKS) (Turbo-Mode) ~ by Shadoo91
-echo   [FULL PRESET INJECTOR - 100%% STABLE]
+echo   [LINE INJECTOR - KEEPS PLAYER SETTINGS]
 echo ===================================================================================
 echo.
 
-:: 1. Prüfen ob die 590-Zeilen Preset-Datei im selben Ordner existiert
-if not exist "controls_preset.sii" (
-    echo [ERROR] 'controls_preset.sii' not found in this directory!
-    pause
-    exit
-)
-
-:: 2. Automatische Pfad-Erkennung
 set "PROFILE_DIR=%USERPROFILE%\Documents\American Truck Simulator\profiles"
 
 if not exist "%PROFILE_DIR%\*" (
@@ -39,37 +29,81 @@ if not exist "%PROFILE_DIR%\*" (
     exit
 )
 
-echo Profiles directory found at:
-echo "%PROFILE_DIR%"
-echo.
-echo Injecting complete 590-line control preset...
-echo.
-
-:: 3. Profile durchlaufen und das komplette Preset drüberkopieren
 for /d %%P in ("%PROFILE_DIR%\*") do (
     if exist "%%P\controls.sii" (
         echo Patching ATS Profile: %%~nxP
-        
-        :: Schreibschutz der alten Datei loesen
         attrib -r -s -h "%%P\controls.sii" >nul 2>&1
         
-        :: Backup erstellen, falls noch nicht vorhanden
         if not exist "%%P\controls.sii.bak" (
             copy /y "%%P\controls.sii" "%%P\controls.sii.bak" >nul 2>&1
             echo   -^> Backup created: controls.sii.bak
-        ) else (
-            echo   -^> Backup already exists.
         )
         
-        :: Überschreibe die Datei direkt mit deiner kompletten controls_preset.sii
-        copy /y "controls_preset.sii" "%%P\controls.sii" >nul 2>&1
+        set "TEMP_FILE=%%P\controls_temp.sii"
+        if exist "!TEMP_FILE!" del /q "!TEMP_FILE!"
         
-        :: KEIN "+r" Schreibschutz am Ende, damit ATS speichern darf
-        echo   -^> Successfully injected verified 590-line preset!
+        for /f "tokens=1* delims=]" %%A in ('type "%%P\controls.sii" ^| findstr /n "^"') do (
+            set "LINE=%%B"
+            set "PATCHED=0"
+            
+            if "!LINE!"=="" (
+                echo.>>"!TEMP_FILE!"
+                set "PATCHED=1"
+            )
+            
+            if "!PATCHED!"=="0" (
+                echo !LINE! | findstr /c:"mix dsteerleft" >nul
+                if !errorlevel! equ 0 (
+                    echo  config_lines: "mix dsteerleft `keyboard.a?0`">>"!TEMP_FILE!"
+                    set "PATCHED=1"
+                )
+            )
+            if "!PATCHED!"=="0" (
+                echo !LINE! | findstr /c:"mix dsteerright" >nul
+                if !errorlevel! equ 0 (
+                    echo  config_lines: "mix dsteerright `keyboard.d?0`">>"!TEMP_FILE!"
+                    set "PATCHED=1"
+                )
+            )
+            if "!PATCHED!"=="0" (
+                echo !LINE! | findstr /c:"mix dsteering" >nul
+                if !errorlevel! equ 0 (
+                    echo  config_lines: "mix dsteering `(keyboard.a?0 - keyboard.d?0) * (0.35 + keyboard.space?0 * (0.55 - keyboard.s?0 * 0.25))`">>"!TEMP_FILE!"
+                    set "PATCHED=1"
+                )
+            )
+            if "!PATCHED!"=="0" (
+                echo !LINE! | findstr /c:"mix steering" >nul
+                if !errorlevel! equ 0 (
+                    echo  config_lines: "mix steering `dsteering * (1.0 - (c_steer_func * 0.5))`">>"!TEMP_FILE!"
+                    set "PATCHED=1"
+                )
+            )
+            if "!PATCHED!"=="0" (
+                echo !LINE! | findstr /c:"mix aforward" >nul
+                if !errorlevel! equ 0 (
+                    echo  config_lines: "mix aforward `(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)`">>"!TEMP_FILE!"
+                    set "PATCHED=1"
+                )
+            )
+            if "!PATCHED!"=="0" (
+                echo !LINE! | findstr /c:"mix abackward" >nul
+                if !errorlevel! equ 0 (
+                    echo  config_lines: "mix abackward `keyboard.s?0 * (0.10 + keyboard.space?0 * 0.50)`">>"!TEMP_FILE!"
+                    set "PATCHED=1"
+                )
+            )
+            
+            if "!PATCHED!"=="0" (
+                echo.!LINE!>>"!TEMP_FILE!"
+            )
+        )
+        
+        move /y "!TEMP_FILE!" "%%P\controls.sii" >nul 2>&1
+        echo   -^> Successfully injected RKS formulas!
         echo -----------------------------------------------------------------------------------
     )
 )
-
 echo.
 echo [INFO] Installation completed successfully!
 pause
