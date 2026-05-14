@@ -1,10 +1,11 @@
 SiiNunit
 {
 ui_control_config : _nameless.config {
- constant c_msens 0.330000
- constant c_mousesteer 0.000000
- constant c_mousetrack 1.000000
- constant c_steer_func 0.600000
+ version: 3
+ config_lines: "constant c_msens 0.330000"
+ config_lines: "constant c_mousesteer 0.000000"
+ config_lines: "constant c_mousetrack 1.000000"
+ config_lines: "constant c_steer_func 0.600000"
  config_lines: "mix dsteerleft `keyboard.a?0`"
  config_lines: "mix dsteerright `keyboard.d?0`"
  config_lines: "mix dsteering `(keyboard.a?0 - keyboard.d?0) * (0.35 + keyboard.space?0 * (0.55 - keyboard.s?0 * 0.25))`"
@@ -17,5 +18,13 @@ ui_control_config : _nameless.config {
  config_lines: "mix abackward `keyboard.s?0 * (0.10 + keyboard.space?0 * 0.50)`"
  config_lines: "mix forward `aforward`"
  config_lines: "mix backward `abackward`"
+ config_lines: "mix lturnsignal `keyboard.lbracket?0`"
+ config_lines: "mix rturnsignal `keyboard.rbracket?0`"
+ config_lines: "mix light `keyboard.l?0`"
+ config_lines: "mix highbeam `keyboard.k?0`"
+ config_lines: "mix horn `keyboard.h?0`"
+ config_lines: "mix wiper `keyboard.p?0`"
+ config_lines: "mix cruise `keyboard.c?0`"
+ config_lines: "mix motorbrake `keyboard.b?0`"
 }
 }
