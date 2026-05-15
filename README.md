@@ -1,7 +1,7 @@
 # ATS Realistic Keyboard Steering (with Turbo-Mode)
 
 ⚠️ **IMPORTANT NOTICE:** This repository contains the official installation scripts and physics configuration files. It is designed as a mandatory companion/supplement to the official Steam Workshop mod. Make sure you are subscribed to the mod on Steam before running these files!  
-🔗 **[Steam Workshop Link](https://steamcommunity.com)**
+🔗 **[Steam Workshop Link]([https://steamcommunity.com](https://steamcommunity.com/sharedfiles/filedetails/?id=3725174940))**
 
 This script updates your American Truck Simulator input configuration to provide realistic, physics-compliant keyboard controls. It implements a multi-stage input logic ("Turbo Mode") that allows precise cruising, multi-tier braking, and sharp maneuvers without altering game physics files.
 
