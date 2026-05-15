@@ -52,7 +52,7 @@ Before running the installer, go to Steam ➔ Right-click American Truck Simulat
 1. Completely close the game.
 2. Download `rks_preset_controls.sii`, `rks_injector_core.ps1`, and `Launcher_Windows_RKS.bat` into the **same folder** (e.g., your Downloads folder). 
    *(Note: Both the .bat and .ps1 files must be in the same directory!)*
-3. Double-click **`install_windows_rks_1.0.bat`** to launch the manager. 
+3. Double-click **`Launcher_Windows_RKS.bat`** to launch the manager. 
 4. Type **`A`** and press Enter to patch all your profiles automatically.
 
 ### 🐧 Linux Instruction (Pop!_OS / Ubuntu / Steam Deck)
@@ -135,7 +135,7 @@ Nachdem du den Installer ausgeführt hast, werden **Gas und Bremse im Steuerungs
 1. Schließe das Spiel vollständig.
 2. Lade die Dateien `rks_preset_controls.sii`, `rks_injector_core.ps1` und `Launcher_Windows_RKS.bat` in den **selben Ordner** herunter (z.B. deinen Downloads-Ordner).
    *(Hinweis: Sowohl die .bat- als auch die .ps1-Datei müssen zwingend im selben Verzeichnis liegen!)*
-3. Führe die Datei **`install_windows_rks_1.0.bat`** per Doppelklick aus, um den Manager zu starten.
+3. Führe die Datei **`Launcher_Windows_RKS.bat`** per Doppelklick aus, um den Manager zu starten.
 4. Tippe im Menü **`A`** ein und drücke Enter, um die Modifikation vollautomatisch auf alle Profile anzuwenden.
 
 #### 🐧 Linux Anleitung (Pop!_OS / Ubuntu / Steam Deck)
