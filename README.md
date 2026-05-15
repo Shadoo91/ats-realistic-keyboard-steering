@@ -3,7 +3,7 @@
 ⚠️ **IMPORTANT NOTICE:** This repository contains the official installation scripts and physics configuration files. It is designed as a mandatory companion/supplement to the official Steam Workshop mod. Make sure you are subscribed to the mod on Steam before running these files!  
 🔗 **[Steam Workshop Link](https://steamcommunity.com)**
 
-This script updates your American Truck Simulator input configuration to provide realistic, physics-compliant keyboard controls. It implements a dual-stage input logic ("Turbo Mode") that allows precise cruising and sharp maneuvers without altering game physics files.
+This script updates your American Truck Simulator input configuration to provide realistic, physics-compliant keyboard controls. It implements a multi-stage input logic ("Turbo Mode") that allows precise cruising, multi-tier braking, and sharp maneuvers without altering game physics files.
 
 ---
 
@@ -11,7 +11,8 @@ This script updates your American Truck Simulator input configuration to provide
 
 ### 🔹 Steering (A / D)
 * **Cruise & Maneuver Logic (A / D):** Smooth and precise input at **35%** sensitivity for high-speed highway stability.
-* **Turbo Steering (A / D + Spacebar):** Instantly boosts your steering angle to **90%** max capacity for tight city turns or emergency maneuvers. 
+* **Intelligent Braking-Turbo (A/D + Spacebar OR LAlt while Braking):** Instantly boosts your steering angle to **90%** max capacity for tight turns or emergency maneuvers. 
+* **Anti-Twitch Acceleration Guard:** The steering turbo automatically stays completely deactivated while accelerating (`W + LAlt`), preventing your truck from spinning out at high speeds. It only activates when braking (`S`).
 * **Dynamic Speed Damping:** Automatically tones down steering sharpness at high speeds based on your in-game Non-Linearity to prevent truck rollovers.
 
 ### 🔹 Throttle
@@ -20,16 +21,16 @@ This script updates your American Truck Simulator input configuration to provide
 * **Kickdown / Turbo Gas (W + Left Alt together):** Unlocks the full highway power of your truck, merging both stages to deliver **90%** total throttle output.
 
 ### 🔹 Braking
-* **Smooth Brake (S Key):** Triggers a soft **10%** baseline deceleration. Lights up your brake lights naturally without instantly triggering ABS or locking up the tires.
-* **Heavy Turbo Brake (S + Spacebar):** Instantly engages up to **60%** maximum braking force for heavy emergency stops.
-* **Anti-Twitch Balance:** When braking heavily with `S + Spacebar`, the steering turbo automatically downscales from 90% to **65%** to compensate for the extreme weight shift and tire grip, preventing your truck from spinning out of control.
+* **Stage 1 - Smooth Brake (S Key):** Triggers a soft **10%** baseline deceleration. Lights up your brake lights naturally without instantly triggering ABS or locking up the tires.
+* **Stage 2 - Mid Brake (S + Left Alt):** Engages a controlled **60%** medium deceleration force. Simultaneously unlocks the 90% steering turbo for tactical evasive action.
+* **Stage 3 - Emergency Brake (S + Spacebar):** Instantly engages **90%** brutal maximum braking force for heavy ABS emergency stops. Simultaneously unlocks the 90% steering turbo.
 
 ---
 
 ## ⚙️ Recommended In-Game Settings
 
 * **Steering Sensitivity:** Adjust to your liking! Moving the slider changes the steering intensity. Your custom formula scales perfectly with this option.
-* **Steering Non-Linearity:** Pull the slider to the **Right (50% - 80%)** to unleash the full geschwindigkeitsabhängige Abdämpfung (Speed-Damping) on highways.
+* **Steering Non-Linearity:** Pull the slider to the **Right (50% - 80%)** to unleash the full speed-damping on highways.
 * **Braking Intensity:** Set to **50% (Middle / Default)**. This provides the most realistic stopping distance combined with your Turbo-Brake. Adjust freely for harder or softer braking.
 
 ---
@@ -41,19 +42,27 @@ Before running the installer, go to Steam ➔ Right-click American Truck Simulat
 
 ### 🪟 Windows (10 / 11) Instruction
 1. Completely close the game.
-2. Download `controls_preset.sii`, `install_windows_rks_1.0.bat`, and `uninstall_windows_rks_1.0.bat` into the **same folder** (e.g., your Downloads folder).
+2. Download `rks_preset_controls.sii`, `install_windows_rks_1.0.bat`, and `uninstall_windows_rks_1.0.bat` into the **same folder** (e.g., your Downloads folder).
 3. Double-click **`install_windows_rks_1.0.bat`** to run the installer. 
 4. It will automatically find all your ATS profiles, create a safe `.bak` backup, and apply the patch.
 
 ### 🐧 Linux Instruction (Pop!_OS / Ubuntu / Steam Deck)
 1. Completely close the game.
-2. Download `controls_preset.sii`, `install_linux_rks_1.0.sh`, and `uninstall_linux_rks_1.0.sh` into the **same folder**.
+2. Download `rks_preset_controls.sii`, `install_linux_rks_1.0.sh`, and `uninstall_linux_rks_1.0.sh` into the **same folder**.
 3. Open your terminal in that directory.
 4. Make the script executable and run it by typing:
    ```bash
    chmod +x install_linux_rks_1.0.sh uninstall_linux_rks_1.0.sh
    ./install_linux_rks_1.0.sh
    ```
+
+### 💡 Alternative Manual Installation (If scripts fail due to OS restrictions)
+If your operating system blocks the automatic installers, you can easily apply the custom logic manually:
+1. Open your ATS profile folder: `Documents / American Truck Simulator / profiles / YOUR_PROFILE_ID /`
+2. Open your existing **`controls.sii`** file with a text editor (like Notepad++).
+3. Look for the lines starting from `mix dsteerleft` down to `mix backward` (usually around lines 330-341).
+4. Delete those specific lines and replace them by copy-pasting the exact 12 configuration lines from the **`rks_preset_controls.sii`** file included in this repository.
+5. Save and close the file.
 
 ---
 
@@ -68,16 +77,17 @@ It will instantly delete the injector preset and safely restore your original co
 
 ## 🇩🇪 Deutsche Version
 
-Dieses Skript aktualisiert deine American Truck Simulator Steuerungskonfiguration für eine realistische und präzise Tastaturbedienung. Es implementiert eine zweistufige Eingabelogik ("Turbo-Modus"), die präzises Fahren auf Autobahnen sowie scharfe Manöver in der Stadt ermöglicht – völlig ohne Modifikation von Spieldateien.
+Dieses Skript aktualisiert deine American Truck Simulator Steuerungskonfiguration für eine realistische und präzise Tastaturbedienung. Es implementiert eine mehrstufige Eingabelogik ("Turbo-Modus"), die präzises Fahren auf Autobahnen sowie scharfe Manöver in der Stadt ermöglicht – völlig ohne Modifikation von Spieldateien.
 
 ⚠️ **WICHTIGER HINWEIS:** Dieses Repository dient als zwingende Ergänzung zur offiziellen Steam-Workshop-Mod. Stelle sicher, dass du die Mod auf Steam abonniert hast, bevor du diese Dateien ausführst!  
-🔗 **[Steam Workshop Link](https://steamcommunity.com)**
+🔗 **[Steam Workshop Link]((https://steamcommunity.com/sharedfiles/filedetails/?id=3725174940)**
 
 ### 🎮 Features & Tastenbelegung
 
 #### 🔹 Lenkung (A / D)
-* **Cruising-Logik (A / D):** Sanfter und präziser Einschlag bei **35%** Grundempfindlichkeit für maximale Stabilität bei schneller Fahrt.
-* **Turbo-Lenkung (A / D + Leertaste):** Erzwingt sofort maximal **90%** Einschlagwinkel für enge Kurven in Städten oder Ausweichmanöver.
+* **Cruising-Logik (A / D):** Sanfter und präziser Einschlag bei **35%** Grundempfindlichkeit für maximale Stabilität bei schneller Fahrt auf Highways.
+* **Intelligenter Brems-Turbo (A/D + Leertaste ODER Links-Alt beim Bremsen):** Erzwingt sofort maximal **90%** Einschlagwinkel für enge Stadtkurven oder Notmanöver.
+* **Anti-Ausbrech-Schutz beim Beschleunigen:** Während du Gas gibst (`W + Links-Alt`), bleibt der Lenkungs-Turbo komplett gesperrt. Das verhindert das gefährliche Verreißen des Lkw bei hoher Geschwindigkeit. Er zündet nur, wenn du bremst (`S`).
 * **Geschwindigkeits-Dämpfung:** Die Lenkung wird bei hohen Geschwindigkeiten automatisch feiner gedämpft, um ein Umkippen des Lkw zu verhindern.
 
 #### 🔹 Gas geben
@@ -86,14 +96,14 @@ Dieses Skript aktualisiert deine American Truck Simulator Steuerungskonfiguratio
 * **Kickdown / Turbo-Gas (W + Links-Alt zusammen):** Kombiniert beide Stufen für volle Beschleunigung und schaltet gebündelte **90%** Gesamtleistung für Autobahnen frei.
 
 #### 🔹 Bremsen
-* **Sanfte Bremse (S-Taste):** Löst eine weiche Verzögerung von **10%** aus. Schaltet die Bremslichter an, verhindert aber blockierende Reifen.
-* **Turbo-Bremse (S + Leertaste):** Schaltet sofort **60%** maximale Bremskraft für harte Notbremsungen frei.
-* **Anti-Ausbrech-Schutz:** Wenn du mit `S + Leertaste` voll bremst, wird der Lenkungs-Turbo automatisch von 90% auf **65%** gedrosselt. Das gleicht die extreme Gewichtsverlagerung nach vorne perfekt aus, sodass der Lkw beim Bremsen in Kurven nicht unkontrolliert ausbricht.
+* **Stufe 1 - Sanfte Bremse (S-Taste):** Löst eine weiche Verzögerung von **10%** aus. Schaltet die Bremslichter an, verhindert aber blockierende Reifen beim Heranrollen an Kreuzungen.
+* **Stufe 2 - Zwischenbremse (S + Links-Alt):** Greift mit einer kontrollierten, mittleren Verzögerung von **60%**. Schaltet gleichzeitig den 90%-Lenkungs-Turbo für sofortige Ausweichmanöver frei.
+* **Stufe 3 - Gefahrenbremsung (S + Leertaste):** Aktiviert sofort eine brutale **90%** maximale Bremskraft für schwere Notbremsungen mit ABS. Schaltet gleichzeitig den 90%-Lenkungs-Turbo frei.
 
 ### ⚙️ Empfohlene Einstellungen
-* **Lenkempfindlichkeit:** Nach Belieben einstellbar! Der Regler skaliert flüssig mit deiner neuen Formel.
+* **Lenkempfindlichkeit:** Nach Belieben im Menü einstellbar! Der Regler skaliert flüssig mit deiner neuen Formel.
 * **Lenkungs-Nichtlinearität:** Schiebe den Regler weit nach **Rechts (50% - 80%)**, um die geschwindigkeitsabhängige Abdämpfung auf Highways zu aktivieren.
-* **Bremsstärke:** Stelle den Regler auf **50% (Mitte / Standard)** für den realistischsten Bremsweg in Kombination mit der Turbo-Bremse.
+* **Bremsstärke:** Stelle den Regler auf **50% (Mitte / Default)** für den realistischsten Bremsweg in Kombination mit der Turbo-Bremse.
 
 ### 🚀 Installations-Anleitung
 
@@ -102,19 +112,26 @@ Dieses Skript aktualisiert deine American Truck Simulator Steuerungskonfiguratio
 
 #### 🪟 Windows (10 / 11) Anleitung
 1. Schließe das Spiel vollständig.
-2. Lade die Dateien `controls_preset.sii`, `install_windows_rks_1.0.bat` und `uninstall_windows_rks_1.0.bat` in den **selben Ordner** herunter (z.B. deinen Downloads-Ordner).
+2. Lade die Dateien `rks_preset_controls.sii`, `install_windows_rks_1.0.bat` und `uninstall_windows_rks_1.0.bat` in den **selben Ordner** herunter (z.B. deinen Downloads-Ordner).
 3. Führe die Datei **`install_windows_rks_1.0.bat`** per Doppelklick aus.
 4. Das Skript sucht automatisch alle deine ATS-Profile, erstellt ein sicheres Backup und wendet den Patch an.
 
 #### 🐧 Linux Anleitung (Pop!_OS / Ubuntu / Steam Deck)
 1. Schließe das Spiel vollständig.
-2. Lade die Dateien `controls_preset.sii`, `install_linux_rks_1.0.sh` und `uninstall_linux_rks_1.0.sh` in den **selben Ordner** herunter.
+2. Lade die Dateien `rks_preset_controls.sii`, `install_linux_rks_1.0.sh` und `uninstall_linux_rks_1.0.sh` in den **selben Ordner** herunter.
 3. Öffne dein Terminal in diesem Ordner.
 4. Mache das Skript ausführbar und starte es mit folgenden Befehlen:
    ```bash
    chmod +x install_linux_rks_1.0.sh uninstall_linux_rks_1.0.sh
    ./install_linux_rks_1.0.sh
    ```
+
+#### 💡 Alternative Manuelle Installation (Falls Skripte blockiert werden)
+1. Öffne deinen ATS-Profilordner: `Dokumente / American Truck Simulator / profiles / DEINE_PROFIL_ID /`
+2. Öffne deine vorhandene **`controls.sii`** mit einem Texteditor (z.B. Notepad++).
+3. Suche nach den Zeilen von `mix dsteerleft` bis `mix backward` (normalerweise die Zeilen 330-341).
+4. Lösche diese spezifischen Zeilen und ersetze sie, indem du die 12 Konfigurationszeilen aus der bereitgestellten **`rks_preset_controls.sii`** per Copy-Paste einfügst.
+5. Speichere und schließe die Datei.
 
 ---
 
