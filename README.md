@@ -25,6 +25,8 @@ This script updates your American Truck Simulator input configuration to provide
 * **Stage 2 - Mid Brake (S + Left Alt):** Engages a controlled **60%** medium deceleration force. Simultaneously unlocks the 90% steering turbo for tactical evasive action.
 * **Stage 3 - Emergency Brake (S + Spacebar):** Instantly engages **90%** brutal maximum braking force for heavy ABS emergency stops. Simultaneously unlocks the 90% steering turbo.
 
+⚠️ **CRITICAL KEYBIND NOTICE:** Since **Spacebar** and **Left Alt** are now hardcoded into the RKS steering and multi-stage braking/throttle matrix, you **MUST** ensure these two keys are not bound to any other functions (like Handbrake or Camera toggle) inside the in-game options! Rebind conflicting functions to other keys to prevent double-activation issues.
+
 ---
 
 ## ⚙️ Recommended In-Game Settings
@@ -42,19 +44,20 @@ Before running the installer, go to Steam ➔ Right-click American Truck Simulat
 
 ### 🪟 Windows (10 / 11) Instruction
 1. Completely close the game.
-2. Download `rks_preset_controls.sii`, `install_windows_rks_1.0.bat`, and `uninstall_windows_rks_1.0.bat` into the **same folder** (e.g., your Downloads folder).
-3. Double-click **`install_windows_rks_1.0.bat`** to run the installer. 
-4. It will automatically find all your ATS profiles, create a safe `.bak` backup, and apply the patch.
+2. Download `rks_preset_controls.sii` and `install_windows_rks_1.0.bat` into the **same folder** (e.g., your Downloads folder).
+3. Double-click **`install_windows_rks_1.0.bat`** to run the manager. 
+4. Type **`A`** and press Enter to patch all your profiles automatically.
 
 ### 🐧 Linux Instruction (Pop!_OS / Ubuntu / Steam Deck)
 1. Completely close the game.
-2. Download `rks_preset_controls.sii`, `install_linux_rks_1.0.sh`, and `uninstall_linux_rks_1.0.sh` into the **same folder**.
+2. Download `rks_preset_controls.sii` and `install_linux_rks_1.0.sh` into the **same folder**.
 3. Open your terminal in that directory.
 4. Make the script executable and run it by typing:
    ```bash
-   chmod +x install_linux_rks_1.0.sh uninstall_linux_rks_1.0.sh
+   chmod +x install_linux_rks_1.0.sh
    ./install_linux_rks_1.0.sh
    ```
+5. Type **`A`** and press Enter to patch all your profiles automatically.
 
 ### 💡 Alternative Manual Installation (If scripts fail due to OS restrictions)
 If your operating system blocks the automatic installers, you can easily apply the custom logic manually:
@@ -66,12 +69,13 @@ If your operating system blocks the automatic installers, you can easily apply t
 
 ---
 
-## ↩️ Uninstallation
-If you ever want to revert back to your old controls, simply run the uninstaller depending on your system:
-* **Windows:** Double-click **`uninstall_windows_rks_1.0.bat`**
-* **Linux:** Run `./uninstall_linux_rks_1.0.sh` in your terminal.
-
-It will instantly delete the injector preset and safely restore your original configuration from the backup file.
+## ↩️ Uninstallation & Rollback
+If you ever want to revert back to your old controls and completely remove the mod, the manager has a built-in safety rollback feature:
+1. Simply restart the manager script according to your system:
+   * **Windows:** Double-click **`install_windows_rks_1.0.bat`**
+   * **Linux:** Run `./install_linux_rks_1.0.sh` in your terminal.
+2. Inside the script main menu, type **`R`** and press Enter to trigger the **Restore backups** system.
+3. The script will automatically delete the RKS configuration and safely restore your original profile settings from the `.bak` file.
 
 ---
 
@@ -87,7 +91,7 @@ Dieses Skript aktualisiert deine American Truck Simulator Steuerungskonfiguratio
 #### 🔹 Lenkung (A / D)
 * **Cruising-Logik (A / D):** Sanfter und präziser Einschlag bei **35%** Grundempfindlichkeit für maximale Stabilität bei schneller Fahrt auf Highways.
 * **Intelligenter Brems-Turbo (A/D + Leertaste ODER Links-Alt beim Bremsen):** Erzwingt sofort maximal **90%** Einschlagwinkel für enge Stadtkurven oder Notmanöver.
-* **Anti-Ausbrech-Schutz beim Beschleunigen:** Während du Gas gibst (`W + Links-Alt`), bleibt der Lenkungs-Turbo komplett gesperrt. Das verhindert das gefährliche Verreißen des Lkw bei hoher Geschwindigkeit. Er zündet nur, wenn du bremst (`S`).
+* **Anti-Ausbrech-Schutz beim Beschleunigen:** Während du Gas givst (`W + Links-Alt`), bleibt der Lenkungs-Turbo komplett gesperrt. Das verhindert das gefährliche Verreißen des Lkw bei hoher Geschwindigkeit. Er zündet nur, wenn du bremst (`S`).
 * **Geschwindigkeits-Dämpfung:** Die Lenkung wird bei hohen Geschwindigkeiten automatisch feiner gedämpft, um ein Umkippen des Lkw zu verhindern.
 
 #### 🔹 Gas geben
@@ -100,7 +104,11 @@ Dieses Skript aktualisiert deine American Truck Simulator Steuerungskonfiguratio
 * **Stufe 2 - Zwischenbremse (S + Links-Alt):** Greift mit einer kontrollierten, mittleren Verzögerung von **60%**. Schaltet gleichzeitig den 90%-Lenkungs-Turbo für sofortige Ausweichmanöver frei.
 * **Stufe 3 - Gefahrenbremsung (S + Leertaste):** Aktiviert sofort eine brutale **90%** maximale Bremskraft für schwere Notbremsungen mit ABS. Schaltet gleichzeitig den 90%-Lenkungs-Turbo frei.
 
-### ⚙️ Empfohlene Einstellungen
+⚠️ **WICHTIGER HINWEIS ZUR TASTENBELEGUNG:** Da die **Leertaste** und **Links-Alt** nun fest in die mathematische Matrix deiner Lenkung, Bremsen und Gänge integriert sind, musst du im Spielmenü zwingend sicherstellen, dass diese beiden Tasten **nicht doppelt belegt sind** (z. B. für die Handbremse oder Kamerawechsel)! Lege Konflikte im Menü auf andere Tasten um, um Fehlfunktionen zu vermeiden.
+
+---
+
+## ⚙️ Empfohlene Einstellungen
 * **Lenkempfindlichkeit:** Nach Belieben im Menü einstellbar! Der Regler skaliert flüssig mit deiner neuen Formel.
 * **Lenkungs-Nichtlinearität:** Schiebe den Regler weit nach **Rechts (50% - 80%)**, um die geschwindigkeitsabhängige Abdämpfung auf Highways zu aktivieren.
 * **Bremsstärke:** Stelle den Regler auf **50% (Mitte / Default)** für den realistischsten Bremsweg in Kombination mit der Turbo-Bremse.
@@ -112,19 +120,20 @@ Dieses Skript aktualisiert deine American Truck Simulator Steuerungskonfiguratio
 
 #### 🪟 Windows (10 / 11) Anleitung
 1. Schließe das Spiel vollständig.
-2. Lade die Dateien `rks_preset_controls.sii`, `install_windows_rks_1.0.bat` und `uninstall_windows_rks_1.0.bat` in den **selben Ordner** herunter (z.B. deinen Downloads-Ordner).
+2. Lade die Dateien `rks_preset_controls.sii` und `install_windows_rks_1.0.bat` in den **selben Ordner** herunter (z.B. deinen Downloads-Ordner).
 3. Führe die Datei **`install_windows_rks_1.0.bat`** per Doppelklick aus.
-4. Das Skript sucht automatisch alle deine ATS-Profile, erstellt ein sicheres Backup und wendet den Patch an.
+4. Tippe im Menü **`A`** ein und drücke Enter, um die Modifikation vollautomatisch auf alle Profile anzuwenden.
 
 #### 🐧 Linux Anleitung (Pop!_OS / Ubuntu / Steam Deck)
 1. Schließe das Spiel vollständig.
-2. Lade die Dateien `rks_preset_controls.sii`, `install_linux_rks_1.0.sh` und `uninstall_linux_rks_1.0.sh` in den **selben Ordner** herunter.
+2. Lade die Dateien `rks_preset_controls.sii` und `install_linux_rks_1.0.sh` in den **selben Ordner** herunter.
 3. Öffne dein Terminal in diesem Ordner.
 4. Mache das Skript ausführbar und starte es mit folgenden Befehlen:
    ```bash
-   chmod +x install_linux_rks_1.0.sh uninstall_linux_rks_1.0.sh
+   chmod +x install_linux_rks_1.0.sh
    ./install_linux_rks_1.0.sh
    ```
+5. Tippe im Terminal-Menü **`A`** ein und drücke Enter, um die Anpassung zu aktivieren.
 
 #### 💡 Alternative Manuelle Installation (Falls Skripte blockiert werden)
 1. Öffne deinen ATS-Profilordner: `Dokumente / American Truck Simulator / profiles / DEINE_PROFIL_ID /`
@@ -135,12 +144,13 @@ Dieses Skript aktualisiert deine American Truck Simulator Steuerungskonfiguratio
 
 ---
 
-## ↩️ Deinstallation
-Wenn du deine alten Steuerungseinstellungen wiederherstellen möchtest, führe einfach den passenden Uninstaller für dein System aus:
-* **Windows:** Führe die **`uninstall_windows_rks_1.0.bat`** per Doppelklick aus.
-* **Linux:** Starte `./uninstall_linux_rks_1.0.sh` im Terminal.
-
-Das Skript löscht das modifizierte Preset und stellt deine originale Konfiguration sofort aus der Backup-Datei wieder her.
+## ↩️ Deinstallation & Rollback
+Wenn du deine alten Steuerungseinstellungen wiederherstellen und die Mod restlos entfernen möchtest, kannst du das integrierte Rückroll-System des Managers nutzen:
+1. Starte das jeweilige Hauptskript deines Systems einfach erneut:
+   * **Windows:** Doppelklick auf **`install_windows_rks_1.0.bat`**
+   * **Linux:** Starte `./install_linux_rks_1.0.sh` im Terminal.
+2. Tippe im Hauptmenü des Skripts den Buchstaben **`R`** ein und drücke Enter, um das **Restore backups** System zu aktivieren.
+3. Das Skript löscht die RKS-Befehle automatisch und stellt deine originale Steuerung fehlerfrei aus der Backup-Datei wieder her.
 
 ---
 
