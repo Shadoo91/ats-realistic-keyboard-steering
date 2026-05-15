@@ -73,19 +73,39 @@ Write-Host ""
 $Selection = (Read-Host "Please select an option").Trim().ToUpper()
 if ($Selection -eq "E") { Exit }
 
+# INTERAKTIVES BACKUP-ROLLBACK SYSTEM
 if ($Selection -eq "R") {
     Write-Host ""
+    $RollbackSel = (Read-Host "Restore ALL backups [A] or select a specific Profile Number? (A/Number)").Trim().ToUpper()
+    
+    $FilesToRollback = @()
+    if ($RollbackSel -eq "A") {
+        $FilesToRollback = $ControlFiles
+    } else {
+        $SelectedRIdx = 0
+        if ([int]::TryParse($RollbackSel, [ref]$SelectedRIdx) -and $SelectedRIdx -le $ControlFiles.Count -and $SelectedRIdx -gt 0) {
+            $FilesToRollback = @($ControlFiles[$SelectedRIdx - 1])
+        } else {
+            Write-Host "[ERROR] Invalid selection!" -ForegroundColor Red
+            Read-Host "Press Enter to exit..."
+            Exit
+        }
+    }
+
+    Write-Host ""
     Write-Host "Starting Rollback System..." -ForegroundColor Cyan
-    foreach ($CF in $ControlFiles) {
+    foreach ($CF in $FilesToRollback) {
         $BackupPath = $CF.Path + ".bak"
         if (Test-Path $BackupPath) {
             if ($CF.FileInfo.IsReadOnly) { $CF.FileInfo.IsReadOnly = $false }
             Copy-Item -Path $BackupPath -Destination $CF.Path -Force
             Remove-Item -Path $BackupPath -Force
             Write-Host "  -> Restored: $($CF.Folder)" -ForegroundColor Green
+        } else {
+            Write-Host "  -> No backup found for: $($CF.Folder)" -ForegroundColor DarkYellow
         }
     }
-    Read-Host "Rollback completed. Press Enter to exit..."
+    Read-Host "Rollback finished. Press Enter to exit..."
     Exit
 }
 
@@ -100,6 +120,7 @@ else {
 
 if ($FilesToPatch.Count -eq 0) { Write-Host "[ERROR] Invalid selection!" -ForegroundColor Red; Exit }
 
+# EXAKTE DOPPEL-BACKTICK ERSETZUNG GEGEN VERSCHLUCKEN
 $Replacements = @{
     '(?i)(config_lines\[\d+\]:\s+)"mix dsteerleft .*"'   = '$1"mix dsteerleft ``keyboard.a?0``"'
     '(?i)(config_lines\[\d+\]:\s+)"mix dsteerright .*"'  = '$1"mix dsteerright ``keyboard.d?0``"'
@@ -114,7 +135,6 @@ $Replacements = @{
     '(?i)(config_lines\[\d+\]:\s+)"mix forward .*"'      = '$1"mix forward ``aforward``"'
     '(?i)(config_lines\[\d+\]:\s+)"mix backward .*"'     = '$1"mix backward ``abackward``"'
 }
-
 
 foreach ($CF in $FilesToPatch) {
     $File = $CF.FileInfo
