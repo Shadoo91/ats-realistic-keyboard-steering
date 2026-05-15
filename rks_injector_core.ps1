@@ -73,7 +73,7 @@ Write-Host ""
 $Selection = (Read-Host "Please select an option").Trim().ToUpper()
 if ($Selection -eq "E") { Exit }
 
-# INTERAKTIVES BACKUP-ROLLBACK SYSTEM (VOLLSTÄNDIG)
+# INTERAKTIVES BACKUP-ROLLBACK SYSTEM
 if ($Selection -eq "R") {
     Write-Host ""
     $RollbackSel = (Read-Host "Restore ALL backups [A] or select a specific Profile Number? (A/Number)").Trim().ToUpper()
@@ -120,7 +120,7 @@ else {
 
 if ($FilesToPatch.Count -eq 0) { Write-Host "[ERROR] Invalid selection!" -ForegroundColor Red; Exit }
 
-# REIN-TEXT-MATRIX (NATIVE STRINGS OHNE ERSETZUNGS-FEHLER)
+# REIN-TEXT-MATRIX (NATIVE STRINGS)
 $B = [char]96
 $CustomFormulas = @{
     'mix dsteerleft'  = "mix dsteerleft ${B}keyboard.a?0${B}"
@@ -156,8 +156,8 @@ foreach ($CF in $FilesToPatch) {
     foreach ($Line in $Lines) {
         $Matched = $false
         foreach ($Key in $CustomFormulas.Keys) {
-            # Sicherer Abgleich über reguläre Ausdrücke (Regex) für den Zeilenanfang des Befehls
-            if ($Line -match "mix $Key\b" -or $Line -match """mix $Key\b""") {
+            # FLEXIBLE SUCHE: Ignoriert Anstriche und Leerzeichen vor dem mix-Befehl
+            if ($Line -match "\b$Key\b") {
                 if ($Line -match '^(\s*config_lines\[\d+\]:\s*)') {
                     $Prefix = $Matches[1]
                     $NewLines += "${Prefix}`"$($CustomFormulas[$Key])`""
@@ -177,7 +177,7 @@ foreach ($CF in $FilesToPatch) {
         [System.IO.File]::WriteAllLines($File.FullName, $NewLines, [System.Text.Encoding]::UTF8)
         Write-Host "  -> Success: RKS formulas injected!" -ForegroundColor Green
     } else {
-        # VOLLSTÄNDIGER WARNBLOCK & PRESET-FALLBACK WENN INJEKTION FEHLSCHLÄGT
+        # WARNBLOCK & PRESET-FALLBACK WENN INJEKTION FEHLSCHLÄGT
         Write-Host "  -> [WARNING] Target lines not found. File might be corrupted." -ForegroundColor DarkYellow
         if (Test-Path $PresetFile) {
             Write-Host ""
