@@ -80,7 +80,7 @@ It will instantly delete the injector preset and safely restore your original co
 Dieses Skript aktualisiert deine American Truck Simulator Steuerungskonfiguration für eine realistische und präzise Tastaturbedienung. Es implementiert eine mehrstufige Eingabelogik ("Turbo-Modus"), die präzises Fahren auf Autobahnen sowie scharfe Manöver in der Stadt ermöglicht – völlig ohne Modifikation von Spieldateien.
 
 ⚠️ **WICHTIGER HINWEIS:** Dieses Repository dient als zwingende Ergänzung zur offiziellen Steam-Workshop-Mod. Stelle sicher, dass du die Mod auf Steam abonniert hast, bevor du diese Dateien ausführst!  
-🔗 **[Steam Workshop Link]((https://steamcommunity.com/sharedfiles/filedetails/?id=3725174940)**
+🔗 **[Steam Workshop Link](https://steamcommunity.com/sharedfiles/filedetails/?id=3725174940)**
 
 ### 🎮 Features & Tastenbelegung
 
