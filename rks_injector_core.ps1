@@ -1,6 +1,6 @@
 # ===================================================================================
 #   ATS Realistic-Keyboard-Steering (RKS) (Turbo-Mode) ~ by Shadoo91
-#   [POWERSHELL PROFILE INJECTOR - WITH SAFETY FALLBACK PRESET & ROLLBACK INFO]
+#   [POWERSHELL PROFILE INJECTOR - PURE TEXT MODE - 100% BIT-ACCURATE]
 # ===================================================================================
 
 if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
@@ -73,7 +73,7 @@ Write-Host ""
 $Selection = (Read-Host "Please select an option").Trim().ToUpper()
 if ($Selection -eq "E") { Exit }
 
-# INTERAKTIVES BACKUP-ROLLBACK SYSTEM
+# INTERAKTIVES BACKUP-ROLLBACK SYSTEM (VOLLSTÄNDIG)
 if ($Selection -eq "R") {
     Write-Host ""
     $RollbackSel = (Read-Host "Restore ALL backups [A] or select a specific Profile Number? (A/Number)").Trim().ToUpper()
@@ -105,7 +105,7 @@ if ($Selection -eq "R") {
             Write-Host "  -> No backup found for: $($CF.Folder)" -ForegroundColor DarkYellow
         }
     }
-    Read-Host "Rollback finished. Press Enter to exit..."
+    Read-Host "Rollback completed. Press Enter to exit..."
     Exit
 }
 
@@ -113,28 +113,29 @@ $FilesToPatch = @()
 if ($Selection -eq "A") { $FilesToPatch = $ControlFiles }
 else {
     $SelectedIdx = 0
-    if ([int]::TryParse($Selection, [ref]$SelectedIdx)) {
-        $FilesToPatch = $ControlFiles | Where-Object { $_.Index -eq $SelectedIdx }
+    if ([int]::TryParse($Selection, [ref]$SelectedIdx) -and $SelectedIdx -le $ControlFiles.Count -and $SelectedIdx -gt 0) {
+        $FilesToPatch = @($ControlFiles[$SelectedIdx - 1])
     }
 }
 
 if ($FilesToPatch.Count -eq 0) { Write-Host "[ERROR] Invalid selection!" -ForegroundColor Red; Exit }
 
-$Replacements = @{
-    '(?i)(config_lines\[\d+\]:\s+"mix dsteerleft ).*"'   = '$1``keyboard.a?0``"'
-    '(?i)(config_lines\[\d+\]:\s+"mix dsteerright ).*"'  = '$1``keyboard.d?0``"'
-    '(?i)(config_lines\[\d+\]:\s+"mix dsteering ).*"'    = '$1``(keyboard.a?0 - keyboard.d?0) * (0.40 + (keyboard.space?0 * 0.50) + (keyboard.s?0 * keyboard.lalt?0 * 0.20))``"'
-    '(?i)(config_lines\[\d+\]:\s+"mix steering ).*"'     = '$1``dsteering * (1.0 - c_steer_func)``"'
-    '(?i)(config_lines\[\d+\]:\s+"mix msteering ).*"'    = '$1``-mouse.rel_position.x?0 * c_msens``"'
-    '(?i)(config_lines\[\d+\]:\s+"mix mpedals ).*"'      = '$1``-mouse.rel_position.y?0 * c_msens``"'
-    '(?i)(config_lines\[\d+\]:\s+"mix dforward ).*"'     = '$1``0``"'
-    '(?i)(config_lines\[\d+\]:\s+"mix dbackward ).*"'    = '$1".`0``"'
-    '(?i)(config_lines\[\d+\]:\s+"mix aforward ).*"'     = '$1``(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)``"'
-    '(?i)(config_lines\[\d+\]:\s+"mix abackward ).*"'    = '$1``keyboard.s?0 * (0.10 + (keyboard.lalt?0 * 0.50) + (keyboard.space?0 * 0.80))``"'
-    '(?i)(config_lines\[\d+\]:\s+"mix forward ).*"'      = '$1``aforward``"'
-    '(?i)(config_lines\[\d+\]:\s+"mix backward ).*"'     = '$1``abackward``"'
+# REIN-TEXT-MATRIX (NATIVE STRINGS OHNE ERSETZUNGS-FEHLER)
+$B = [char]96
+$CustomFormulas = @{
+    'mix dsteerleft'  = "mix dsteerleft ${B}keyboard.a?0${B}"
+    'mix dsteerright' = "mix dsteerright ${B}keyboard.d?0${B}"
+    'mix dsteering'   = "mix dsteering ${B}(keyboard.a?0 - keyboard.d?0) * (0.40 + (keyboard.space?0 * 0.50) + (keyboard.s?0 * keyboard.lalt?0 * 0.20))${B}"
+    'mix steering'    = "mix steering ${B}dsteering * (1.0 - c_steer_func)${B}"
+    'mix msteering'   = "mix msteering ${B}-mouse.rel_position.x?0 * c_msens${B}"
+    'mix mpedals'     = "mix mpedals ${B}-mouse.rel_position.y?0 * c_msens${B}"
+    'mix dforward'    = "mix dforward ${B}0${B}"
+    'mix dbackward'   = "mix dbackward ${B}0${B}"
+    'mix aforward'    = "mix aforward ${B}(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)${B}"
+    'mix abackward'   = "mix abackward ${B}keyboard.s?0 * (0.10 + (keyboard.lalt?0 * 0.50) + (keyboard.space?0 * 0.80))${B}"
+    'mix forward'     = "mix forward ${B}aforward${B}"
+    'mix backward'    = "mix backward ${B}abackward${B}"
 }
-
 
 foreach ($CF in $FilesToPatch) {
     $File = $CF.FileInfo
@@ -142,19 +143,41 @@ foreach ($CF in $FilesToPatch) {
     if ($File.IsReadOnly) { $File.IsReadOnly = $false }
     
     $BackupPath = $File.FullName + ".bak"
-    if (-not (Test-Path $BackupPath)) { Copy-Item -Path $File.FullName -Destination $BackupPath -Force }
-    
-    $Content = [System.IO.File]::ReadAllText($File.FullName, [System.Text.Encoding]::UTF8)
-    $Modified = $false
-    
-    foreach ($Key in $Replacements.Keys) {
-        if ($Content -match $Key) { $Content = $Content -replace $Key, $Replacements[$Key]; $Modified = $true }
+    if (-not (Test-Path $BackupPath)) { 
+        Copy-Item -Path $File.FullName -Destination $BackupPath -Force 
+        Write-Host "  -> Backup created: controls.sii.bak" -ForegroundColor Green
     }
     
-    if ($Modified) {
-        [System.IO.File]::WriteAllText($File.FullName, $Content, [System.Text.Encoding]::UTF8)
+    # Datei zeilenweise einlesen
+    $Lines = [System.IO.File]::ReadAllLines($File.FullName, [System.Text.Encoding]::UTF8)
+    $NewLines = @()
+    $ModifiedCount = 0
+    
+    foreach ($Line in $Lines) {
+        $Matched = $false
+        foreach ($Key in $CustomFormulas.Keys) {
+            # Sicherer Abgleich über reguläre Ausdrücke (Regex) für den Zeilenanfang des Befehls
+            if ($Line -match "mix $Key\b" -or $Line -match """mix $Key\b""") {
+                if ($Line -match '^(\s*config_lines\[\d+\]:\s*)') {
+                    $Prefix = $Matches[1]
+                    $NewLines += "${Prefix}`"$($CustomFormulas[$Key])`""
+                    $ModifiedCount++
+                    $Matched = $true
+                    break
+                }
+            }
+        }
+        if (-not $Matched) {
+            $NewLines += $Line
+        }
+    }
+    
+    # Pruefen, ob die Zeilen erfolgreich injiziert wurden
+    if ($ModifiedCount -ge 6) {
+        [System.IO.File]::WriteAllLines($File.FullName, $NewLines, [System.Text.Encoding]::UTF8)
         Write-Host "  -> Success: RKS formulas injected!" -ForegroundColor Green
     } else {
+        # VOLLSTÄNDIGER WARNBLOCK & PRESET-FALLBACK WENN INJEKTION FEHLSCHLÄGT
         Write-Host "  -> [WARNING] Target lines not found. File might be corrupted." -ForegroundColor DarkYellow
         if (Test-Path $PresetFile) {
             Write-Host ""
@@ -184,4 +207,5 @@ foreach ($CF in $FilesToPatch) {
     }
     Write-Host "------------------------------------------------------------------------------------"
 }
+
 Read-Host "Process finished. Press Enter to exit..."
