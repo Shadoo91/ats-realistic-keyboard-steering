@@ -341,7 +341,7 @@ input_config : _nameless.1c54.acc0 {
  config_lines[335]: "mix mpedals `-mouse.rel_position.y?0 * c_msens`"
  config_lines[336]: "mix dforward `keyboard.uarrow?0 | keyboard.w?0`"
  config_lines[337]: "mix dbackward `keyboard.darrow?0 | keyboard.s?0`"
- config_lines[338]: "mix aforward `memory(j_throttle_c?1, normalize(sel(c_jzthrottle, sel(c_jithrottle, -j_throttle?0, j_throttle?0), sel(c_jithrottle, j_throttle?1 * -0.5 + 0.5, j_throttle?-1 * 0.5 + 0.5)), c_throt_dz)) + semantical.aforward?0`"
+ config_lines[338]: "mix aforward `((keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)) * (! keyboard.s?0)`"
  config_lines[339]: "mix abackward `memory(j_brake_c?1, normalize(sel(c_jzbrake, sel(c_jibrake, -j_brake?0, j_brake?0), sel(c_jibrake, j_brake?1 * -0.5 + 0.5, j_brake?-1 * 0.5 + 0.5)), c_brake_dz)) + semantical.abackward?0`"
  config_lines[340]: "mix forward `dforward + aforward`"
  config_lines[341]: "mix backward `dbackward + abackward`"
