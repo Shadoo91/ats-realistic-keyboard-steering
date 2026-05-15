@@ -100,21 +100,21 @@ else {
 
 if ($FilesToPatch.Count -eq 0) { Write-Host "[ERROR] Invalid selection!" -ForegroundColor Red; Exit }
 
+$b = [char]0x60
 $Replacements = @{
-    '(?i)(config_lines\[\d+\]:\s+)"mix dsteerleft .*"'   = '$1"mix dsteerleft `keyboard.a?0`"'
-    '(?i)(config_lines\[\d+\]:\s+)"mix dsteerright .*"'  = '$1"mix dsteerright `keyboard.d?0`"'
-    '(?i)(config_lines\[\d+\]:\s+)"mix dsteering .*"'    = '$1"mix dsteering `(keyboard.a?0 - keyboard.d?0) * (0.40 + (keyboard.space?0 * 0.50) + (keyboard.s?0 * keyboard.lalt?0 * 0.20))`"'
-    '(?i)(config_lines\[\d+\]:\s+)"mix steering .*"'     = '$1"mix steering `dsteering * (1.0 - c_steer_func)`"'
-    '(?i)(config_lines\[\d+\]:\s+)"mix msteering .*"'    = '$1"mix msteering `-mouse.rel_position.x?0 * c_msens`"'
-    '(?i)(config_lines\[\d+\]:\s+)"mix mpedals .*"'      = '$1"mix mpedals `-mouse.rel_position.y?0 * c_msens`"'
-    '(?i)(config_lines\[\d+\]:\s+)"mix dforward .*"'     = '$1"mix dforward `0`"'
-    '(?i)(config_lines\[\d+\]:\s+)"mix dbackward .*"'    = '$1"mix dbackward `0`"'
-    '(?i)(config_lines\[\d+\]:\s+)"mix aforward .*"'     = '$1"mix aforward `(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)`"'
-    '(?i)(config_lines\[\d+\]:\s+)"mix abackward .*"'    = '$1"mix abackward `keyboard.s?0 * (0.10 + (keyboard.lalt?0 * 0.50) + (keyboard.space?0 * 0.80))`"'
-    '(?i)(config_lines\[\d+\]:\s+)"mix forward .*"'      = '$1"mix forward `aforward`"'
-    '(?i)(config_lines\[\d+\]:\s+)"mix backward .*"'     = '$1"mix backward `abackward`"'
+    '(?i)(config_lines\[\d+\]:\s+)"mix dsteerleft .*"'   = '$1"mix dsteerleft ' + $b + 'keyboard.a?0' + $b + '"'
+    '(?i)(config_lines\[\d+\]:\s+)"mix dsteerright .*"'  = '$1"mix dsteerright ' + $b + 'keyboard.d?0' + $b + '"'
+    '(?i)(config_lines\[\d+\]:\s+)"mix dsteering .*"'    = '$1"mix dsteering ' + $b + '(keyboard.a?0 - keyboard.d?0) * (0.40 + (keyboard.space?0 * 0.50) + (keyboard.s?0 * keyboard.lalt?0 * 0.20))' + $b + '"'
+    '(?i)(config_lines\[\d+\]:\s+)"mix steering .*"'     = '$1"mix steering ' + $b + 'dsteering * (1.0 - c_steer_func)' + $b + '"'
+    '(?i)(config_lines\[\d+\]:\s+)"mix msteering .*"'    = '$1"mix msteering ' + $b + '-mouse.rel_position.x?0 * c_msens' + $b + '"'
+    '(?i)(config_lines\[\d+\]:\s+)"mix mpedals .*"'      = '$1"mix mpedals ' + $b + '-mouse.rel_position.y?0 * c_msens' + $b + '"'
+    '(?i)(config_lines\[\d+\]:\s+)"mix dforward .*"'     = '$1"mix dforward ' + $b + '0' + $b + '"'
+    '(?i)(config_lines\[\d+\]:\s+)"mix dbackward .*"'    = '$1"mix dbackward ' + $b + '0' + $b + '"'
+    '(?i)(config_lines\[\d+\]:\s+)"mix aforward .*"'     = '$1"mix aforward ' + $b + '(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)' + $b + '"'
+    '(?i)(config_lines\[\d+\]:\s+)"mix abackward .*"'    = '$1"mix abackward ' + $b + 'keyboard.s?0 * (0.10 + (keyboard.lalt?0 * 0.50) + (keyboard.space?0 * 0.80))' + $b + '"'
+    '(?i)(config_lines\[\d+\]:\s+)"mix forward .*"'      = '$1"mix forward ' + $b + 'aforward' + $b + '"'
+    '(?i)(config_lines\[\d+\]:\s+)"mix backward .*"'     = '$1"mix backward ' + $b + 'abackward' + $b + '"'
 }
-
 
 foreach ($CF in $FilesToPatch) {
     $File = $CF.FileInfo
