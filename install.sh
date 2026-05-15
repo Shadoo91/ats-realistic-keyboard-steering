@@ -2,121 +2,211 @@
 
 # ===================================================================================
 #   ATS Realistic-Keyboard-Steering (RKS) (Turbo-Mode) ~ by Shadoo91
-#   [LINUX PROFILE INJECTOR - WITH SAFETY FALLBACK PRESET & ROLLBACK INFO]
+#   [BASH PROFILE INJECTOR - WITH SAFETY FALLBACK PRESET & ROLLBACK INFO]
 # ===================================================================================
 
+cd "$(dirname "$0")"
+
 clear
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE}")" && pwd)"
-PRESET_FILE="$SCRIPT_DIR/rks_preset_controls.sii"
+echo -e "\e[36m====================================================================================\e[0m"
+echo -e "\e[36m   ATS Realistic-Keyboard-Steering (RKS) ~ Profile Manager (Linux)\e[0m"
+echo -e "\e[36m====================================================================================\e[0m"
+echo
 
-echo "===================================================================================="
-echo "   ATS Realistic-Keyboard-Steering (RKS) ~ Profile Manager (Linux)"
-echo "===================================================================================="
-echo ""
+PresetFile="./rks_preset_controls.sii"
 
-declare -a SEARCH_PATHS=()
-if [ -d "$HOME/.local/share/American Truck Simulator/profiles" ]; then SEARCH_PATHS+=("$HOME/.local/share/American Truck Simulator/profiles"); fi
-if [ -d "$HOME/.local/share/American Truck Simulator/steam_profiles" ]; then SEARCH_PATHS+=("$HOME/.local/share/American Truck Simulator/steam_profiles"); fi
+# 1. Suchpfade für Profile definieren (Lokal, Flatpak und Steam Cloud userdata)
+AtsDocPath="$HOME/.steam/steam/steamapps/compatdata/270880/pfx/drive_c/users/steamuser/Documents/American Truck Simulator"
+AtsFlatpakPath="$HOME/.var/app/com.valvesoftware.Steam/.steam/steam/steamapps/compatdata/270880/pfx/drive_c/users/steamuser/Documents/American Truck Simulator"
 
-for STEAM_DIR in "$HOME/.local/share/Steam" "$HOME/.var/app/com.valvesoftware.Steam/.local/share/Steam"; do
-    if [ -d "$STEAM_DIR/userdata" ]; then
-        while IFS= read -r -d '' path; do SEARCH_PATHS+=("$path"); done < <(find "$STEAM_DIR/userdata" -type d -path "*/270880/remote/profiles" -print0 2>/dev/null)
+declare -a SearchPaths
+[ -d "$AtsDocPath/profiles" ] && SearchPaths+=("$AtsDocPath/profiles")
+[ -d "$AtsDocPath/steam_profiles" ] && SearchPaths+=("$AtsDocPath/steam_profiles")
+[ -d "$AtsFlatpakPath/profiles" ] && SearchPaths+=("$AtsFlatpakPath/profiles")
+[ -d "$AtsFlatpakPath/steam_profiles" ] && SearchPaths+=("$AtsFlatpakPath/steam_profiles")
+
+# Lokale Steam Userdata (Cloud) Pfade durchsuchen
+SteamPaths=("$HOME/.steam/steam/userdata" "$HOME/.var/app/com.valvesoftware.Steam/.steam/steam/userdata")
+for SPath in "${SteamPaths[@]}"; do
+    if [ -d "$SPath" ]; then
+        for UserDir in "$SPath"/*; do
+            if [ -d "$UserDir/270880/remote/profiles" ]; then
+                SearchPaths+=("$UserDir/270880/remote/profiles")
+            fi
+        done
     fi
 done
 
-UNIQUE_PATHS=($(printf "%s\n" "${SEARCH_PATHS[@]}" | sort -u))
-if [ ${#UNIQUE_PATHS[@]} -eq 0 ]; then echo -e "\e[31m[ERROR] No profile folders found!\e[0m"; exit 1; fi
-
-declare -a CONTROL_FILES=()
-declare -a FILE_TYPES=()
-declare -a PROFILE_NAMES=()
-
-echo "Detected ATS Profiles:"
-echo "------------------------------------------------------------------------------------"
-INDEX=1
-for DIR in "${UNIQUE_PATHS[@]}"; do
-    while IFS= read -r -d '' file; do
-        CONTROL_FILES+=("$file")
-        TYPE="Local"; if [[ "$file" == *"steam_profiles"* ]]; then TYPE="Steam Copy"; elif [[ "$file" == *"userdata"* ]]; then TYPE="Steam Cloud"; fi
-        FILE_TYPES+=("$TYPE")
-        PROF_DIR=$(basename "$(dirname "$file")"); PROFILE_NAMES+=("$PROF_DIR")
-        BAK_STATUS="[Backup: No ]"; if [ -f "${file}.bak" ]; then BAK_STATUS="[Backup: Yes]"; fi
-        printf " [\e[36m%s\e[0m] Folder: \e[37m%-20s\e[0m | Type: \e[35m%-12s\e[0m | %s\n" "$INDEX" "$PROF_DIR" "$TYPE" "$BAK_STATUS"
-        INDEX=$((INDEX + 1))
-    done < <(find "$DIR" -type f -name "controls.sii" -print0 2>/dev/null)
+# Einzigartige, existierende Pfade filtern
+declare -a TargetPaths
+for Path in "${SearchPaths[@]}"; do
+    if [[ ! " ${TargetPaths[@]} " =~ " ${Path} " ]] && [ -d "$Path" ]; then
+        TargetPaths+=("$Path")
+    fi
 done
 
-echo "------------------------------------------------------------------------------------"
-echo -e " [\e[32mA\e[0m] Patch ALL  |  [\e[33mR\e[0m] Restore Backups  |  [\e[31mE\e[0m] Exit"
-echo "------------------------------------------------------------------------------------"
-echo ""
+if [ ${#TargetPaths[@]} -eq 0 ]; then
+    echo -e "\e[31m[ERROR] No American Truck Simulator profile directories found!\e[0m"
+    read -p "Press Enter to exit..."
+    exit 1
+fi
 
-read -p "Please select an option: " SELECTION
-SELECTION=$(echo "$SELECTION" | tr '[:lower:]' '[:upper:]' | xargs)
-if [ "$SELECTION" == "E" ]; then exit 0; fi
+# 2. Alle controls.sii Dateien finden und auflisten
+declare -a ControlFiles
+declare -a ControlTypes
+declare -a ControlFolders
+Index=1
 
-if [ "$SELECTION" == "R" ]; then
-    for i in "${!CONTROL_FILES[@]}"; do
-        FILE="${CONTROL_FILES[$i]}"; BACKUP="${FILE}.bak"
-        if [ -f "$BACKUP" ]; then
-            chmod +w "$FILE" 2>/dev/null; cp -f "$BACKUP" "$FILE"; rm -f "$BACKUP"
-            echo -e "  -> \e[32mRestored: ${PROFILE_NAMES[$i]}\e[0m"
-        fi
-    done
+echo -e "\e[33mDetected ATS Profiles:\e[0m"
+echo "------------------------------------------------------------------------------------"
+
+for TPath in "${TargetPaths[@]}"; do
+    while IFS= read -r -d '' FILE; do
+        Folder=$(basename "$(dirname "$FILE")")
+        Type="Local"
+        [[ "$FILE" =~ "steam_profiles" ]] && Type="Steam Copy"
+        [[ "$FILE" =~ "userdata" ]] && Type="Steam Cloud"
+        
+        BakStatus="[Backup: No ]"
+        [ -f "${FILE}.bak" ] && BakStatus="[Backup: Yes]"
+        
+        ControlFiles+=("$FILE")
+        ControlTypes+=("$Type")
+        ControlFolders+=("$Folder")
+        
+        printf " [\e[36m%d\e[0m] Folder: %-20s | Type: %-12s | %s\n" "$Index" "$Folder" "$Type" "$BakStatus"
+        ((Index++))
+    done < <(find "$TPath" -name "controls.sii" -print0 2>/dev/null)
+done
+
+if [ ${#ControlFiles[@]} -eq 0 ]; then
+    echo -e "\e[33m[INFO] No 'controls.sii' files found!\e[0m"
+    read -p "Press Enter to exit..."
     exit 0
 fi
 
-declare -a TARGETS_TO_PATCH=()
-if [ "$SELECTION" == "A" ]; then TARGETS_TO_PATCH=("${!CONTROL_FILES[@]}")
-elif [[ "$SELECTION" =~ ^[0-9]+$ ]] && [ "$SELECTION" -ge 1 ] && [ "$SELECTION" -le "${#CONTROL_FILES[@]}" ]; then
-    TARGETS_TO_PATCH+=("$((SELECTION - 1))")
+echo "------------------------------------------------------------------------------------"
+echo -e "\e[33m [A] Patch ALL profiles  |  [R] Restore backups  |  [E] Exit\e[0m"
+echo "------------------------------------------------------------------------------------"
+echo
+
+read -p "Please select an option: " Selection
+Selection=$(echo "$Selection" | tr '[:lower:]' '[:upper:]')
+
+[ "$Selection" == "E" ] && exit 0
+
+# ==========================================
+# REITER: ROLLBACK SYSTEM [R] (MIT GEZIELTER ABFRAGE)
+# ==========================================
+if [ "$Selection" == "R" ]; then
+    echo
+    read -p "Restore ALL backups [A] or select a specific Profile Number? (A/Number): " RollbackSel
+    RollbackSel=$(echo "$RollbackSel" | tr '[:lower:]' '[:upper:]')
+    
+    declare -a FilesToRollback
+    if [ "$RollbackSel" == "A" ]; then
+        FilesToRollback=("${!ControlFiles[@]}")
+    elif [[ "$RollbackSel" =~ ^[0-9]+$ ]] && [ "$RollbackSel" -le "${#ControlFiles[@]}" ] && [ "$RollbackSel" -gt 0 ]; then
+        FilesToRollback+=($((RollbackSel-1)))
+    else
+        echo -e "\e[31m[ERROR] Invalid selection!\e[0m"; exit 1
+    fi
+
+    echo -e "\e[36mStarting Rollback System...\e[0m"
+    for i in "${FilesToRollback[@]}"; do
+        FILE="${ControlFiles[$i]}"
+        Folder="${ControlFolders[$i]}"
+        if [ -f "${FILE}.bak" ]; then
+            chmod 644 "$FILE" 2>/dev/null
+            cp -f "${FILE}.bak" "$FILE"
+            rm -f "${FILE}.bak"
+            echo -e "  -> \e[32mRestored:\e[0m $Folder"
+        else
+            echo -e "  -> \e[33mNo backup found for:\e[0m $Folder"
+        fi
+    done
+    read -p "Rollback finished. Press Enter to exit..."
+    exit 0
 fi
 
-if [ ${#TARGETS_TO_PATCH[@]} -eq 0 ]; then echo -e "\e[31m[ERROR] Invalid selection!\e[0m"; exit 1; fi
-
-for idx in "${TARGETS_TO_PATCH[@]}"; do
-    FILE="${CONTROL_FILES[$idx]}"; BACKUP="${FILE}.bak"
-    echo -e "Processing: ${PROFILE_NAMES[$idx]} [${FILE_TYPES[$idx]}]"
-    chmod +w "$FILE" 2>/dev/null
-    if [ ! -f "$BACKUP" ]; then cp "$FILE" "$BACKUP"; fi
-    
-    if grep -q "mix dsteering" "$FILE"; then
-        sed -i 's|mix dsteerleft .*|mix dsteerleft "keyboard.a?0"|' "$FILE"
-        sed -i 's|mix dsteerright .*|mix dsteerright "keyboard.d?0"|' "$FILE"
-        sed -i 's|mix dsteering .*|mix dsteering "(keyboard.a?0 - keyboard.d?0) * (0.35 + keyboard.space?0 * (0.55 - keyboard.s?0 * 0.25))"|' "$FILE"
-        sed -i 's|mix steering .*|mix steering "dsteering * (1.0 - (c_steer_func * 0.5))"|' "$FILE"
-        sed -i 's|mix aforward .*|mix aforward "(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)"|' "$FILE"
-        sed -i 's|mix abackward .*|mix abackward "keyboard.s?0 * (0.10 + keyboard.space?0 * 0.50)"|' "$FILE"
-        echo -e "  -> \e[32mSuccess: RKS formulas injected!\e[0m"
+# Auswahl für das Patchen auswerten
+declare -a FilesToPatch
+if [ "$Selection" == "A" ]; then
+    FilesToPatch=("${ControlFiles[@]}")
+else
+    if [[ "$Selection" =~ ^[0-9]+$ ]] && [ "$Selection" -le "${#ControlFiles[@]}" ] && [ "$Selection" -gt 0 ]; then
+        Idx=$((Selection-1))
+        FilesToPatch+=("${ControlFiles[$Idx]}")
     else
-        echo -e "  -> \e[33m[WARNING] Target lines not found. File might be corrupted.\e[0m"
-        if [ -f "$PRESET_FILE" ]; then
-            echo ""
+        echo -e "\e[31m[ERROR] Invalid selection!\e[0m"; exit 1
+    fi
+fi
+
+# ==========================================
+# REITER: INJEKTOR STARTEN
+# ==========================================
+for FILE in "${FilesToPatch[@]}"; do
+    Folder=$(basename "$(dirname "$FILE")" )
+    echo -e "Processing: \e[33m$Folder\e[0m"
+    
+    chmod 644 "$FILE"
+    [ ! -f "${FILE}.bak" ] && cp "$FILE" "${FILE}.bak"
+    
+    TEMP_FILE="${FILE}.tmp"
+    
+    # Sauberes Ersetzen
+    perl -pe '
+        s/(config_lines\[\d+\]:\s+)"mix dsteerleft .*"/$1"mix dsteerleft `keyboard.a?0`"/i;
+        s/(config_lines\[\d+\]:\s+)"mix dsteerright .*"/$1"mix dsteerright `keyboard.d?0`"/i;
+        s/(config_lines\[\d+\]:\s+)"mix dsteering .*"/$1"mix dsteering `(keyboard.a?0 - keyboard.d?0) * (0.35 + (keyboard.s?0 * (keyboard.lalt?0 | keyboard.space?0) * 0.55))`"/i;
+        s/(config_lines\[\d+\]:\s+)"mix steering .*"/$1"mix steering `dsteering * (1.0 - (c_steer_func * 0.5))`"/i;
+        s/(config_lines\[\d+\]:\s+)"mix aforward .*"/$1"mix aforward `(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)`"/i;
+        s/(config_lines\[\d+\]:\s+)"mix abackward .*"/$1"mix abackward `keyboard.s?0 * (0.10 + (keyboard.lalt?0 * 0.50) + (keyboard.space?0 * 0.80))`"/i;
+    ' "$FILE" > "$TEMP_FILE"
+    
+    # Überprüfen, ob Modifikationen vorgenommen wurden
+    if ! cmp -s "$FILE" "$TEMP_FILE"; then
+        mv -f "$TEMP_FILE" "$FILE"
+        echo -e "  -> \e[32mSuccess:\e[0m RKS formulas injected!"
+    else
+        rm -f "$TEMP_FILE"
+        echo -e "  -> \e[33m[WARNING]\e[0m Target lines not found. File might be corrupted."
+        
+        # INTERAKTIVER FALLBACK & WARNBLOCK (IDENTISCH ZU WINDOWS)
+        if [ -f "$PresetFile" ]; then
+            echo
             echo -e "     \e[31m!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\e[0m"
             echo -e "     \e[33mWARNING: Installing the preset will reset your custom in-game keybinds \e[0m"
             echo -e "              \e[33mand sensitivity settings to default RKS values!\e[0m"
             echo -e "              \e[32mYour original settings are SAFELY backed up in 'controls.sii.bak'.\e[0m"
             echo -e "              \e[33mYou will need to manually reconfigure your basic controls in-game.\e[0m"
             echo -e "     \e[31m!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\e[0m"
-            echo ""
-            read -p "     Do you still want to overwrite with the clean RKS Default Preset? (Y/N): " CHOICE
-            CHOICE=$(echo "$CHOICE" | tr '[:lower:]' '[:upper:]' | xargs)
-            if [ "$CHOICE" == "Y" ]; then
-                cp -f "$PRESET_FILE" "$FILE"
-                echo -e "     -> \e[32mSuccess: Overwritten with clean RKS Preset!\e[0m"
-                echo ""
+            echo
+            
+            read -p "     Do you still want to overwrite with the clean RKS Default Preset? (Y/N): " Choice
+            Choice=$(echo "$Choice" | tr '[:lower:]' '[:upper:]')
+            
+            if [ "$Choice" == "Y" ]; then
+                cp -f "$PresetFile" "$FILE"
+                echo -e "     -> \e[32mSuccess:\e[0m Overwritten with clean RKS Preset!"
+                echo
                 echo -e "     \e[36m------------------------------------------------------------------------\e[0m"
                 echo -e "     \e[33mHOW TO RESTORE YOUR ORIGINAL SETTINGS LATER:\e[0m"
-                echo -e "     Option 1 (Automatic): Restart this script and press [R] in the main menu."
-                echo -e "     Option 2 (Manual): Go to your profile directory:"
+                echo -e "     Option 1 (Automatic): Restart this tool and press [R] in the main menu."
+                echo -e "     Option 2 (Manual): Go to your profile folder:"
                 echo -e "                        $(dirname "$FILE")"
                 echo -e "                        Delete 'controls.sii' and rename 'controls.sii.bak'"
                 echo -e "                        back to 'controls.sii'."
                 echo -e "     \e[36m------------------------------------------------------------------------\e[0m"
-                echo ""
-            else echo "     -> Skipped preset installation."; fi
-        else echo -e "     -> \e[31mFallback preset file 'rks_preset_controls.sii' not found!\e[0m"; fi
+                echo
+            else
+                echo -e "     -> \e[37mSkipped preset installation.\e[0m"
+            fi
+        else
+            echo -e "     -> \e[31mFallback preset file 'rks_preset_controls.sii' not found in script folder!\e[0m"
+        fi
     fi
     echo "------------------------------------------------------------------------------------"
 done
+
 read -p "Process finished. Press Enter to exit..."
