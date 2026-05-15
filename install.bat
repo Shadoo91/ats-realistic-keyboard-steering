@@ -101,12 +101,12 @@ else {
 if ($FilesToPatch.Count -eq 0) { Write-Host "[ERROR] Invalid selection!" -ForegroundColor Red; Exit }
 
 $Replacements = @{
-    'mix dsteerleft .*'   = 'mix dsteerleft "keyboard.a?0"'
-    'mix dsteerright .*'  = 'mix dsteerright "keyboard.d?0"'
-    'mix dsteering .*'    = 'mix dsteering "(keyboard.a?0 - keyboard.d?0) * (0.35 + keyboard.space?0 * (0.55 - keyboard.s?0 * 0.25))"'
-    'mix steering .*'     = 'mix steering "dsteering * (1.0 - (c_steer_func * 0.5))"'
-    'mix aforward .*'     = 'mix aforward "(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)"'
-    'mix abackward .*'    = 'mix abackward "keyboard.s?0 * (0.10 + keyboard.space?0 * 0.50)"'
+    '(?i)(config_lines\[\d+\]:\s+)"mix dsteerleft .*"'   = '$1"mix dsteerleft `\`keyboard.a?0`\`"'
+    '(?i)(config_lines\[\d+\]:\s+)"mix dsteerright .*"'  = '$1"mix dsteerright `\`keyboard.d?0`\`"'
+    '(?i)(config_lines\[\d+\]:\s+)"mix dsteering .*"'    = '$1"mix dsteering `\`(keyboard.a?0 - keyboard.d?0) * (0.35 + keyboard.space?0 * (0.55 - keyboard.s?0 * 0.25))\`"'
+    '(?i)(config_lines\[\d+\]:\s+)"mix steering .*"'     = '$1"mix steering `\`dsteering * (1.0 - (c_steer_func * 0.5))\`"'
+    '(?i)(config_lines\[\d+\]:\s+)"mix aforward .*"'     = '$1"mix aforward `\`(keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)\`"'
+    '(?i)(config_lines\[\d+\]:\s+)"mix abackward .*"'    = '$1"mix abackward `\`keyboard.s?0 * (0.10 + keyboard.space?0 * 0.50)\`"'
 }
 
 foreach ($CF in $FilesToPatch) {
