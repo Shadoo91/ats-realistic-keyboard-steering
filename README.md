@@ -1,5 +1,11 @@
 # ATS Realistic Keyboard Steering (with Turbo-Mode)
 
+⚠️ **CRITICAL IN-GAME MENU NOTICE (For English & German users):**
+After running the installer, **Throttle (Gas) and Brake will visually appear as "Not Bound" / "Nicht belegt" inside your in-game options menu!** 
+* **This is 100% intentional and required!** 
+* The script completely detaches the rigid digital lines to unlock the high-fidelity 3-stage analog physics matrix. 
+* **Do NOT rebind W and S in the menu!** If you click there and re-assign W and S, the game will force full-throttle/full-brake digital logic, and the realistic physics script will be completely disabled. Just leave the fields empty and drive!
+
 ⚠️ **IMPORTANT NOTICE:** This repository contains the official installation scripts and physics configuration files. It is designed as a mandatory companion/supplement to the official Steam Workshop mod. Make sure you are subscribed to the mod on Steam before running these files!  
 🔗 **[Steam Workshop Link](https://steamcommunity.com/sharedfiles/filedetails/?id=3725174940)**
 
@@ -44,8 +50,9 @@ Before running the installer, go to Steam ➔ Right-click American Truck Simulat
 
 ### 🪟 Windows (10 / 11) Instruction
 1. Completely close the game.
-2. Download `rks_preset_controls.sii` and `install_windows_rks_1.0.bat` into the **same folder** (e.g., your Downloads folder).
-3. Double-click **`install_windows_rks_1.0.bat`** to run the manager. 
+2. Download `rks_preset_controls.sii`, `install_windows_rks_1.0.ps1`, and `install_windows_rks_1.0.bat` into the **same folder** (e.g., your Downloads folder). 
+   *(Note: Both the .bat and .ps1 files must be in the same directory!)*
+3. Double-click **`install_windows_rks_1.0.bat`** to launch the manager. 
 4. Type **`A`** and press Enter to patch all your profiles automatically.
 
 ### 🐧 Linux Instruction (Pop!_OS / Ubuntu / Steam Deck)
@@ -86,6 +93,12 @@ Dieses Skript aktualisiert deine American Truck Simulator Steuerungskonfiguratio
 ⚠️ **WICHTIGER HINWEIS:** Dieses Repository dient als zwingende Ergänzung zur offiziellen Steam-Workshop-Mod. Stelle sicher, dass du die Mod auf Steam abonniert hast, bevor du diese Dateien ausführst!  
 🔗 **[Steam Workshop Link](https://steamcommunity.com/sharedfiles/filedetails/?id=3725174940)**
 
+⚠️ **WICHTIGER HINWEIS ZUM INGAME-MENÜ:**
+Nachdem du den Installer ausgeführt hast, werden **Gas und Bremse im Steuerungsmenü des Spiels optisch als "Nicht belegt" angezeigt!** 
+* **Das ist zu 100% so gewollt und technisch zwingend notwendig!** 
+* Das Skript klemmt die starren digitalen Leitungen im Hintergrund ab, um die präzise, analoge 3-Stufen-Physik überhaupt erst zu ermöglichen.
+* **Belege W und S NIEMALS neu im Menü!** Wenn du in die leeren Felder klickst und W/S dort wieder einträgst, schaltet das Spiel sofort zurück auf die standardmäßige digitale Vollgas-/Vollbremsungs-Logik und zerstört das gesamte RKS-Skript. Lass die Felder einfach leer und fahr los!
+
 ### 🎮 Features & Tastenbelegung
 
 #### 🔹 Lenkung (A / D)
@@ -120,8 +133,9 @@ Dieses Skript aktualisiert deine American Truck Simulator Steuerungskonfiguratio
 
 #### 🪟 Windows (10 / 11) Anleitung
 1. Schließe das Spiel vollständig.
-2. Lade die Dateien `rks_preset_controls.sii` und `install_windows_rks_1.0.bat` in den **selben Ordner** herunter (z.B. deinen Downloads-Ordner).
-3. Führe die Datei **`install_windows_rks_1.0.bat`** per Doppelklick aus.
+2. Lade die Dateien `rks_preset_controls.sii`, `install_windows_rks_1.0.ps1` und `install_windows_rks_1.0.bat` in den **selben Ordner** herunter (z.B. deinen Downloads-Ordner).
+   *(Hinweis: Sowohl die .bat- als auch die .ps1-Datei müssen zwingend im selben Verzeichnis liegen!)*
+3. Führe die Datei **`install_windows_rks_1.0.bat`** per Doppelklick aus, um den Manager zu starten.
 4. Tippe im Menü **`A`** ein und drücke Enter, um die Modifikation vollautomatisch auf alle Profile anzuwenden.
 
 #### 🐧 Linux Anleitung (Pop!_OS / Ubuntu / Steam Deck)
