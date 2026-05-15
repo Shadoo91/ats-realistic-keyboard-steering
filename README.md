@@ -79,7 +79,7 @@ If your operating system blocks the automatic installers, you can easily apply t
 ## ↩️ Uninstallation & Rollback
 If you ever want to revert back to your old controls and completely remove the mod, the manager has a built-in safety rollback feature:
 1. Simply restart the manager script according to your system:
-   * **Windows:** Double-click **`install_windows_rks_1.0.bat`**
+   * **Windows:** Double-click **`Launcher_Windows_RKS.bat`**
    * **Linux:** Run `./install_linux_rks_1.0.sh` in your terminal.
 2. Inside the script main menu, type **`R`** and press Enter to trigger the **Restore backups** system.
 3. The script will automatically delete the RKS configuration and safely restore your original profile settings from the `.bak` file.
@@ -161,7 +161,7 @@ Nachdem du den Installer ausgeführt hast, werden **Gas und Bremse im Steuerungs
 ## ↩️ Deinstallation & Rollback
 Wenn du deine alten Steuerungseinstellungen wiederherstellen und die Mod restlos entfernen möchtest, kannst du das integrierte Rückroll-System des Managers nutzen:
 1. Starte das jeweilige Hauptskript deines Systems einfach erneut:
-   * **Windows:** Doppelklick auf **`install_windows_rks_1.0.bat`**
+   * **Windows:** Doppelklick auf **`Launcher_Windows_RKS.bat`**
    * **Linux:** Starte `./install_linux_rks_1.0.sh` im Terminal.
 2. Tippe im Hauptmenü des Skripts den Buchstaben **`R`** ein und drücke Enter, um das **Restore backups** System zu aktivieren.
 3. Das Skript löscht die RKS-Befehle automatisch und stellt deine originale Steuerung fehlerfrei aus der Backup-Datei wieder her.
