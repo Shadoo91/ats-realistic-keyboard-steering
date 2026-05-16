@@ -2,7 +2,9 @@
 
 ⚠️ **CRITICAL IN-GAME MENU NOTICE:**
 After running the installer, **Throttle (Gas) and Brake will visually appear as "Not Bound" inside your in-game options menu!** 
-* **This is 100% intentional and required!** 
+* **This is 100% intentional and required!**
+
+  
 * The script completely detaches the rigid digital lines to unlock the high-fidelity 3-stage analog physics matrix. 
 * **Do NOT rebind W and S in the menu!** If you click there and re-assign W and S, the game will force full-throttle/full-brake digital logic, and the realistic physics script will be completely disabled. Just leave the fields empty and drive!
 
@@ -91,6 +93,7 @@ If you ever want to revert back to your old controls and completely remove the m
 ⚠️ **WICHTIGER HINWEIS ZUM INGAME-MENÜ:**
 Nachdem du den Installer ausgeführt hast, werden **Gas und Bremse im Steuerungsmenü des Spiels optisch als "Nicht belegt" angezeigt!** 
 * **Das ist zu 100% so gewollt und technisch zwingend notwendig!** 
+
 
 Dieses Skript aktualisiert deine American Truck Simulator Steuerungskonfiguration für eine realistische und präzise Tastaturbedienung. Es implementiert eine mehrstufige Eingabelogik ("Turbo-Modus"), die präzises Fahren auf Autobahnen sowie scharfe Manöver in der Stadt ermöglicht – völlig ohne Modifikation von Spieldateien.
 
