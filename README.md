@@ -61,8 +61,8 @@ Before running the installer, go to Steam ➔ Right-click American Truck Simulat
 3. Open your terminal in that directory.
 4. Make the script executable and run it by typing:
    ```bash
-   chmod +x Launcher_Linux_RKS.sh.sh
-   ./Launcher_Linux_RKS.sh.sh
+   chmod +x Launcher_Linux_RKS.sh
+   ./Launcher_Linux_RKS.sh
    ```
 5. Type **`A`** and press Enter to patch all your profiles automatically.
 
@@ -80,7 +80,7 @@ If your operating system blocks the automatic installers, you can easily apply t
 If you ever want to revert back to your old controls and completely remove the mod, the manager has a built-in safety rollback feature:
 1. Simply restart the manager script according to your system:
    * **Windows:** Double-click **`Launcher_Windows_RKS.bat`**
-   * **Linux:** Run `./install_linux_rks_1.0.sh` in your terminal.
+   * **Linux:** Run `./Launcher_Linux_RKS.sh` in your terminal.
 2. Inside the script main menu, type **`R`** and press Enter to trigger the **Restore backups** system.
 3. The script will automatically delete the RKS configuration and safely restore your original profile settings from the `.bak` file.
 
