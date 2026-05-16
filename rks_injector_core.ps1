@@ -132,7 +132,7 @@ $CustomFormulas = @{
     'mix dforward'    = "mix dforward ${B}0${B}"
     'mix dbackward'   = "mix dbackward ${B}0${B}"
     'mix aforward'    = "mix aforward ${B}((keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)) * (! keyboard.s?0)${B}"
-    'mix abackward'   = "mix abackward ${B}keyboard.s?0 * (0.10 + (keyboard.lalt?0 * 0.50) + (keyboard.space?0 * 0.80))${B}"
+    'mix abackward'   = "mix abackward ${B}keyboard.s?0 * (0.10 + (keyboard.lalt?0 * 0.50) + (keyboard.space?0 * 0.90))${B}"
     'mix forward'     = "mix forward ${B}aforward${B}"
     'mix backward'    = "mix backward ${B}abackward${B}"
 }
