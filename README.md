@@ -1,6 +1,6 @@
 # ATS Realistic Keyboard Steering (with Turbo-Mode)
 
-⚠️ **CRITICAL IN-GAME MENU NOTICE (For English & German users):**
+⚠️ **CRITICAL IN-GAME MENU NOTICE:**
 After running the installer, **Throttle (Gas) and Brake will visually appear as "Not Bound" inside your in-game options menu!** 
 * **This is 100% intentional and required!** 
 * The script completely detaches the rigid digital lines to unlock the high-fidelity 3-stage analog physics matrix. 
@@ -88,14 +88,16 @@ If you ever want to revert back to your old controls and completely remove the m
 
 ## 🇩🇪 Deutsche Version
 
+⚠️ **WICHTIGER HINWEIS ZUM INGAME-MENÜ:**
+Nachdem du den Installer ausgeführt hast, werden **Gas und Bremse im Steuerungsmenü des Spiels optisch als "Nicht belegt" angezeigt!** 
+* **Das ist zu 100% so gewollt und technisch zwingend notwendig!** 
+
 Dieses Skript aktualisiert deine American Truck Simulator Steuerungskonfiguration für eine realistische und präzise Tastaturbedienung. Es implementiert eine mehrstufige Eingabelogik ("Turbo-Modus"), die präzises Fahren auf Autobahnen sowie scharfe Manöver in der Stadt ermöglicht – völlig ohne Modifikation von Spieldateien.
 
 ⚠️ **WICHTIGER HINWEIS:** Dieses Repository dient als zwingende Ergänzung zur offiziellen Steam-Workshop-Mod. Stelle sicher, dass du die Mod auf Steam abonniert hast, bevor du diese Dateien ausführst!  
 🔗 **[Steam Workshop Link](https://steamcommunity.com/sharedfiles/filedetails/?id=3725174940)**
 
-⚠️ **WICHTIGER HINWEIS ZUM INGAME-MENÜ:**
-Nachdem du den Installer ausgeführt hast, werden **Gas und Bremse im Steuerungsmenü des Spiels optisch als "Nicht belegt" angezeigt!** 
-* **Das ist zu 100% so gewollt und technisch zwingend notwendig!** 
+
 * Das Skript klemmt die starren digitalen Leitungen im Hintergrund ab, um die präzise, analoge 3-Stufen-Physik überhaupt erst zu ermöglichen.
 * **Belege W und S NIEMALS neu im Menü!** Wenn du in die leeren Felder klickst und W/S dort wieder einträgst, schaltet das Spiel sofort zurück auf die standardmäßige digitale Vollgas-/Vollbremsungs-Logik und zerstört das gesamte RKS-Skript. Lass die Felder einfach leer und fahr los!
 
