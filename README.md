@@ -57,12 +57,12 @@ Before running the installer, go to Steam ➔ Right-click American Truck Simulat
 
 ### 🐧 Linux Instruction (Pop!_OS / Ubuntu / Steam Deck)
 1. Completely close the game.
-2. Download `rks_preset_controls.sii` and `install_linux_rks_1.0.sh` into the **same folder**.
+2. Download `rks_preset_controls.sii` and `Launcher_Linux_RKS.sh` into the **same folder**.
 3. Open your terminal in that directory.
 4. Make the script executable and run it by typing:
    ```bash
-   chmod +x install_linux_rks_1.0.sh
-   ./install_linux_rks_1.0.sh
+   chmod +x Launcher_Linux_RKS.sh.sh
+   ./Launcher_Linux_RKS.sh.sh
    ```
 5. Type **`A`** and press Enter to patch all your profiles automatically.
 
@@ -140,12 +140,12 @@ Nachdem du den Installer ausgeführt hast, werden **Gas und Bremse im Steuerungs
 
 #### 🐧 Linux Anleitung (Pop!_OS / Ubuntu / Steam Deck)
 1. Schließe das Spiel vollständig.
-2. Lade die Dateien `rks_preset_controls.sii` und `install_linux_rks_1.0.sh` in den **selben Ordner** herunter.
+2. Lade die Dateien `rks_preset_controls.sii` und `Launcher_Linux_RKS.sh` in den **selben Ordner** herunter.
 3. Öffne dein Terminal in diesem Ordner.
 4. Mache das Skript ausführbar und starte es mit folgenden Befehlen:
    ```bash
-   chmod +x install_linux_rks_1.0.sh
-   ./install_linux_rks_1.0.sh
+   chmod +x Launcher_Linux_RKS.sh
+   ./Launcher_Linux_RKS.sh
    ```
 5. Tippe im Terminal-Menü **`A`** ein und drücke Enter, um die Anpassung zu aktivieren.
 
