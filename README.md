@@ -1,7 +1,7 @@
 # ATS Realistic Keyboard Steering (with Turbo-Mode)
 
 ⚠️ **CRITICAL IN-GAME MENU NOTICE (For English & German users):**
-After running the installer, **Throttle (Gas) and Brake will visually appear as "Not Bound" / "Nicht belegt" inside your in-game options menu!** 
+After running the installer, **Throttle (Gas) and Brake will visually appear as "Not Bound" inside your in-game options menu!** 
 * **This is 100% intentional and required!** 
 * The script completely detaches the rigid digital lines to unlock the high-fidelity 3-stage analog physics matrix. 
 * **Do NOT rebind W and S in the menu!** If you click there and re-assign W and S, the game will force full-throttle/full-brake digital logic, and the realistic physics script will be completely disabled. Just leave the fields empty and drive!
