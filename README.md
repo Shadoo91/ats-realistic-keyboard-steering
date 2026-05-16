@@ -162,7 +162,7 @@ Nachdem du den Installer ausgeführt hast, werden **Gas und Bremse im Steuerungs
 Wenn du deine alten Steuerungseinstellungen wiederherstellen und die Mod restlos entfernen möchtest, kannst du das integrierte Rückroll-System des Managers nutzen:
 1. Starte das jeweilige Hauptskript deines Systems einfach erneut:
    * **Windows:** Doppelklick auf **`Launcher_Windows_RKS.bat`**
-   * **Linux:** Starte `./install_linux_rks_1.0.sh` im Terminal.
+   * **Linux:** Starte `./Launcher_Linux_RKS` im Terminal.
 2. Tippe im Hauptmenü des Skripts den Buchstaben **`R`** ein und drücke Enter, um das **Restore backups** System zu aktivieren.
 3. Das Skript löscht die RKS-Befehle automatisch und stellt deine originale Steuerung fehlerfrei aus der Backup-Datei wieder her.
 
