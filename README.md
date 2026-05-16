@@ -3,8 +3,8 @@
 ⚠️ **CRITICAL IN-GAME MENU NOTICE:**
 After running the installer, **Throttle (Gas) and Brake will visually appear as "Not Bound" inside your in-game options menu!** 
 * **This is 100% intentional and required!**
-
-The script completely detaches the rigid digital lines to unlock the high-fidelity 3-stage analog physics matrix. 
+*
+* The script completely detaches the rigid digital lines to unlock the high-fidelity 3-stage analog physics matrix. 
 * **Do NOT rebind W and S in the menu!** If you click there and re-assign W and S, the game will force full-throttle/full-brake digital logic, and the realistic physics script will be completely disabled. Just leave the fields empty and drive!
 
 ⚠️ **IMPORTANT NOTICE:** This repository contains the official installation scripts and physics configuration files. It is designed as a mandatory companion/supplement to the official Steam Workshop mod. Make sure you are subscribed to the mod on Steam before running these files!  
