@@ -123,18 +123,18 @@ if ($FilesToPatch.Count -eq 0) { Write-Host "[ERROR] Invalid selection!" -Foregr
 # REIN-TEXT-MATRIX (NATIVE STRINGS)
 $B = [char]96
 $CustomFormulas = @{
-    'mix dsteerleft'  = "mix dsteerleft ${B}keyboard.a?0${B}"
-    'mix dsteerright' = "mix dsteerright ${B}keyboard.d?0${B}"
-    'mix dsteering'   = "mix dsteering ${B}(keyboard.a?0 - keyboard.d?0) * (0.40 + (keyboard.space?0 * 0.50)) * (1.00 + (keyboard.s?0 * keyboard.lalt?0 * 0.50))${B}"
-    'mix steering'    = "mix steering ${B}dsteering * (1.0 - c_steer_func)${B}"
-    'mix msteering'   = "mix msteering ${B}-mouse.rel_position.x?0 * c_msens${B}"
-    'mix mpedals'     = "mix mpedals ${B}-mouse.rel_position.y?0 * c_msens${B}"
-    'mix dforward'    = "mix dforward ${B}0${B}"
-    'mix dbackward'   = "mix dbackward ${B}0${B}"
-    'mix aforward'    = "mix aforward ${B}((keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)) * (! keyboard.s?0)${B}"
-    'mix abackward'   = "mix abackward ${B}keyboard.s?0 * (0.10 + (keyboard.lalt?0 * 0.50) + (keyboard.space?0 * 0.90))${B}"
-    'mix forward'     = "mix forward ${B}aforward${B}"
-    'mix backward'    = "mix backward ${B}abackward${B}"
+    ' mix dsteerleft'  = " mix dsteerleft ${B} keyboard.a?0${B}"
+    ' mix dsteerright' = " mix dsteerright ${B} keyboard.d?0${B}"
+    ' mix dsteering'   = " mix dsteering ${B}(keyboard.a?0 - keyboard.d?0) * (0.40 + (keyboard.space?0 * 0.50)) * (1.00 + (keyboard.s?0 * keyboard.lalt?0 * 0.60))${B}"
+    ' mix steering'    = " mix steering ${B} dsteering * (1.0 - c_steer_func)${B}"
+    ' mix msteering'   = " mix msteering ${B}-mouse.rel_position.x?0 * c_msens${B}"
+    ' mix mpedals'     = " mix mpedals ${B}-mouse.rel_position.y?0 * c_msens${B}"
+    ' mix dforward'    = " mix dforward ${B} 0${B}"
+    ' mix dbackward'   = " mix dbackward ${B} 0${B}"
+    ' mix aforward'    = " mix aforward ${B}((keyboard.w?0 * 0.35) + (keyboard.lalt?0 * 0.55)) * (! keyboard.s?0)${B}"
+    ' mix abackward'   = " mix abackward ${B} keyboard.s?0 * (0.10 + (keyboard.space?0 * 0.50) + (keyboard.lalt?0 * 0.90))${B}"
+    ' mix forward'     = " mix forward ${B} aforward${B}"
+    ' mix backward'    = " mix backward ${B} abackward${B}"
 }
 
 foreach ($CF in $FilesToPatch) {
