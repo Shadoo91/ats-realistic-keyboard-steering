@@ -16,20 +16,24 @@ This script updates your American Truck Simulator input configuration to provide
 ## 🎮 Features & Control Layout
 
 ### 🔹 Steering (A / D)
-* **Cruise & Maneuver Logic (A / D):** Smooth and precise input at **35%** sensitivity for high-speed highway stability.
-* **Intelligent Braking-Turbo (A/D + Spacebar OR LAlt while Braking):** Instantly boosts your steering angle to **90%** max capacity for tight turns or emergency maneuvers. 
-* **Anti-Twitch Acceleration Guard:** The steering turbo automatically stays completely deactivated while accelerating (`W + LAlt`), preventing your truck from spinning out at high speeds. It only activates when braking (`S`).
-* **Dynamic Speed Damping:** Automatically tones down steering sharpness at high speeds based on your in-game Non-Linearity to prevent truck rollovers.
+
+- **Cruise & Maneuver Logic (A / D):** Smooth, precise **40%** baseline sensitivity.
+- **Maneuvering-Boost (A/D + Spacebar):** Adds **50%** extra, totaling **90%** max angle.
+- **Anti-Snapping:** Dynamically locked spacebar boost when stopped.
+- **100% Emergency Steering Bypass (S + LAlt):** Instant max steering.
 
 ### 🔹 Throttle
-* **Smooth Throttle (W Key):** Limits independent acceleration power to **35%**. Perfect for realistic city driving, smooth takeoffs, and precise yard parking.
-* **Partial Throttle Boost (Left Alt Key Only):** Serves as an independent **55%** mid-stage throttle cruise control or hill climbing assist.
-* **Kickdown / Turbo Gas (W + Left Alt together):** Unlocks the full highway power of your truck, merging both stages to deliver **90%** total throttle output.
 
-### 🔹 Braking
-* **Stage 1 - Smooth Brake (S Key):** Triggers a soft **10%** baseline deceleration. Lights up your brake lights naturally without instantly triggering ABS or locking up the tires.
-* **Stage 2 - Mid Brake (S + Left Alt):** Engages a controlled **60%** medium deceleration force. Simultaneously unlocks the 90% steering turbo for tactical evasive action.
-* **Stage 3 - Emergency Brake (S + Spacebar):** Instantly engages **90%** brutal maximum braking force for heavy ABS emergency stops. Simultaneously unlocks the 90% steering turbo.
+- **Smooth Throttle (W Key):** **35%** power for city driving.
+- **Partial Throttle (LAlt):** Independent **55%** mid-stage.
+- **Kickdown / Turbo Gas (W + LAlt):** **90%** total throttle.
+
+### 🔹 Braking & Reversing
+
+- **Stage 1 - Soft (S Key):** **10%** deceleration.
+- **Stage 2 - Mid (S + Spacebar):** **50%** controlled deceleration.
+- **Stage 3 - Emergency (S + LAlt):** **100%** maximum force.
+
 
 ⚠️ **CRITICAL KEYBIND NOTICE:** Since **Spacebar** and **Left Alt** are now hardcoded into the RKS steering and multi-stage braking/throttle matrix, you **MUST** ensure these two keys are not bound to any other functions (like Handbrake or Camera toggle) inside the in-game options! Rebind conflicting functions to other keys to prevent double-activation issues.
 
@@ -102,23 +106,27 @@ Dieses Skript aktualisiert deine American Truck Simulator Steuerungskonfiguratio
 * Das Skript klemmt die starren digitalen Leitungen im Hintergrund ab, um die präzise, analoge 3-Stufen-Physik überhaupt erst zu ermöglichen.
 * **Belege W und S NIEMALS neu im Menü!** Wenn du in die leeren Felder klickst und W/S dort wieder einträgst, schaltet das Spiel sofort zurück auf die standardmäßige digitale Vollgas-/Vollbremsungs-Logik und zerstört das gesamte RKS-Skript. Lass die Felder einfach leer und fahr los!
 
-### 🎮 Features & Tastenbelegung
+## 🎮 Features & Tastenbelegung
 
-#### 🔹 Lenkung (A / D)
-* **Cruising-Logik (A / D):** Sanfter und präziser Einschlag bei **35%** Grundempfindlichkeit für maximale Stabilität bei schneller Fahrt auf Highways.
-* **Intelligenter Brems-Turbo (A/D + Leertaste ODER Links-Alt beim Bremsen):** Erzwingt sofort maximal **90%** Einschlagwinkel für enge Stadtkurven oder Notmanöver.
-* **Anti-Ausbrech-Schutz beim Beschleunigen:** Während du Gas givst (`W + Links-Alt`), bleibt der Lenkungs-Turbo komplett gesperrt. Das verhindert das gefährliche Verreißen des Lkw bei hoher Geschwindigkeit. Er zündet nur, wenn du bremst (`S`).
-* **Geschwindigkeits-Dämpfung:** Die Lenkung wird bei hohen Geschwindigkeiten automatisch feiner gedämpft, um ein Umkippen des Lkw zu verhindern.
+### 🔹 Lenkung (A / D)
 
-#### 🔹 Gas geben
-* **Sanftes Gas (W-Taste):** Begrenzt die reine Motorleistung auf **35%**. Perfekt für realistisches Anfahren, Rangieren und Stadtverkehr.
-* **Zwischengas / Teil-Beschleunigung (Nur Links-Alt):** Fungiert als eigenständige **55%** Gasstufe. Ideal als "manueller Tempomat" oder für leichte Steigungen.
-* **Kickdown / Turbo-Gas (W + Links-Alt zusammen):** Kombiniert beide Stufen für volle Beschleunigung und schaltet gebündelte **90%** Gesamtleistung für Autobahnen frei.
+- **Cruising-Logik (A / D):** Sanfter, präziser **40%** Einschlag.
+- **Intelligenter Rangier-Boost (A/D + Leertaste):** **50%** Zusatz, insgesamt **90%** Winkel.
+- **Anti-Ausrast-Schutz:** Dynamisch gesperrter Boost im Stand.
+- **100% Notfall-Lenk-Bypass (S + LAlt):** Sofortiger Max-Einschlag.
 
-#### 🔹 Bremsen
-* **Stufe 1 - Sanfte Bremse (S-Taste):** Löst eine weiche Verzögerung von **10%** aus. Schaltet die Bremslichter an, verhindert aber blockierende Reifen beim Heranrollen an Kreuzungen.
-* **Stufe 2 - Zwischenbremse (S + Links-Alt):** Greift mit einer kontrollierten, mittleren Verzögerung von **60%**. Schaltet gleichzeitig den 90%-Lenkungs-Turbo für sofortige Ausweichmanöver frei.
-* **Stufe 3 - Gefahrenbremsung (S + Leertaste):** Aktiviert sofort eine brutale **90%** maximale Bremskraft für schwere Notbremsungen mit ABS. Schaltet gleichzeitig den 90%-Lenkungs-Turbo frei.
+### 🔹 Gas geben
+
+- **Sanftes Gas (W-Taste):** **35%** Leistung für die Stadt.
+- **Teil-Beschleunigung (Links-Alt):** Unabhängige **55%** Stufe.
+- **Kickdown (W + LAlt):** **90%** Gesamtleistung.
+
+### 🔹 Bremsen & Rückwärtsfahren
+
+- **Stufe 1 - Sanft (S-Taste):** **10%** Verzögerung.
+- **Stufe 2 - Mittel (S + Leertaste):** **50%** kontrollierte Bremskraft.
+- **Stufe 3 - Gefahrenbremsung (S + LAlt):** **100%** maximale Kraft.
+
 
 ⚠️ **WICHTIGER HINWEIS ZUR TASTENBELEGUNG:** Da die **Leertaste** und **Links-Alt** nun fest in die mathematische Matrix deiner Lenkung, Bremsen und Gänge integriert sind, musst du im Spielmenü zwingend sicherstellen, dass diese beiden Tasten **nicht doppelt belegt sind** (z. B. für die Handbremse oder Kamerawechsel)! Lege Konflikte im Menü auf andere Tasten um, um Fehlfunktionen zu vermeiden.
 
