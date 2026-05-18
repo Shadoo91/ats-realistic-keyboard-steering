@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ===================================================================================
-#   ATS Realistic-Keyboard-Steering (RKS) (Turbo-Mode) ~ by Shadoo91
+#   ETS2 Realistic-Keyboard-Steering (RKS) (Turbo-Mode) ~ by Shadoo91
 #   [BASH PROFILE INJECTOR - WITH SAFETY FALLBACK PRESET & ROLLBACK INFO]
 # ===================================================================================
 
@@ -9,29 +9,29 @@ cd "$(dirname "$0")"
 
 clear
 echo -e "\e[36m====================================================================================\e[0m"
-echo -e "\e[36m   ATS Realistic-Keyboard-Steering (RKS) ~ Profile Manager (Linux)\e[0m"
+echo -e "\e[36m   ETS2 Realistic-Keyboard-Steering (RKS) ~ Profile Manager (Linux)\e[0m"
 echo -e "\e[36m====================================================================================\e[0m"
 echo
 
 PresetFile="./rks_preset_controls.sii"
 
 # 1. Suchpfade für Profile definieren (Lokal, Flatpak und Steam Cloud userdata)
-AtsDocPath="$HOME/.steam/steam/steamapps/compatdata/270880/pfx/drive_c/users/steamuser/Documents/American Truck Simulator"
-AtsFlatpakPath="$HOME/.var/app/com.valvesoftware.Steam/.steam/steam/steamapps/compatdata/270880/pfx/drive_c/users/steamuser/Documents/American Truck Simulator"
+Ets2DocPath="$HOME/.steam/steam/steamapps/compatdata/227300/pfx/drive_c/users/steamuser/Documents/Euro Truck Simulator 2"
+Ets2FlatpakPath="$HOME/.var/app/com.valvesoftware.Steam/.steam/steam/steamapps/compatdata/227300/pfx/drive_c/users/steamuser/Documents/Euro Truck Simulator 2"
 
 declare -a SearchPaths
-[ -d "$AtsDocPath/profiles" ] && SearchPaths+=("$AtsDocPath/profiles")
-[ -d "$AtsDocPath/steam_profiles" ] && SearchPaths+=("$AtsDocPath/steam_profiles")
-[ -d "$AtsFlatpakPath/profiles" ] && SearchPaths+=("$AtsFlatpakPath/profiles")
-[ -d "$AtsFlatpakPath/steam_profiles" ] && SearchPaths+=("$AtsFlatpakPath/steam_profiles")
+[ -d "$Ets2DocPath/profiles" ] && SearchPaths+=("$Ets2DocPath/profiles")
+[ -d "$Ets2DocPath/steam_profiles" ] && SearchPaths+=("$Ets2DocPath/steam_profiles")
+[ -d "$Ets2FlatpakPath/profiles" ] && SearchPaths+=("$Ets2FlatpakPath/profiles")
+[ -d "$Ets2FlatpakPath/steam_profiles" ] && SearchPaths+=("$Ets2FlatpakPath/steam_profiles")
 
-# Lokale Steam Userdata (Cloud) Pfade durchsuchen
+# Lokale Steam Userdata (Cloud) Pfade durchsuchen (AppID 227300 für ETS2)
 SteamPaths=("$HOME/.steam/steam/userdata" "$HOME/.var/app/com.valvesoftware.Steam/.steam/steam/userdata")
 for SPath in "${SteamPaths[@]}"; do
     if [ -d "$SPath" ]; then
         for UserDir in "$SPath"/*; do
-            if [ -d "$UserDir/270880/remote/profiles" ]; then
-                SearchPaths+=("$UserDir/270880/remote/profiles")
+            if [ -d "$UserDir/227300/remote/profiles" ]; then
+                SearchPaths+=("$UserDir/227300/remote/profiles")
             fi
         done
     fi
@@ -46,7 +46,7 @@ for Path in "${SearchPaths[@]}"; do
 done
 
 if [ ${#TargetPaths[@]} -eq 0 ]; then
-    echo -e "\e[31m[ERROR] No American Truck Simulator profile directories found!\e[0m"
+    echo -e "\e[31m[ERROR] No Euro Truck Simulator 2 profile directories found!\e[0m"
     read -p "Press Enter to exit..."
     exit 1
 fi
@@ -57,7 +57,7 @@ declare -a ControlTypes
 declare -a ControlFolders
 Index=1
 
-echo -e "\e[33mDetected ATS Profiles:\e[0m"
+echo -e "\e[33mDetected ETS2 Profiles:\e[0m"
 echo "------------------------------------------------------------------------------------"
 
 for TPath in "${TargetPaths[@]}"; do
@@ -96,7 +96,7 @@ Selection=$(echo "$Selection" | tr '[:lower:]' '[:upper:]')
 [ "$Selection" == "E" ] && exit 0
 
 # ==========================================
-# REITER: ROLLBACK SYSTEM [R] (MIT GEZIELTER ABFRAGE)
+# REITER: ROLLBACK SYSTEM [R]
 # ==========================================
 if [ "$Selection" == "R" ]; then
     echo
@@ -154,12 +154,12 @@ for FILE in "${FilesToPatch[@]}"; do
     
     TEMP_FILE="${FILE}.tmp"
     
-    # Sauberes Ersetzen
+    # Sauberes Ersetzen über Perl (Exakt dein funktionierendes Prinzip!)
     perl -pe '
         s/(config_lines\[\d+\]:\s+)"mix dsteerleft .*"/$1"mix dsteerleft \`keyboard.a?0\`"/i;
         s/(config_lines\[\d+\]:\s+)"mix dsteerright .*"/$1"mix dsteerright \`keyboard.d?0\`"/i;
         s/(config_lines\[\d+\]:\s+)"mix dsteering .*"/$1"mix dsteering \`(keyboard.a?0 - keyboard.d?0) * (0.40 + (keyboard.space?0 * 0.50)) * (1.00 + (keyboard.s?0 * keyboard.lalt?0 * 0.60))\`"/i;
-        s/(config_lines\[\d+\]:\s+)"mix steering .*"/$1"mix steering \`dsteering * (1.0 - c_steer_func)\`"/i;
+        s/(config_lines\[\d+\]:\s+)"mix steering .*"/$1"mix steering \`dsteering * (1.00 - c_steer_func)\`"/i;
         s/(config_lines\[\d+\]:\s+)"mix msteering .*"/$1"mix msteering \`-mouse.rel_position.x?0 * c_msens\`"/i;
         s/(config_lines\[\d+\]:\s+)"mix mpedals .*"/$1"mix mpedals \`-mouse.rel_position.y?0 * c_msens\`"/i;
         s/(config_lines\[\d+\]:\s+)"mix dforward .*"/$1"mix dforward \`0\`"/i;
@@ -178,41 +178,28 @@ for FILE in "${FilesToPatch[@]}"; do
         rm -f "$TEMP_FILE"
         echo -e "  -> \e[33m[WARNING]\e[0m Target lines not found. File might be corrupted."
         
-        # INTERAKTIVER FALLBACK & WARNBLOCK (IDENTISCH ZU WINDOWS)
+        # INTERAKTIVER FALLBACK & WARNBLOCK
         if [ -f "$PresetFile" ]; then
             echo
             echo -e "     \e[31m!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\e[0m"
             echo -e "     \e[33mWARNING: Installing the preset will reset your custom in-game keybinds \e[0m"
             echo -e "              \e[33mand sensitivity settings to default RKS values!\e[0m"
-            echo -e "              \e[32mYour original settings are SAFELY backed up in 'controls.sii.bak'.\e[0m"
-            echo -e "              \e[33mYou will need to manually reconfigure your basic controls in-game.\e[0m"
+            echo -e "              \e[32mYour original settings are SAFELY backed up in '\''controls.sii.bak'\''.\e[0m"
             echo -e "     \e[31m!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\e[0m"
             echo
             
-            read -p "     Do you still want to overwrite with the clean RKS Default Preset? (Y/N): " Choice
-            Choice=$(echo "$Choice" | tr '[:lower:]' '[:upper:]')
+            read -p "     Do you want to overwrite 'controls.sii' with the RKS Preset? (Y/N): " Confirm
+            Confirm=$(echo "$Confirm" | tr '[:lower:]' '[:upper:]')
             
-            if [ "$Choice" == "Y" ]; then
+            if [ "$Confirm" == "Y" ]; then
                 cp -f "$PresetFile" "$FILE"
-                echo -e "     -> \e[32mSuccess:\e[0m Overwritten with clean RKS Preset!"
-                echo
-                echo -e "     \e[36m------------------------------------------------------------------------\e[0m"
-                echo -e "     \e[33mHOW TO RESTORE YOUR ORIGINAL SETTINGS LATER:\e[0m"
-                echo -e "     Option 1 (Automatic): Restart this tool and press [R] in the main menu."
-                echo -e "     Option 2 (Manual): Go to your profile folder:"
-                echo -e "                        $(dirname "$FILE")"
-                echo -e "                        Delete 'controls.sii' and rename 'controls.sii.bak'"
-                echo -e "                        back to 'controls.sii'."
-                echo -e "     \e[36m------------------------------------------------------------------------\e[0m"
-                echo
+                echo -e "  -> \e[32mSuccess:\e[0m Default RKS Preset applied successfully!"
             else
-                echo -e "     -> \e[37mSkipped preset installation.\e[0m"
+                echo -e "  -> \e[33mPatching skipped by user.\e[0m"
             fi
-        else
-            echo -e "     -> \e[31mFallback preset file 'rks_preset_controls.sii' not found in script folder!\e[0m"
         fi
     fi
-    echo "------------------------------------------------------------------------------------"
 done
 
-read -p "Process finished. Press Enter to exit..."
+echo
+read -p "All operations completed. Press Enter to exit..."
