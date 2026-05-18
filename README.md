@@ -1,10 +1,10 @@
-# ETS2 - Realistic Keyboard Steering & Authentic Physics Logic (v1.10)
+# ATS - Realistic Keyboard Steering & Authentic Physics Logic (v1.10)
 
 ![Game Version](https://shields.io)
 ![Platform](https://shields.io)
 ![License](https://shields.io)
 
-This mod fundamentally transforms driving in Euro Truck Simulator 2 (ETS2) by introducing a smart, multi-stage control system directly into the game's input engine. Experience razor-sharp steering, multi-tier braking, and realistic weight dynamics – completely independent of global physics files!
+This mod fundamentally transforms driving in American Truck Simulator (ATS) by introducing a smart, multi-stage control system directly into the game's input engine. Experience razor-sharp steering, multi-tier braking, and realistic weight dynamics – completely independent of global physics files!
 
 ---
 
@@ -37,7 +37,7 @@ This mod fundamentally transforms driving in Euro Truck Simulator 2 (ETS2) by in
    - Start the game once, click **Edit Profile** on your main profile, and **uncheck "Use Steam Cloud"**. 
    - *Note: This forces the game to save files locally so the script can find them. You can safely turn it back on after the installation is complete!*
 3. **Optimize Steam Settings:** 
-   - Go to Steam -> Right-click **ETS2** -> Properties -> Controller -> Select **"Disable Steam Input"**.
+   - Go to Steam -> Right-click **ATS** -> Properties -> Controller -> Select **"Disable Steam Input"**.
 4. **Download & Run Patcher:** 
    - Download the automated profile patcher from this repository (`rks_injector_core.ps1` for Windows / `Launcher_Linux_RKS.sh` for Linux).
 
@@ -54,7 +54,7 @@ chmod +x Launcher_Linux_RKS.sh && ./Launcher_Linux_RKS.sh
 
 ## ⚙️ Recommended In-Game Settings
 
-- **Steering Sensitivity / Animation Range:** Full Right (1440° for ETS2)
+- **Steering Sensitivity / Animation Range:** Full Right (1800° for ATS)
 - **Steering Non-Linearity:** 50% - 80% (Highway damping)
 - **Auto-Centering (Gameplay Settings):** **DISABLED / OFF** *(Crucial for the RKS physics engine to take full control!)*
 - **Braking Intensity:** **50%** *(Perfectly balanced for the multi-stage brake matrix)*
@@ -92,9 +92,9 @@ chmod +x Launcher_Linux_RKS.sh && ./Launcher_Linux_RKS.sh
    - Starte das Spiel einmal, klicke bei deinem Hauptprofil auf **Profil bearbeiten** und **entferne den Haken bei "Steam Cloud nutzen"**. 
    - *Hinweis: Dies zwingt das Spiel, die Dateien lokal zu speichern, damit das Skript sie finden kann. Du kannst die Cloud nach der Installation beruhigt wieder einschalten!*
 3. **Steam-Einstellungen optimieren:** 
-   - Gehe in Steam zu -> Rechtsklick auf **ETS2** -> Eigenschaften -> Controller -> Wähle **"Steam Input deaktivieren"**.
+   - Gehe in Steam zu -> Rechtsklick auf **ATS** -> Eigenschaften -> Controller -> Wähle **"Steam Input deaktivieren"**.
 4. **Patcher herunterladen & starten:** 
-   - Lade den automatischen Profil-Patcher aus diesem Repository herunter (`rks_injector_core.ps1` für Windows / `Launcher_Linux_RKS.sh` for Linux).
+   - Lade den automatischen Profil-Patcher aus diesem Repository herunter (`rks_injector_core.ps1` für Windows / `Launcher_Linux_RKS.sh` für Linux).
 
 ### 🖥️ Windows-Ausführung:
 - Öffne die PowerShell im Skript-Ordner und führe folgenden Befehl aus: `.\rks_injector_core.ps1`
@@ -109,7 +109,7 @@ chmod +x Launcher_Linux_RKS.sh && ./Launcher_Linux_RKS.sh
 
 ## ⚙️ Empfohlene Ingame-Einstellungen
 
-- **Lenkempfindlichkeit / Animationsbereich:** Ganz nach rechts (1440° für ETS2)
+- **Lenkempfindlichkeit / Animationsbereich:** Ganz nach rechts (1800° für ATS)
 - **Lenkungs-Nichtlinearität:** 50% - 80% (Autobahn-Dämpfung)
 - **Automatisches Zentrieren (Gameplay-Optionen):** **DEAKTIVIERT / AUS** *(Zwingend notwendig, damit die RKS-Physikmatrix die volle Kontrolle übernimmt!)*
 - **Bremsintensität:** **50%** *(Perfekt ausbalanciert für die mehrstufige Bremsmatrix)*
