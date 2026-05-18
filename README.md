@@ -1,186 +1,127 @@
-# ATS Realistic Keyboard Steering (with Turbo-Mode)
+# ETS2 - Realistic Keyboard Steering & Authentic Physics Logic (v1.10)
 
-⚠️ **CRITICAL IN-GAME MENU NOTICE:**
-After running the installer, **Throttle (Gas) and Brake will visually appear as "Not Bound" inside your in-game options menu!** 
-* **This is 100% intentional and required!**
-* The script completely detaches the rigid digital lines to unlock the high-fidelity 3-stage analog physics matrix. 
-* **Do NOT rebind W and S in the menu!** If you click there and re-assign W and S, the game will force full-throttle/full-brake digital logic, and the realistic physics script will be completely disabled. Just leave the fields empty and drive!
+![Game Version](https://shields.io)
+![Platform](https://shields.io)
+![License](https://shields.io)
 
-⚠️ **IMPORTANT NOTICE:** This repository contains the official installation scripts and physics configuration files. It is designed as a mandatory companion/supplement to the official Steam Workshop mod. Make sure you are subscribed to the mod on Steam before running these files!  
-🔗 **[Steam Workshop Link](https://steamcommunity.com/sharedfiles/filedetails/?id=3725174940)**
-
-This script updates your American Truck Simulator input configuration to provide realistic, physics-compliant keyboard controls. It implements a multi-stage input logic ("Turbo Mode") that allows precise cruising, multi-tier braking, and sharp maneuvers without altering game physics files.
+This mod fundamentally transforms driving in Euro Truck Simulator 2 (ETS2) by introducing a smart, multi-stage control system directly into the game's input engine. Experience razor-sharp steering, multi-tier braking, and realistic weight dynamics – completely independent of global physics files!
 
 ---
+
+## 🇺🇸 ENGLISH VERSION
 
 ## 🎮 Features & Control Layout
 
 ### 🔹 Steering (A / D)
-
-- **Cruise & Maneuver Logic (A / D):** Smooth, precise **40%** baseline sensitivity.
-- **Maneuvering-Boost (A/D + Spacebar):** Adds **50%** extra, totaling **90%** max angle.
+- **Cruise & Maneuver Logic (A / D):** Smooth, precise 40% baseline sensitivity.
+- **Maneuvering-Boost (A/D + Spacebar):** Adds 50% extra, totaling 90% max angle.
 - **Anti-Snapping:** Dynamically locked spacebar boost when stopped.
 - **100% Emergency Steering Bypass (S + LAlt):** Instant max steering.
 
 ### 🔹 Throttle
-
-- **Smooth Throttle (W Key):** **35%** power for city driving.
-- **Partial Throttle (LAlt):** Independent **55%** mid-stage.
-- **Kickdown / Turbo Gas (W + LAlt):** **90%** total throttle.
+- **Smooth Throttle (W Key):** 35% power for city driving.
+- **Partial Throttle (LAlt):** Independent 55% mid-stage.
+- **Kickdown / Turbo Gas (W + LAlt):** 90% total throttle.
 
 ### 🔹 Braking & Reversing
-
-- **Stage 1 - Soft (S Key):** **10%** deceleration.
-- **Stage 2 - Mid (S + Spacebar):** **50%** controlled deceleration.
-- **Stage 3 - Emergency (S + LAlt):** **100%** maximum force.
-
-
-⚠️ **CRITICAL KEYBIND NOTICE:** Since **Spacebar** and **Left Alt** are now hardcoded into the RKS steering and multi-stage braking/throttle matrix, you **MUST** ensure these two keys are not bound to any other functions (like Handbrake or Camera toggle) inside the in-game options! Rebind conflicting functions to other keys to prevent double-activation issues.
-
----
-
-## ⚙️ Recommended In-Game Settings
-
-* **Steering Sensitivity:** Adjust to your liking! Moving the slider changes the steering intensity. Your custom formula scales perfectly with this option.
-* **Steering Non-Linearity:** Pull the slider to the **Right (50% - 80%)** to unleash the full speed-damping on highways.
-* **Braking Intensity:** Set to **50% (Middle / Default)**. This provides the most realistic stopping distance combined with your Turbo-Brake. Adjust freely for harder or softer braking.
+- **Stage 1 - Soft (S Key):** 10% deceleration.
+- **Stage 2 - Mid (S + Spacebar):** 50% controlled deceleration.
+- **Stage 3 - Emergency (S + LAlt):** 100% maximum force.
 
 ---
 
 ## 🚀 Installation Guide
 
-### 📥 Prerequisites
-Before running the installer, go to Steam ➔ Right-click American Truck Simulator ➔ Properties ➔ Controller ➔ Set Steam Input to **"Disable Steam Input"**. If active, Steam Input will emulate a gamepad and override this configuration.
+1. **Subscribe** to the official companion core mod on the Steam Workshop.
+2. **Disable Steam Cloud (Highly Recommended):** 
+   - Start the game once, click **Edit Profile** on your main profile, and **uncheck "Use Steam Cloud"**. 
+   - *Note: This forces the game to save files locally so the script can find them. You can safely turn it back on after the installation is complete!*
+3. **Optimize Steam Settings:** 
+   - Go to Steam -> Right-click **ETS2** -> Properties -> Controller -> Select **"Disable Steam Input"**.
+4. **Download & Run Patcher:** 
+   - Download the automated profile patcher from this repository (`rks_injector_core.ps1` for Windows / `Launcher_Linux_RKS.sh` for Linux).
 
-### 🪟 Windows (10 / 11) Instruction
-1. Completely close the game.
-2. Download `rks_preset_controls.sii`, `rks_injector_core.ps1`, and `Launcher_Windows_RKS.bat` into the **same folder** (e.g., your Downloads folder). 
-   *(Note: Both the .bat and .ps1 files must be in the same directory!)*
-3. Double-click **`Launcher_Windows_RKS.bat`** to launch the manager. 
-4. Type **`A`** and press Enter to patch all your profiles automatically.
+### 🖥️ Windows Execution:
+- Open PowerShell in the script folder and execute: `.\rks_injector_core.ps1`
 
-### 🐧 Linux Instruction (Pop!_OS / Ubuntu / Steam Deck)
-1. Completely close the game.
-2. Download `rks_preset_controls.sii` and `Launcher_Linux_RKS.sh` into the **same folder**.
-3. Open your terminal in that directory.
-4. Make the script executable and run it by typing:
-   ```bash
-   chmod +x Launcher_Linux_RKS.sh
-   ./Launcher_Linux_RKS.sh
-   ```
-5. Type **`A`** and press Enter to patch all your profiles automatically.
-
-### 💡 Alternative Manual Installation (If scripts fail due to OS restrictions)
-If your operating system blocks the automatic installers, you can easily apply the custom logic manually:
-1. Open your ATS profile folder: `Documents / American Truck Simulator / profiles / YOUR_PROFILE_ID /`
-2. Open your existing **`controls.sii`** file with a text editor (like Notepad++).
-3. Look for the lines starting from `mix dsteerleft` down to `mix backward` (usually around lines 330-341).
-4. Delete those specific lines and replace them by copy-pasting the exact 12 configuration lines from the **`rks_preset_controls.sii`** file included in this repository.
-5. Save and close the file.
+### 🐧 Linux & Steam Deck Permissions (Pop!_OS, Ubuntu, etc.):
+Linux security requires you to explicitly grant execution permissions to the script before running it. Open your terminal in the script directory and run:
+```bash
+chmod +x Launcher_Linux_RKS.sh && ./Launcher_Linux_RKS.sh
+```
 
 ---
 
-## ↩️ Uninstallation & Rollback
-If you ever want to revert back to your old controls and completely remove the mod, the manager has a built-in safety rollback feature:
-1. Simply restart the manager script according to your system:
-   * **Windows:** Double-click **`Launcher_Windows_RKS.bat`**
-   * **Linux:** Run `./Launcher_Linux_RKS.sh` in your terminal.
-2. Inside the script main menu, type **`R`** and press Enter to trigger the **Restore backups** system.
-3. The script will automatically delete the RKS configuration and safely restore your original profile settings from the `.bak` file.
+## ⚙️ Recommended In-Game Settings
+
+- **Steering Sensitivity / Animation Range:** Full Right (1440° for ETS2)
+- **Steering Non-Linearity:** 50% - 80% (Highway damping)
+- **Auto-Centering (Gameplay Settings):** **DISABLED / OFF** *(Crucial for the RKS physics engine to take full control!)*
+- **Braking Intensity:** **50%** *(Perfectly balanced for the multi-stage brake matrix)*
+- **Truck / Trailer Stability:** 80%
+- **Suspension / Cabin Stiffness:** 40%
 
 ---
 
-## 🇩🇪 Deutsche Version
-
-⚠️ **WICHTIGER HINWEIS ZUM INGAME-MENÜ:**
-Nachdem du den Installer ausgeführt hast, werden **Gas und Bremse im Steuerungsmenü des Spiels optisch als "Nicht belegt" angezeigt!** 
-* **Das ist zu 100% so gewollt und technisch zwingend notwendig!** 
-
-
-Dieses Skript aktualisiert deine American Truck Simulator Steuerungskonfiguration für eine realistische und präzise Tastaturbedienung. Es implementiert eine mehrstufige Eingabelogik ("Turbo-Modus"), die präzises Fahren auf Autobahnen sowie scharfe Manöver in der Stadt ermöglicht – völlig ohne Modifikation von Spieldateien.
-
-⚠️ **WICHTIGER HINWEIS:** Dieses Repository dient als zwingende Ergänzung zur offiziellen Steam-Workshop-Mod. Stelle sicher, dass du die Mod auf Steam abonniert hast, bevor du diese Dateien ausführst!  
-🔗 **[Steam Workshop Link](https://steamcommunity.com/sharedfiles/filedetails/?id=3725174940)**
-
-
-* Das Skript klemmt die starren digitalen Leitungen im Hintergrund ab, um die präzise, analoge 3-Stufen-Physik überhaupt erst zu ermöglichen.
-* **Belege W und S NIEMALS neu im Menü!** Wenn du in die leeren Felder klickst und W/S dort wieder einträgst, schaltet das Spiel sofort zurück auf die standardmäßige digitale Vollgas-/Vollbremsungs-Logik und zerstört das gesamte RKS-Skript. Lass die Felder einfach leer und fahr los!
+## 🇩🇪 DEUTSCHE VERSION
 
 ## 🎮 Features & Tastenbelegung
 
 ### 🔹 Lenkung (A / D)
-
-- **Cruising-Logik (A / D):** Sanfter, präziser **40%** Einschlag.
-- **Intelligenter Rangier-Boost (A/D + Leertaste):** **50%** Zusatz, insgesamt **90%** Winkel.
+- **Cruising-Logik (A / D):** Sanfter, präziser 40% Einschlag.
+- **Intelligenter Rangier-Boost (A/D + Leertaste):** 50% Zusatz, insgesamt 90% Winkel.
 - **Anti-Ausrast-Schutz:** Dynamisch gesperrter Boost im Stand.
 - **100% Notfall-Lenk-Bypass (S + LAlt):** Sofortiger Max-Einschlag.
 
 ### 🔹 Gas geben
-
-- **Sanftes Gas (W-Taste):** **35%** Leistung für die Stadt.
-- **Teil-Beschleunigung (Links-Alt):** Unabhängige **55%** Stufe.
-- **Kickdown (W + LAlt):** **90%** Gesamtleistung.
+- **Sanftes Gas (W-Taste):** 35% Leistung für die Stadt.
+- **Teil-Beschleunigung (Links-Alt):** Unabhängige 55% Stufe.
+- **Kickdown (W + LAlt):** 90% Gesamtleistung.
 
 ### 🔹 Bremsen & Rückwärtsfahren
-
-- **Stufe 1 - Sanft (S-Taste):** **10%** Verzögerung.
-- **Stufe 2 - Mittel (S + Leertaste):** **50%** kontrollierte Bremskraft.
-- **Stufe 3 - Gefahrenbremsung (S + LAlt):** **100%** maximale Kraft.
-
-
-⚠️ **WICHTIGER HINWEIS ZUR TASTENBELEGUNG:** Da die **Leertaste** und **Links-Alt** nun fest in die mathematische Matrix deiner Lenkung, Bremsen und Gänge integriert sind, musst du im Spielmenü zwingend sicherstellen, dass diese beiden Tasten **nicht doppelt belegt sind** (z. B. für die Handbremse oder Kamerawechsel)! Lege Konflikte im Menü auf andere Tasten um, um Fehlfunktionen zu vermeiden.
+- **Stufe 1 - Sanft (S-Taste):** 10% Verzögerung.
+- **Stufe 2 - Mittel (S + Leertaste):** 50% kontrollierte Bremskraft.
+- **Stufe 3 - Gefahrenbremsung (S + LAlt):** 100% maximale Kraft.
 
 ---
 
-## ⚙️ Empfohlene Einstellungen
-* **Lenkempfindlichkeit:** Nach Belieben im Menü einstellbar! Der Regler skaliert flüssig mit deiner neuen Formel.
-* **Lenkungs-Nichtlinearität:** Schiebe den Regler weit nach **Rechts (50% - 80%)**, um die geschwindigkeitsabhängige Abdämpfung auf Highways zu aktivieren.
-* **Bremsstärke:** Stelle den Regler auf **50% (Mitte / Default)** für den realistischsten Bremsweg in Kombination mit der Turbo-Bremse.
+## 🚀 Installations-Anleitung
 
-### 🚀 Installations-Anleitung
+1. Klicke im Steam Workshop bei der Core-Mod auf **Abonnieren**.
+2. **Steam Cloud deaktivieren (Dringend empfohlen):** 
+   - Starte das Spiel einmal, klicke bei deinem Hauptprofil auf **Profil bearbeiten** und **entferne den Haken bei "Steam Cloud nutzen"**. 
+   - *Hinweis: Dies zwingt das Spiel, die Dateien lokal zu speichern, damit das Skript sie finden kann. Du kannst die Cloud nach der Installation beruhigt wieder einschalten!*
+3. **Steam-Einstellungen optimieren:** 
+   - Gehe in Steam zu -> Rechtsklick auf **ETS2** -> Eigenschaften -> Controller -> Wähle **"Steam Input deaktivieren"**.
+4. **Patcher herunterladen & starten:** 
+   - Lade den automatischen Profil-Patcher aus diesem Repository herunter (`rks_injector_core.ps1` für Windows / `Launcher_Linux_RKS.sh` for Linux).
 
-#### 📥 Vorbereitung
-1. Klicke in Steam mit der rechten Maustaste auf ATS ➔ Eigenschaften ➔ Controller ➔ Stelle Steam-Eingabe auf **"Steam-Eingabe deaktivieren"**. Wenn aktiv, emuliert Steam ein Gamepad und ignoriert die Tastatur-Befehle der Datei.
+### 🖥️ Windows-Ausführung:
+- Öffne die PowerShell im Skript-Ordner und führe folgenden Befehl aus: `.\rks_injector_core.ps1`
 
-#### 🪟 Windows (10 / 11) Anleitung
-1. Schließe das Spiel vollständig.
-2. Lade die Dateien `rks_preset_controls.sii`, `rks_injector_core.ps1` und `Launcher_Windows_RKS.bat` in den **selben Ordner** herunter (z.B. deinen Downloads-Ordner).
-   *(Hinweis: Sowohl die .bat- als auch die .ps1-Datei müssen zwingend im selben Verzeichnis liegen!)*
-3. Führe die Datei **`Launcher_Windows_RKS.bat`** per Doppelklick aus, um den Manager zu starten.
-4. Tippe im Menü **`A`** ein und drücke Enter, um die Modifikation vollautomatisch auf alle Profile anzuwenden.
-
-#### 🐧 Linux Anleitung (Pop!_OS / Ubuntu / Steam Deck)
-1. Schließe das Spiel vollständig.
-2. Lade die Dateien `rks_preset_controls.sii` und `Launcher_Linux_RKS.sh` in den **selben Ordner** herunter.
-3. Öffne dein Terminal in diesem Ordner.
-4. Mache das Skript ausführbar und starte es mit folgenden Befehlen:
-   ```bash
-   chmod +x Launcher_Linux_RKS.sh
-   ./Launcher_Linux_RKS.sh
-   ```
-5. Tippe im Terminal-Menü **`A`** ein und drücke Enter, um die Anpassung zu aktivieren.
-
-#### 💡 Alternative Manuelle Installation (Falls Skripte blockiert werden)
-1. Öffne deinen ATS-Profilordner: `Dokumente / American Truck Simulator / profiles / DEINE_PROFIL_ID /`
-2. Öffne deine vorhandene **`controls.sii`** mit einem Texteditor (z.B. Notepad++).
-3. Suche nach den Zeilen von `mix dsteerleft` bis `mix backward` (normalerweise die Zeilen 330-341).
-4. Lösche diese spezifischen Zeilen und ersetze sie, indem du die 12 Konfigurationszeilen aus der bereitgestellten **`rks_preset_controls.sii`** per Copy-Paste einfügst.
-5. Speichere und schließe die Datei.
+### 🐧 Linux & Steam Deck Rechte-Vergabe (Pop!_OS, Ubuntu, etc.):
+Die Linux-Sicherheit erfordert es, dass du dem Skript vor dem Start explizit Ausführungsrechte (Execution Permissions) gibst. Öffne dein Terminal im Skript-Ordner und führe diesen Befehl aus:
+```bash
+chmod +x Launcher_Linux_RKS.sh && ./Launcher_Linux_RKS.sh
+```
 
 ---
 
-## ↩️ Deinstallation & Rollback
-Wenn du deine alten Steuerungseinstellungen wiederherstellen und die Mod restlos entfernen möchtest, kannst du das integrierte Rückroll-System des Managers nutzen:
-1. Starte das jeweilige Hauptskript deines Systems einfach erneut:
-   * **Windows:** Doppelklick auf **`Launcher_Windows_RKS.bat`**
-   * **Linux:** Starte `./Launcher_Linux_RKS` im Terminal.
-2. Tippe im Hauptmenü des Skripts den Buchstaben **`R`** ein und drücke Enter, um das **Restore backups** System zu aktivieren.
-3. Das Skript löscht die RKS-Befehle automatisch und stellt deine originale Steuerung fehlerfrei aus der Backup-Datei wieder her.
+## ⚙️ Empfohlene Ingame-Einstellungen
+
+- **Lenkempfindlichkeit / Animationsbereich:** Ganz nach rechts (1440° für ETS2)
+- **Lenkungs-Nichtlinearität:** 50% - 80% (Autobahn-Dämpfung)
+- **Automatisches Zentrieren (Gameplay-Optionen):** **DEAKTIVIERT / AUS** *(Zwingend notwendig, damit die RKS-Physikmatrix die volle Kontrolle übernimmt!)*
+- **Bremsintensität:** **50%** *(Perfekt ausbalanciert für die mehrstufige Bremsmatrix)*
+- **Lkw- / Aufliegerstabilität:** 80%
+- **Federungs- / Kabinenhärte:** 40%
 
 ---
 
 ## ⚠️ Terms of Use & Copyright
+
 © 2026 Shadoo91. All rights reserved.
-* **No Redistribution:** You are strictly prohibited from re-uploading, redistributing, or mirroring these scripts or the repository files on any other platform, forum, or modding site.
-* **No Unauthorized Modifications:** Modifying, editing, or copying code from these installers or configuration files for public release or sharing is not allowed.
-* **Credits & Attribution:** If you showcase, review, or feature this project (e.g., on YouTube, blogs, or community forums), you MUST explicitly credit me as the author and provide direct links to this GitHub repository and the official Steam Workshop page.
+
+- **No Redistribution:** You are strictly prohibited from re-uploading, redistributing, or mirroring these scripts or the repository files on any other platform, forum, or modding site.
+- **No Unauthorized Modifications:** Modifying, editing, or copying code from these installers or configuration files for public release or sharing is not allowed.
+- **Credits & Attribution:** If you showcase, review, or feature this project (e.g., on YouTube, blogs, or community forums), you MUST explicitly credit me as the author and provide direct links to this GitHub repository and the official Steam Workshop page.
